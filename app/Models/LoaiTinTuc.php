@@ -9,7 +9,11 @@ class LoaiTinTuc extends Model
 {
     use HasFactory;
 
-    protected $table = 'LoaiTinTuc';
+    protected $table = 'loaitintuc';
+
+    protected $primaryKey = 'idLTT';
 
     public $timestamps = false;
+
+    protected $guarded = [];
 }

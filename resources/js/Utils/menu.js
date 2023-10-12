@@ -7,9 +7,9 @@ const common = [
 const MENUS = {
     admin: [
         { name: "dashboard", label: "Tổng quan" },
-        { name: "users.list", label: "QL tài khoản" },
-        { name: "news.list", label: "QL tin tức" },
-        { name: "kind_new.list", label: "QL loại tin tức" },
+        { name: "users.list", label: "Tài khoản" },
+        { name: "news.list", label: "Tin tức" },
+        { name: "kind_new.list", label: "Loại tin tức" },
     ],
     doctor: [
         ...common,
@@ -26,6 +26,10 @@ const MENUS = {
         { name: "bills.list", label: "QL hoá đơn" },
         { name: "services.list", label: "QL dịch vụ" },
         { name: "kind_services.list", label: "QL loại dịch vụ" },
+        { name: "units.list", label: "Đơn vị tính" },
+        { name: "kind_services.list", label: "Loại dịch vụ" },
+        { name: "supplies.list", label: "Loại vật tư" },
+        { name: "kindMedicine.list", label: "Loại thuốc" },
     ],
 };
 

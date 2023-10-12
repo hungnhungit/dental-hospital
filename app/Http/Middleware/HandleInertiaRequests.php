@@ -36,13 +36,13 @@ class HandleInertiaRequests extends Middleware
         $user = null;
 
         if ($request->user()) {
-            $currentUser = User::query()->with('role')->where('id', $request->user()['id'])->first();
+            $currentUser = User::query()->with('role')->where('idTK', $request->user()['idTK'])->first();
             if ($currentUser->role['Ten'] === 'admin') {
-                $admin = Admin::query()->where('TaiKhoanId', $currentUser['id'])->first();
+                $admin = Admin::query()->where('TaiKhoanId', $currentUser['idTK'])->first();
                 $user['role'] =  $currentUser->role['Ten'];
                 $user['full_name'] = $admin['HoVaTen'];
             } else {
-                $employee = NhanVien::query()->where('TaiKhoanId', $currentUser['id'])->first();
+                $employee = NhanVien::query()->where('TaiKhoanId', $currentUser['idTK'])->first();
                 $user['role'] =  $currentUser->role['Ten'];
                 $user['full_name'] = $employee['HoVaTen'];
             }

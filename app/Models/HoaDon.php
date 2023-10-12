@@ -10,9 +10,11 @@ class HoaDon extends Model
 {
     use HasFactory;
 
-    public $table = 'HoaDon';
+    public $table = 'hoadon';
 
     public $timestamps = false;
+
+    protected $primaryKey = 'idHD';
 
     public function nhanVien(): BelongsTo
     {

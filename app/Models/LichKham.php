@@ -12,7 +12,7 @@ class LichKham extends Model
 
     protected $fillable = [];
 
-    protected $table = 'LichKham';
+    protected $table = 'lichkham';
 
     public $timestamps = false;
 

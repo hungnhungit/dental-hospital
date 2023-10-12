@@ -9,9 +9,11 @@ class BenhNhan extends Model
 {
     use HasFactory;
 
-    public $table = 'BenhNhan';
+    public $table = 'benhnhan';
 
     public $timestamps = false;
+
+    protected $primaryKey = 'idBN';
 
     protected $fillable = [];
 }

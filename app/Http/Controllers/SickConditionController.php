@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\News;
 use App\Models\Patient;
+use App\Models\TinhTrangBenh;
 use App\Models\TinTuc;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -18,26 +19,25 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Role;
 
-class NewsController extends Controller
+class SickConditionController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('News/List');
+        return Inertia::render('Sick/List');
     }
 
     public function paginate(Request $request)
     {
-        $news = TinTuc::with(['loaiTinTuc'])->paginate(10);
+        $sick = TinhTrangBenh::query()->paginate(10);
 
         return [
-            "news" => collect($news->items())->map(function ($item) {
+            "sicks" => collect($sick->items())->map(function ($item) {
                 return [
-                    "title" => $item['TieuDe'],
+                    "name" => $item['Ten'],
                     "desc" => $item['MieuTa'],
-                    "kindNew" => $item['loaiTinTuc']['Ten']
                 ];
             }),
-            "totalPage" => $news->total(),
+            "totalPage" => $sick->total(),
         ];
     }
 }

@@ -19,7 +19,7 @@ export default function ListPatients(props) {
             header={
                 <div className="flex justify-between">
                     <h2 className="font-semibold text-xl text-gray-800 leading-tight uppercase">
-                        Quản lý bệnh nhân
+                        bệnh nhân
                     </h2>
                     <Link
                         className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"

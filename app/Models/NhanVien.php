@@ -11,11 +11,13 @@ class NhanVien extends Model
 {
     use HasFactory;
 
-    public $table = 'NhanVien';
+    public $table = 'nhanvien';
+
+    protected $primaryKey = 'idNV';
 
     public $timestamps = false;
 
-    protected $fillable = [];
+    protected $guarded = [];
 
     public function taiKhoan(): BelongsTo
     {

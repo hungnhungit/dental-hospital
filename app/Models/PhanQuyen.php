@@ -9,9 +9,11 @@ class PhanQuyen extends Model
 {
     use HasFactory;
 
-    public $table = 'PhanQuyen';
+    public $table = 'phanquyen';
 
     public $timestamps = false;
+
+    protected $primaryKey = 'idPQ';
 
     protected $fillable = [];
 }

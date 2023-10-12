@@ -8,10 +8,13 @@ use App\Models\Admin;
 use App\Models\BenhNhan;
 use App\Models\ChucVu;
 use App\Models\DichVu;
+use App\Models\DonViTinh;
 use App\Models\HoaDon;
 use App\Models\LichKham;
 use App\Models\LoaiDichVu;
+use App\Models\LoaiThuoc;
 use App\Models\LoaiTinTuc;
+use App\Models\LoaiVatTu;
 use App\Models\NhanVien;
 use App\Models\PhanQuyen;
 use App\Models\SoKhamBenh;
@@ -47,8 +50,10 @@ class DatabaseSeeder extends Seeder
         LoaiDichVu::truncate();
         DichVu::truncate();
         ThanhToan::truncate();
-        TinhTrangBenh::truncate();
         SoKhamBenh::truncate();
+        LoaiVatTu::truncate();
+        LoaiThuoc::truncate();
+        DonViTinh::truncate();
         DB::statement("SET foreign_key_checks=1");
 
         ChucVu::create([
@@ -119,7 +124,7 @@ class DatabaseSeeder extends Seeder
             'HoVaTen' => 'Quản trị viên',
             "DienThoai" => '0707295002',
             "DiaChi" => "Hải Phòng",
-            "TaiKhoanId" => $admin['id']
+            "TaiKhoanId" => $admin['idTK']
         ]);
 
         NhanVien::create([
@@ -128,7 +133,7 @@ class DatabaseSeeder extends Seeder
             "NgaySinh" => $faker->dateTime(),
             "DiaChi" => "Hải Phòng",
             "ChucVuId" => 1,
-            "TaiKhoanId" => $doctor['id']
+            "TaiKhoanId" => $doctor['idTK']
         ]);
 
         NhanVien::create([
@@ -137,7 +142,7 @@ class DatabaseSeeder extends Seeder
             "NgaySinh" => $faker->dateTime(),
             "DiaChi" => "Hải Phòng",
             "ChucVuId" => 2,
-            "TaiKhoanId" => $receptionist['id']
+            "TaiKhoanId" => $receptionist['idTK']
         ]);
 
         NhanVien::create([
@@ -146,7 +151,7 @@ class DatabaseSeeder extends Seeder
             "NgaySinh" => $faker->dateTime(),
             "DiaChi" => "Hải Phòng",
             "ChucVuId" => 3,
-            "TaiKhoanId" => $nurse['id']
+            "TaiKhoanId" => $nurse['idTK']
         ]);
 
         $patient1 = BenhNhan::create([
@@ -173,16 +178,6 @@ class DatabaseSeeder extends Seeder
             'cccd' => $faker->ean8()
         ]);
 
-        TinhTrangBenh::create([
-            'Ten' => 'Đau răng',
-            'MieuTa' => 'Đau răng',
-        ]);
-
-        TinhTrangBenh::create([
-            'Ten' => 'Đau lợi',
-            'MieuTa' => 'Đau lợi',
-        ]);
-
         $kindService1 = LoaiDichVu::create([
             'Ten' => 'Răng',
             'MieuTa' => 'Răng',
@@ -202,21 +197,21 @@ class DatabaseSeeder extends Seeder
             'Ten' => 'Răng',
             'MieuTa' => 'Răng',
             'Gia' => 1000,
-            'LoaiDichVuId' => $kindService1->id
+            'idLoaiDV' => $kindService1['idLDV']
         ]);
 
         DichVu::create([
             'Ten' => 'Hàm',
             'MieuTa' => 'Hàm',
             'Gia' => 2000,
-            'LoaiDichVuId' => $kindService2->id
+            'idLoaiDV' => $kindService1['idLDV']
         ]);
 
         DichVu::create([
             'Ten' => 'Mặt',
             'MieuTa' => 'Mặt',
             'Gia' => 3000,
-            'LoaiDichVuId' => $kindService3->id
+            'idLoaiDV' => $kindService1['idLDV']
         ]);
 
         ThanhToan::create([
@@ -238,7 +233,7 @@ class DatabaseSeeder extends Seeder
             'MaHoaDon' => $faker->numerify('BILL-####'),
             'TongTien' => 1000000,
             'NguoiTao' => 2,
-            'BenhNhanId' => $patient1->id,
+            'BenhNhanId' => $patient1['idBN'],
             'ThanhToanId' => 1,
         ]);
 
@@ -246,7 +241,7 @@ class DatabaseSeeder extends Seeder
             'MaHoaDon' => $faker->numerify('BILL-####'),
             'TongTien' => 1000000,
             'NguoiTao' => 2,
-            'BenhNhanId' => $patient3->id,
+            'BenhNhanId' => $patient3['idBN'],
             'ThanhToanId' => 2,
         ]);
 
@@ -254,25 +249,25 @@ class DatabaseSeeder extends Seeder
             'MaHoaDon' => $faker->numerify('BILL-####'),
             'TongTien' => 3000000,
             'NguoiTao' => 2,
-            'BenhNhanId' => $patient2->id,
+            'BenhNhanId' => $patient2['idBN'],
             'ThanhToanId' => 3,
         ]);
 
         LichKham::create([
             'NguoiTao' => 3,
-            'BacSi' => $doctor->id,
+            'BacSi' => $doctor['idNV'],
             'ThoiGian' => $faker->dateTime()
         ]);
 
         LichKham::create([
             'NguoiTao' => 3,
-            'BacSi' => $doctor->id,
+            'BacSi' => $doctor['idNV'],
             'ThoiGian' => $faker->dateTime()
         ]);
 
         LichKham::create([
             'NguoiTao' => 3,
-            'BacSi' => $doctor->id,
+            'BacSi' => $doctor['idNV'],
             'ThoiGian' => $faker->dateTime()
         ]);
 
@@ -289,46 +284,79 @@ class DatabaseSeeder extends Seeder
         TinTuc::create([
             'TieuDe' => $faker->text(20),
             'MieuTa' => $faker->text(50),
-            'LoaiTinTucId' => $kindNew1->id,
-            'AdminId' => $admin->id
+            'LoaiTinTucId' => $kindNew1['idLTT'],
+            'AdminId' => $admin['idTK']
         ]);
 
         TinTuc::create([
             'TieuDe' => $faker->text(20),
             'MieuTa' => $faker->text(50),
-            'LoaiTinTucId' => $kindNew1->id,
-            'AdminId' => $admin->id
+            'LoaiTinTucId' => $kindNew1['idLTT'],
+            'AdminId' => $admin['idTK']
         ]);
 
         TinTuc::create([
             'TieuDe' => $faker->text(20),
             'MieuTa' => $faker->text(50),
-            'LoaiTinTucId' => $kindNew1->id,
-            'AdminId' => $admin->id
+            'LoaiTinTucId' => $kindNew1['idLTT'],
+            'AdminId' => $admin['idTK']
         ]);
 
-        SoKhamBenh::create([
-            'TieuSu' => 'Răng',
-            'BenhNhanId' => $patient1['id'],
-            'NguoiTao' => 3,
-            'NguoiKham' => 1,
-            'TinhTrangBenhId' => 1
+        DonViTinh::create([
+            'TenDVT' => 'Cái',
+            'Mota' => 'Cái',
+            'Hesotinh' => 1
         ]);
 
-        SoKhamBenh::create([
-            'TieuSu' => 'Răng',
-            'BenhNhanId' => $patient2['id'],
-            'NguoiTao' => 3,
-            'NguoiKham' => 1,
-            'TinhTrangBenhId' => 1
+        DonViTinh::create([
+            'TenDVT' => 'Vỉ',
+            'Mota' => 'Vỉ',
+            'Hesotinh' => 1
         ]);
 
-        SoKhamBenh::create([
-            'TieuSu' => 'Răng',
-            'BenhNhanId' => $patient3['id'],
-            'NguoiTao' => 3,
-            'NguoiKham' => 1,
-            'TinhTrangBenhId' => 1
+        LoaiVatTu::create([
+            'TenloaiVT' => 'Máy',
+            'MoTa' => 'Máy chiếu',
+            'Donvitinh' => 1
         ]);
+
+        LoaiVatTu::create([
+            'TenloaiVT' => 'Dụng cụ',
+            'MoTa' => 'Dụng cụ',
+            'Donvitinh' => 1
+        ]);
+
+        LoaiThuoc::create([
+            'TenLT' => 'Kháng sinh',
+            'Mota' => 'Kháng sinh',
+            'idDonvitinh' => 2
+        ]);
+
+        LoaiThuoc::create([
+            'TenLT' => 'Thuốc tê',
+            'Mota' => 'Thuốc tê',
+            'idDonvitinh' => 2
+        ]);
+
+        // SoKhamBenh::create([
+        //     'TieuSu' => 'Răng',
+        //     'BenhNhanId' => $patient1['idBN'],
+        //     'NguoiKham' => 1,
+        //     'idTTDT' => 1
+        // ]);
+
+        // SoKhamBenh::create([
+        //     'TieuSu' => 'Răng',
+        //     'BenhNhanId' => $patient2['idBN'],
+        //     'NguoiKham' => 1,
+        //     'idTTDT' => 1
+        // ]);
+
+        // SoKhamBenh::create([
+        //     'TieuSu' => 'Răng',
+        //     'BenhNhanId' => $patient3['idBN'],
+        //     'NguoiKham' => 1,
+        //     'idTTDT' => 1
+        // ]);
     }
 }

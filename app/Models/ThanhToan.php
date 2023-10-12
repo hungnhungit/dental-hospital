@@ -9,7 +9,9 @@ class ThanhToan extends Model
 {
     use HasFactory;
 
-    public $table = 'ThanhToan';
+    public $table = 'thanhtoan';
+
+    protected $primaryKey = 'idTT';
 
     public $timestamps = false;
 

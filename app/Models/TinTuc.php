@@ -10,11 +10,13 @@ class TinTuc extends Model
 {
     use HasFactory;
 
-    public $table = 'TinTuc';
+    public $table = 'tintuc';
 
     public $timestamps = false;
 
-    protected $fillable = [];
+    protected $primaryKey = 'idTinTuc';
+
+    protected $guarded = [];
 
     public function admin(): BelongsTo
     {

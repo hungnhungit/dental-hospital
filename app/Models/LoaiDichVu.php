@@ -9,7 +9,9 @@ class LoaiDichVu extends Model
 {
     use HasFactory;
 
-    protected $table = 'LoaiDichVu';
+    protected $table = 'loaidichvu';
+
+    protected $primaryKey = 'idLDV';
 
     public $timestamps = false;
 }

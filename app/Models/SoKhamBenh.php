@@ -10,9 +10,11 @@ class SoKhamBenh extends Model
 {
     use HasFactory;
 
-    public $table = 'SoKhamBenh';
+    public $table = 'sokhambenh';
 
     public $timestamps = false;
+
+    protected $primaryKey = 'idSKB';
 
     protected $fillable = [];
 

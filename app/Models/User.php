@@ -13,11 +13,13 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    public $table = 'TaiKhoan';
+    public $table = 'taikhoan';
+
+    protected $primaryKey = 'idTK';
 
     public $timestamps = false;
 
-    protected $fillable = [];
+    protected $guarded = [];
 
     protected $hidden = [
         'password',
@@ -60,16 +62,16 @@ class User extends Authenticatable
 
     public function role(): HasOne
     {
-        return $this->hasOne(PhanQuyen::class, 'id');
+        return $this->hasOne(PhanQuyen::class, 'idPQ', 'PhanQuyenId');
     }
 
     public function employee(): HasOne
     {
-        return $this->hasOne(PhanQuyen::class, 'id');
+        return $this->hasOne(NhanVien::class, 'idNV');
     }
 
     public function admin(): HasOne
     {
-        return $this->hasOne(Admin::class, 'id');
+        return $this->hasOne(Admin::class, 'idAD');
     }
 }

@@ -11,7 +11,7 @@ class TinhTrangBenh extends Model
 
     protected $fillable = [];
 
-    protected $table = 'TinhTrangBenh';
+    protected $table = 'tinhtrangbenh';
 
     public $timestamps = false;
 }

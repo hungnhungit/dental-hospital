@@ -9,9 +9,11 @@ class KetQuaXetNghiem extends Model
 {
     use HasFactory;
 
-    public $table = 'KetQuaXetNghiem';
+    public $table = 'ketquaxetnghiem';
 
     public $timestamps = false;
+
+    protected $primaryKey = 'idKQXN';
 
     protected $fillable = [];
 }

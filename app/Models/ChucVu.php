@@ -9,9 +9,11 @@ class ChucVu extends Model
 {
     use HasFactory;
 
-    public $table = 'ChucVu';
+    public $table = 'chucvu';
 
     public $timestamps = false;
+
+    protected $primaryKey = 'idCV';
 
     protected $fillable = [];
 }

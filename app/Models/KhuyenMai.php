@@ -9,7 +9,7 @@ class KhuyenMai extends Model
 {
     use HasFactory;
 
-    public $table = 'KhuyenMai';
+    public $table = 'khuyenmai';
 
     public $timestamps = false;
 

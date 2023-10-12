@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Models\News;
+use App\Models\ExaminationSchedule;
+use App\Models\LichKham;
 use App\Models\Patient;
-use App\Models\SoKhamBenh;
-use App\Models\TinTuc;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
@@ -19,27 +18,31 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Role;
 
-class HealthRecordsController extends Controller
+class ExaminationScheduleController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('HealthRecords/List');
+        return Inertia::render('ExaminationSchedule/List');
+    }
+
+    public function register(): Response
+    {
+        return Inertia::render('RegisterExaminationSchedule/Register');
     }
 
     public function paginate(Request $request)
     {
-        $healthRecords = SoKhamBenh::with(['nguoiTao', 'bacSi', 'benhNhan', 'tinhTrang'])->paginate(10);
+        $examinationSchedule = LichKham::with(['bacSi', 'nguoiTao'])->paginate(10);
 
         return [
-            "healthRecords" => collect($healthRecords->items())->map(function ($item) {
+            "examinationSchedule" => collect($examinationSchedule->items())->map(function ($item) {
                 return [
-                    "patient" => $item['benhNhan']['HoVaTen'],
                     "doctor" => $item['bacSi']['HoVaTen'],
                     "created_by" => $item['nguoiTao']['HoVaTen'],
-                    "sick" => $item['tinhTrang']['Ten'],
+                    "registration_date" => $item['ThoiGian'],
                 ];
             }),
-            "totalPage" => $healthRecords->total(),
+            "totalPage" => $examinationSchedule->total(),
         ];
     }
 }

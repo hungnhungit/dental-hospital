@@ -4,6 +4,11 @@ const paginate = async () => {
     return await request.get("users");
 };
 
+const create = async (body) => {
+    console.log(body);
+    return await request.post("users", body);
+};
+
 const destroy = async (id) => {
     return await request.delete("users", {
         data: {
@@ -12,4 +17,4 @@ const destroy = async (id) => {
     });
 };
 
-export { destroy, paginate };
+export { create, destroy, paginate };

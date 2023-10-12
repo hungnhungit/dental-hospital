@@ -4,11 +4,11 @@ import { BsTrash } from "react-icons/bs";
 
 const columnHelper = createColumnHelper();
 
-const useCols = () => {
+const useCols = ({ handleDelete }) => {
     const cols = useMemo(() => {
         return [
             columnHelper.accessor("full_name", {
-                header: "Tên",
+                header: "Họ và tên",
                 cell: (info) => info.getValue(),
             }),
             columnHelper.accessor("account", {
@@ -31,7 +31,7 @@ const useCols = () => {
                 header: "Chức vụ",
                 cell: (info) => info.getValue(),
             }),
-            columnHelper.accessor("id", {
+            columnHelper.accessor("actions", {
                 header: "Thao tác",
                 cell: (info) => (
                     <>
@@ -43,7 +43,7 @@ const useCols = () => {
                                         "Bạn có muốn xoá bản ghi này không ?"
                                     )
                                 ) {
-                                    handleDelete(info.getValue());
+                                    handleDelete(info.row.original.id);
                                 }
                             }}
                         />

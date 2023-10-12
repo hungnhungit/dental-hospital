@@ -4,6 +4,7 @@ import {
     getCoreRowModel,
     useReactTable,
 } from "@tanstack/react-table";
+import { memo } from "react";
 
 const Table = ({ data, columns }) => {
     const table = useReactTable({
@@ -13,21 +14,31 @@ const Table = ({ data, columns }) => {
     });
 
     return (
-        <div className="relative overflow-x-auto">
+        <div className="relative overflow-x-auto min-h-[600px]">
             <table className="w-full text-sm text-left text-gray-500">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                     {table.getHeaderGroups().map((headerGroup) => (
                         <tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => (
-                                <th key={header.id} className="px-6 py-3">
-                                    {header.isPlaceholder
-                                        ? null
-                                        : flexRender(
-                                              header.column.columnDef.header,
-                                              header.getContext()
-                                          )}
-                                </th>
-                            ))}
+                            {headerGroup.headers.map((header) => {
+                                return (
+                                    <th
+                                        key={header.id}
+                                        className={
+                                            header.id === "actions"
+                                                ? "px-6 py-3 w-[250px]"
+                                                : "px-6 py-3"
+                                        }
+                                    >
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                  header.column.columnDef
+                                                      .header,
+                                                  header.getContext()
+                                              )}
+                                    </th>
+                                );
+                            })}
                         </tr>
                     ))}
                 </thead>
@@ -57,6 +68,6 @@ const Table = ({ data, columns }) => {
     );
 };
 
-export default Table;
+export default memo(Table);
 
 export { createColumnHelper };

@@ -12,7 +12,9 @@ class DichVu extends Model
 
     protected $fillable = [];
 
-    public $table = 'DichVu';
+    public $table = 'dichvu';
+
+    protected $primaryKey = 'idDV';
 
     public $timestamps = false;
 

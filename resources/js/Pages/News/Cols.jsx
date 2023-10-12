@@ -1,5 +1,4 @@
 import { createColumnHelper } from "@/Components/Table";
-import _get from "lodash/get";
 import { useMemo } from "react";
 import { BsPencil, BsTrash } from "react-icons/bs";
 
@@ -11,7 +10,7 @@ const stylesPayment = {
     done: "uppercase bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300",
 };
 
-const useCols = () => {
+const useCols = ({ handleDelete, handleEdit }) => {
     const cols = useMemo(() => {
         return [
             columnHelper.accessor("title", {
@@ -30,8 +29,25 @@ const useCols = () => {
                 header: "Thao tác",
                 cell: (info) => (
                     <>
-                        <BsTrash className="cursor-pointer" />
-                        <BsPencil className="cursor-pointer" />
+                        <BsTrash
+                            className="cursor-pointer"
+                            onClick={() => {
+                                console.log(info);
+                                if (
+                                    confirm(
+                                        "Bạn có muốn xoá bản ghi này không ?"
+                                    )
+                                ) {
+                                    handleDelete(info.row.original.id);
+                                }
+                            }}
+                        />
+                        <BsPencil
+                            className="cursor-pointer"
+                            onClick={() => {
+                                handleEdit(info.row.original.id);
+                            }}
+                        />
                     </>
                 ),
             }),
