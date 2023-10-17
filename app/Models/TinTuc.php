@@ -14,7 +14,7 @@ class TinTuc extends Model
 
     public $timestamps = false;
 
-    protected $primaryKey = 'idTinTuc';
+    protected $primaryKey = 'Id';
 
     protected $guarded = [];
 
@@ -25,6 +25,6 @@ class TinTuc extends Model
 
     public function loaiTinTuc(): BelongsTo
     {
-        return $this->belongsTo(LoaiTinTuc::class, 'LoaiTinTucId');
+        return $this->belongsTo(LoaiTinTuc::class, 'LoaiTinTuc');
     }
 }

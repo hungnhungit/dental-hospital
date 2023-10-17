@@ -42,7 +42,7 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         if (!Auth::attempt([
-            'TenTaiKhoan' => $this->get('username'),
+            'TenDangNhap' => $this->get('username'),
             'password' => $this->get('password'),
         ])) {
             RateLimiter::hit($this->throttleKey());

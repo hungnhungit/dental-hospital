@@ -23,7 +23,7 @@ export default function NewKindNew(props) {
             router.post("/loai-tin-tuc", data);
             toast.success("Thêm loại thuốc thành công !");
         } else {
-            router.put(`/loai-tin-tuc/${kindNew.id}/update`, data);
+            router.put(`/loai-tin-tuc/${kindNew.id}`, data);
             toast.success("Sửa loại thuốc thành công !");
         }
     };
@@ -41,7 +41,7 @@ export default function NewKindNew(props) {
                     </h2>
                     <Link
                         className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
-                        href={route("kind_new.list")}
+                        href={route("loai-tin-tuc.index")}
                     >
                         Danh sách loại tin tức
                     </Link>

@@ -16,19 +16,19 @@ class UsersController extends Controller
     public function index()
     {
         $users = NhanVien::query()->with(['taiKhoan', 'chucVu'])->whereHas('taiKhoan', function (Builder $q) {
-            $q->where('TenTaiKhoan', 'LIKE', '%' . request('account') . '%');
+            $q->where('TenDangNhap', 'LIKE', '%' . request('account') . '%');
         })->paginate(10);
 
         return Inertia::render('Users/List', [
             "users" => collect($users->items())->map(function (NhanVien $item) {
                 return [
-                    'id' => $item['idNV'],
+                    'id' => $item['Id'],
                     'full_name' => $item['HoVaTen'],
                     'dob' => $item['NgaySinh'],
                     'phone' => $item['DienThoai'],
                     'address' => $item['DiaChi'],
-                    'account' => $item['taiKhoan']['TenTaiKhoan'],
-                    'position' => $item['chucVu']['TenChucVu'],
+                    'account' => $item['taiKhoan']['TenDangNhap'],
+                    'position' => $item['chucVu']['ChucVu'],
                 ];
             }),
             "totalPage" => $users->total(),
@@ -47,25 +47,24 @@ class UsersController extends Controller
             'password' => ['required']
         ]);
 
-        $user = User::where('TenTaiKhoan', $request['username'])->first();
+        $user = User::where('TenDangNhap', $request['username'])->first();
         if ($user) {
             throw ValidationException::withMessages(['message' => "DUPLICATE_USER"]);
         }
 
         $acc = User::create([
-            'TenTaiKhoan' => $request['username'],
+            'TenDangNhap' => $request['username'],
             'MatKhau' => Hash::make($request['password']),
-            'PhanQuyenId' => $request['role']
+            'QuyenId' => $request['role']
         ]);
 
         NhanVien::create(
             [
                 'HoVaTen' => $request['fullName'],
-                'DienThoai' => $request['phone'],
                 'NgaySinh' => $request['dob'],
                 'DiaChi' => $request['address'],
-                'ChucVuId' => $request['pos'],
-                'TaiKhoanId' => $acc['idTK']
+                'MaChucVu' => $request['pos'],
+                'MaTaiKhoan' => $acc['Id']
             ]
         );
 

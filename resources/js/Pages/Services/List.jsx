@@ -1,17 +1,21 @@
-import { paginate } from "@/Api/services.api";
 import PageContainer from "@/Components/PageContainer";
 import Table from "@/Components/Table";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import _get from "lodash/get";
-import { useAsync } from "react-use";
+import { toast } from "react-toastify";
 import useCols from "./Cols";
 
 export default function ListServices(props) {
-    const cols = useCols();
-    const { value: res, loading } = useAsync(async () => {
-        return await paginate();
-    }, []);
+    const cols = useCols({
+        handleDelete: (id) => {
+            router.delete(route("dichvu.destroy", id));
+            toast.success("Xoá dịch vụ thành công !");
+        },
+        handleEdit: (id) => {
+            router.visit(route("dichvu.edit", id));
+        },
+    });
     return (
         <AuthenticatedLayout
             auth={props.auth}
@@ -23,17 +27,17 @@ export default function ListServices(props) {
                     </h2>
                     <Link
                         className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
-                        href={route("users.new")}
+                        href={route("dichvu.create")}
                     >
                         Thêm mới
                     </Link>
                 </div>
             }
         >
-            <Head title="QL tài khoản" />
+            <Head title="QL dịch vụ" />
 
             <PageContainer>
-                <Table data={_get(res, "services", [])} columns={cols} />
+                <Table data={_get(props, "services", [])} columns={cols} />
             </PageContainer>
         </AuthenticatedLayout>
     );

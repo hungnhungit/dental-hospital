@@ -11,7 +11,9 @@ class LoaiDichVu extends Model
 
     protected $table = 'loaidichvu';
 
-    protected $primaryKey = 'idLDV';
+    protected $primaryKey = 'Id';
 
     public $timestamps = false;
+
+    protected $guarded = [];
 }

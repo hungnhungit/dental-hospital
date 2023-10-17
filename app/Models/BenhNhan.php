@@ -13,7 +13,7 @@ class BenhNhan extends Model
 
     public $timestamps = false;
 
-    protected $primaryKey = 'idBN';
+    protected $primaryKey = 'Id';
 
-    protected $fillable = [];
+    protected $guarded = [];
 }

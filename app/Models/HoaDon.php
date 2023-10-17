@@ -14,20 +14,15 @@ class HoaDon extends Model
 
     public $timestamps = false;
 
-    protected $primaryKey = 'idHD';
+    protected $primaryKey = 'Id';
 
     public function nhanVien(): BelongsTo
     {
-        return $this->belongsTo(NhanVien::class, 'NguoiTao');
+        return $this->belongsTo(NhanVien::class, 'MaNhanVien', 'Id');
     }
 
     public function benhNhan(): BelongsTo
     {
-        return $this->belongsTo(BenhNhan::class, 'BenhNhanId');
-    }
-
-    public function phuongThuc(): BelongsTo
-    {
-        return $this->belongsTo(ThanhToan::class, 'ThanhToanId');
+        return $this->belongsTo(BenhNhan::class, 'MaBenhNhan', 'Id');
     }
 }

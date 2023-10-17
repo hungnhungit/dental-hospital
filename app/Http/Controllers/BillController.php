@@ -13,25 +13,18 @@ class BillController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('Bill/List');
-    }
-
-    public function paginate(Request $request)
-    {
-        $bills = HoaDon::with(['nhanVien', 'benhNhan', 'phuongThuc'])->paginate(10);
-
-        return [
+        $bills = HoaDon::with(['nhanVien', 'benhNhan'])->paginate(10);
+        return Inertia::render('Bill/List', [
             "bills" => collect($bills->items())->map(function ($item) {
                 return [
-                    "code" => $item['MaHoaDon'],
-                    "total" => $item['TongTien'],
-                    "created_by" => $item['nhanVien']['HoVaTen'],
-                    "patient" => $item['benhNhan']['HoVaTen'],
-                    'status' => $item['phuongThuc']['TrangThai'],
-                    'payment' => $item['phuongThuc']['TenHinhThucThanhToan'],
+                    "TenHoaDon" => $item['TenHoaDon'],
+                    "TongSoTien" => $item['TongSoTien'],
+                    "NguoiTao" => $item['nhanVien']['HoVaTen'],
+                    "BenhNhan" => $item['benhNhan']['HoVaTen'],
+                    'TrangThai' => $item['TrangThai']
                 ];
             }),
             "totalPage" => $bills->total(),
-        ];
+        ]);
     }
 }

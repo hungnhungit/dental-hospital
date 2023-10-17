@@ -10,16 +10,16 @@ class DichVu extends Model
 {
     use HasFactory;
 
-    protected $fillable = [];
-
     public $table = 'dichvu';
 
-    protected $primaryKey = 'idDV';
+    protected $primaryKey = 'Id';
 
     public $timestamps = false;
 
+    protected $guarded = [];
+
     public function loaiDichVu(): BelongsTo
     {
-        return $this->belongsTo(LoaiDichVu::class, 'LoaiDichVuId');
+        return $this->belongsTo(LoaiDichVu::class, 'LoaiDichVuID', 'Id');
     }
 }

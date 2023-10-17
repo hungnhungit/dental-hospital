@@ -14,12 +14,7 @@ class LoaiThuoc extends Model
 
     public $timestamps = false;
 
-    protected $primaryKey = 'idLoaithuoc';
+    protected $primaryKey = 'Id';
 
     protected $guarded = [];
-
-    public function donViTinh(): BelongsTo
-    {
-        return $this->belongsTo(DonViTinh::class, 'idDonvitinh');
-    }
 }

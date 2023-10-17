@@ -18,25 +18,25 @@ class NewsController extends Controller
         return Inertia::render('News/List', [
             "news" => collect($news->items())->map(function ($item) {
                 return [
-                    "id" => $item['idTinTuc'],
+                    "id" => $item['Id'],
                     "title" => $item['TieuDe'],
-                    "desc" => $item['MieuTa'],
-                    "kindNew" => $item['loaiTinTuc']['Ten']
+                    "desc" => $item['NoiDung'],
+                    "kindNew" => $item['loaiTinTuc']['LoaiTinTuc']
                 ];
             }),
             "totalPage" => $news->total(),
         ]);
     }
 
-    public function new()
+    public function create()
     {
         $kindNews = LoaiTinTuc::all();
 
         return Inertia::render('News/New', [
             'kindNews' => collect($kindNews)->map(function ($item) {
                 return [
-                    "id" => $item["idLTT"],
-                    "name" => $item['Ten']
+                    "id" => $item["Id"],
+                    "name" => $item['LoaiTinTuc']
                 ];
             })
         ]);
@@ -50,15 +50,15 @@ class NewsController extends Controller
         return Inertia::render('News/New', [
             'kindNews' => collect($kindNews)->map(function ($item) {
                 return [
-                    "id" => $item["idLTT"],
-                    "name" => $item['Ten']
+                    "id" => $item["Id"],
+                    "name" => $item['LoaiTinTuc']
                 ];
             }),
             "news" => [
-                "id" => $new['idTinTuc'],
+                "id" => $new['Id'],
                 "name" => $new['TieuDe'],
-                "desc" => $new['MieuTa'],
-                'kind' => $new['LoaiTinTucId']
+                "desc" => $new['NoiDung'],
+                'kind' => $new['LoaiTinTuc']
             ]
         ]);
     }
@@ -66,11 +66,13 @@ class NewsController extends Controller
     public function update(int $id, Request $request)
     {
         $record = TinTuc::query()->findOrFail($id);
+        $currentUser = $request->user();
 
         $record->update([
             'TieuDe' => $request['name'],
-            'MieuTa' => $request['desc'],
-            'LoaiTinTucId' => $request['kind']
+            'NoiDung' => $request['desc'],
+            'TacGia' => $currentUser['Id'],
+            'LoaiTinTuc' => $request['kind']
         ]);
 
         return redirect('/tin-tuc');
@@ -81,17 +83,17 @@ class NewsController extends Controller
         $currentUser = $request->user();
         TinTuc::create([
             'TieuDe' => $request['name'],
-            'MieuTa' => $request['desc'],
-            'AdminId' => $currentUser['idTK'],
-            'LoaiTinTucId' => $request['kind']
+            'NoiDung' => $request['desc'],
+            'TacGia' => $currentUser['Id'],
+            'LoaiTinTuc' => $request['kind']
         ]);
         return redirect('/tin-tuc');
     }
 
-    public function destroy(Request $request)
+    public function destroy(int $id)
     {
-        TinTuc::destroy($request['id']);
+        TinTuc::destroy($id);
 
-        return redirect('/tin-tuc');
+        return back();
     }
 }

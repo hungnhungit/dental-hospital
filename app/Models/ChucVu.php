@@ -13,7 +13,7 @@ class ChucVu extends Model
 
     public $timestamps = false;
 
-    protected $primaryKey = 'idCV';
+    protected $primaryKey = 'Id';
 
     protected $fillable = [];
 }

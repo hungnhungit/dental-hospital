@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Thuoc extends Model
 {
@@ -13,7 +14,17 @@ class Thuoc extends Model
 
     public $timestamps = false;
 
-    protected $primaryKey = 'idThuoc';
+    protected $primaryKey = 'Id';
 
-    protected $fillable = [];
+    protected $guarded = [];
+
+    public function loaiThuoc(): BelongsTo
+    {
+        return $this->belongsTo(LoaiThuoc::class, 'LoaiThuocID', 'Id');
+    }
+
+    public function donVi(): BelongsTo
+    {
+        return $this->belongsTo(DonViTinh::class, 'MaDonVi', 'Id');
+    }
 }

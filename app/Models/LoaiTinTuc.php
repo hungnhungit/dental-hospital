@@ -11,7 +11,7 @@ class LoaiTinTuc extends Model
 
     protected $table = 'loaitintuc';
 
-    protected $primaryKey = 'idLTT';
+    protected $primaryKey = 'Id';
 
     public $timestamps = false;
 

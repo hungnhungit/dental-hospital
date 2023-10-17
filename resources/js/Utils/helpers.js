@@ -8,9 +8,9 @@ const ROLE_MAP_TO_POSTION = {
 };
 
 const STATUS_MAP_TO_STATUS_TEXT = {
-    DangXuLy: "Chờ thanh toán",
-    ThanhCong: "Đã thanh toán",
-    HuyBo: "Hủy thanh toán",
+    ChuaThanhToan: "Chờ thanh toán",
+    DaThanhToan: "Đã thanh toán",
+    Huy: "Hủy thanh toán",
 };
 
 const PAYMENT_MAP_TO_PAYMENT_TEXT = {

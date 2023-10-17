@@ -14,11 +14,11 @@ export default function ListKindNew(props) {
     const [currentPage, setCurrentPage] = useState(Number(page || 1));
     const cols = useCols({
         handleDelete: (id) => {
-            router.delete(route("kind_new.destroy", id));
+            router.delete(route("loai-tin-tuc.destroy", id));
             toast.success("Xoá loại tin tức thành công !");
         },
         handleEdit: (id) => {
-            router.visit(route("kind_new.edit", id));
+            router.visit(route("loai-tin-tuc.edit", id));
         },
     });
     return (
@@ -32,7 +32,7 @@ export default function ListKindNew(props) {
                     </h2>
                     <Link
                         className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
-                        href={route("kind_new.new")}
+                        href={route("loai-tin-tuc.create")}
                     >
                         Thêm mới
                     </Link>

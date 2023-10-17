@@ -1,17 +1,21 @@
-import { paginate } from "@/Api/unit.api";
 import PageContainer from "@/Components/PageContainer";
 import Table from "@/Components/Table";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import _get from "lodash/get";
-import { useAsync } from "react-use";
+import { toast } from "react-toastify";
 import useCols from "./Cols";
 
 export default function ListUnit(props) {
-    const cols = useCols();
-    const { value: res, loading } = useAsync(async () => {
-        return await paginate();
-    }, []);
+    const cols = useCols({
+        handleDelete: (id) => {
+            router.delete(route("donvitinh.destroy", id));
+            toast.success("Xoá đơn vị tính thành công !");
+        },
+        handleEdit: (id) => {
+            router.visit(route("donvitinh.edit", id));
+        },
+    });
     return (
         <AuthenticatedLayout
             auth={props.auth}
@@ -23,17 +27,17 @@ export default function ListUnit(props) {
                     </h2>
                     <Link
                         className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
-                        href={route("users.new")}
+                        href={route("donvitinh.create")}
                     >
                         Thêm mới
                     </Link>
                 </div>
             }
         >
-            <Head title="QL tài khoản" />
+            <Head title="QL đơn vị tính" />
 
             <PageContainer>
-                <Table data={_get(res, "units", [])} columns={cols} />
+                <Table data={_get(props, "units", [])} columns={cols} />
             </PageContainer>
         </AuthenticatedLayout>
     );

@@ -1,17 +1,21 @@
-import { paginate } from "@/Api/kindServices.api";
 import PageContainer from "@/Components/PageContainer";
 import Table from "@/Components/Table";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import _get from "lodash/get";
-import { useAsync } from "react-use";
+import { toast } from "react-toastify";
 import useCols from "./Cols";
 
 export default function ListKindServices(props) {
-    const cols = useCols();
-    const { value: res, loading } = useAsync(async () => {
-        return await paginate();
-    }, []);
+    const cols = useCols({
+        handleDelete: (id) => {
+            router.delete(route("loai-dich-vu.destroy", id));
+            toast.success("Xoá loại dịch vụ thành công !");
+        },
+        handleEdit: (id) => {
+            router.visit(route("loai-dich-vu.edit", id));
+        },
+    });
 
     return (
         <AuthenticatedLayout
@@ -20,21 +24,21 @@ export default function ListKindServices(props) {
             header={
                 <div className="flex justify-between">
                     <h2 className="font-semibold text-xl text-gray-800 leading-tight uppercase">
-                        loại lý dịch vụ
+                        loại dịch vụ
                     </h2>
                     <Link
                         className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
-                        href={route("users.new")}
+                        href={route("loai-dich-vu.create")}
                     >
                         Thêm mới
                     </Link>
                 </div>
             }
         >
-            <Head title="QL tài khoản" />
+            <Head title="QL loại dịch vụ" />
 
             <PageContainer>
-                <Table data={_get(res, "kindServices", [])} columns={cols} />
+                <Table data={_get(props, "kindServices", [])} columns={cols} />
             </PageContainer>
         </AuthenticatedLayout>
     );

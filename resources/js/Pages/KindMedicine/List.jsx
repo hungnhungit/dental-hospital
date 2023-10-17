@@ -9,16 +9,11 @@ import useCols from "./Cols";
 export default function ListKindMedicine(props) {
     const cols = useCols({
         handleDelete: (id) => {
-            console.log(id);
-            router.delete(route("kindMedicine.destroy"), {
-                data: {
-                    id,
-                },
-            });
+            router.delete(route("loai-thuoc.destroy", id));
             toast.success("Xoá loại thuốc thành công !");
         },
         handleEdit: (id) => {
-            router.visit(route("kindMedicine.edit", id));
+            router.visit(route("loai-thuoc.edit", id));
         },
     });
     return (
@@ -32,7 +27,7 @@ export default function ListKindMedicine(props) {
                     </h2>
                     <Link
                         className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
-                        href={route("kindMedicine.new")}
+                        href={route("loai-thuoc.create")}
                     >
                         Thêm mới
                     </Link>

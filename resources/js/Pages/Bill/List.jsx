@@ -8,10 +8,8 @@ import { useAsync } from "react-use";
 import useCols from "./Cols";
 
 export default function ListBill(props) {
+    console.log(props);
     const cols = useCols();
-    const { value: res, loading } = useAsync(async () => {
-        return await paginate();
-    }, []);
     return (
         <AuthenticatedLayout
             auth={props.auth}
@@ -33,7 +31,7 @@ export default function ListBill(props) {
             <Head title="QL tài khoản" />
 
             <PageContainer>
-                <Table data={_get(res, "bills", [])} columns={cols} />
+                <Table data={_get(props, "bills", [])} columns={cols} />
             </PageContainer>
         </AuthenticatedLayout>
     );

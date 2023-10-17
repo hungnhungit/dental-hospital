@@ -4,7 +4,7 @@ import { BsPencil, BsTrash } from "react-icons/bs";
 
 const columnHelper = createColumnHelper();
 
-const useCols = () => {
+const useCols = ({ handleDelete, handleEdit }) => {
     const cols = useMemo(() => {
         return [
             columnHelper.accessor("full_name", {
@@ -15,10 +15,6 @@ const useCols = () => {
                 header: "Ngày sinh",
                 cell: (info) => info.getValue(),
             }),
-            columnHelper.accessor("phone", {
-                header: "Số điện thoại",
-                cell: (info) => info.getValue(),
-            }),
             columnHelper.accessor("cccd", {
                 header: "CCCD",
                 cell: (info) => info.getValue(),
@@ -27,12 +23,40 @@ const useCols = () => {
                 header: "Địa chỉ",
                 cell: (info) => info.getValue(),
             }),
+            columnHelper.accessor("w", {
+                header: "Cân nặng",
+                cell: (info) => info.getValue(),
+            }),
+            columnHelper.accessor("h", {
+                header: "Chiều cao",
+                cell: (info) => info.getValue(),
+            }),
+            columnHelper.accessor("blood", {
+                header: "Nhóm máu",
+                cell: (info) => info.getValue(),
+            }),
             columnHelper.accessor("actions", {
                 header: "Thao tác",
                 cell: (info) => (
                     <>
-                        <BsTrash className="cursor-pointer" />
-                        <BsPencil className="cursor-pointer" />
+                        <BsTrash
+                            className="cursor-pointer"
+                            onClick={() => {
+                                if (
+                                    confirm(
+                                        "Bạn có muốn xoá bản ghi này không ?"
+                                    )
+                                ) {
+                                    handleDelete(info.row.original.id);
+                                }
+                            }}
+                        />
+                        <BsPencil
+                            className="cursor-pointer"
+                            onClick={() => {
+                                handleEdit(info.row.original.id);
+                            }}
+                        />
                     </>
                 ),
             }),

@@ -13,7 +13,7 @@ class LoaiVatTu extends Model
 
     public $timestamps = false;
 
-    protected $primaryKey = 'idLoaiVT';
+    protected $primaryKey = 'Id';
 
-    protected $fillable = [];
+    protected $guarded = [];
 }

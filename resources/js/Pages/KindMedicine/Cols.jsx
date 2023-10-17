@@ -8,15 +8,7 @@ const useCols = ({ handleDelete, handleEdit }) => {
     const cols = useMemo(() => {
         return [
             columnHelper.accessor("name", {
-                header: "Tên",
-                cell: (info) => info.getValue(),
-            }),
-            columnHelper.accessor("desc", {
-                header: "Miêu tả",
-                cell: (info) => info.getValue(),
-            }),
-            columnHelper.accessor("unit", {
-                header: "Đơn vị tính",
+                header: "Tên loại thuốc",
                 cell: (info) => info.getValue(),
             }),
             columnHelper.accessor("actions", {
@@ -26,7 +18,6 @@ const useCols = ({ handleDelete, handleEdit }) => {
                         <BsTrash
                             className="cursor-pointer"
                             onClick={() => {
-                                console.log(info);
                                 if (
                                     confirm(
                                         "Bạn có muốn xoá bản ghi này không ?"

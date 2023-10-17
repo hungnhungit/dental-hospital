@@ -19,10 +19,12 @@ use App\Models\NhanVien;
 use App\Models\PhanQuyen;
 use App\Models\SoKhamBenh;
 use App\Models\ThanhToan;
+use App\Models\Thuoc;
 use App\Models\TinhTrangBenh;
 use App\Models\TinTuc;
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use App\Models\VatTu;
 use Illuminate\Support\Facades\Hash;
 use Faker\Factory;
 use Illuminate\Support\Facades\DB;
@@ -44,12 +46,9 @@ class DatabaseSeeder extends Seeder
         User::truncate();
         NhanVien::truncate();
         ChucVu::truncate();
-        Admin::truncate();
         BenhNhan::truncate();
-        LichKham::truncate();
         LoaiDichVu::truncate();
         DichVu::truncate();
-        ThanhToan::truncate();
         SoKhamBenh::truncate();
         LoaiVatTu::truncate();
         LoaiThuoc::truncate();
@@ -57,306 +56,268 @@ class DatabaseSeeder extends Seeder
         DB::statement("SET foreign_key_checks=1");
 
         ChucVu::create([
-            'TenChucVu' => 'Bác Sĩ',
-            'MoTa' => 'Bác Sĩ'
+            'ChucVu' => 'Bác Sĩ',
         ]);
 
         ChucVu::create([
-            'TenChucVu' => 'Y Tá',
-            'MoTa' => 'Y Tá'
+            'ChucVu' => 'Y Tá',
         ]);
 
         ChucVu::create([
-            'TenChucVu' => 'Lễ tân',
-            'MoTa' => 'Lễ tân'
+            'ChucVu' => 'Lễ tân',
         ]);
 
         PhanQuyen::create([
-            'Ten' => 'admin',
-            'Mota' => 'admin'
+            'Quyen' => 'admin',
         ]);
 
         PhanQuyen::create([
-            'Ten' => 'doctor',
-            'Mota' => 'doctor'
+            'Quyen' => 'doctor',
         ]);
 
         PhanQuyen::create([
-            'Ten' => 'nurse',
-            'Mota' => 'nurse'
+            'Quyen' => 'nurse',
         ]);
 
         PhanQuyen::create([
-            'Ten' => 'receptionist',
-            'Mota' => 'receptionist'
+            'Quyen' => 'receptionist',
         ]);
 
         //users
         $admin = User::create([
-            'TenTaiKhoan' => 'admin',
+            'TenDangNhap' => 'admin',
             'MatKhau' => Hash::make('admin'),
-            'PhanQuyenId' => 1,
-            'MoTa' => 'Admin',
+            'QuyenId' => 1,
         ]);
 
         $doctor = User::create([
-            'TenTaiKhoan' => 'doctor',
+            'TenDangNhap' => 'doctor',
             'MatKhau' => Hash::make('doctor'),
-            'PhanQuyenId' => 2,
-            'MoTa' => 'Doctor',
+            'QuyenId' => 2,
         ]);
 
         $nurse = User::create([
-            'TenTaiKhoan' => 'nurse',
+            'TenDangNhap' => 'nurse',
             'MatKhau' => Hash::make('nurse'),
-            'PhanQuyenId' => 3,
-            'MoTa' => 'Nurse',
+            'QuyenId' => 3,
         ]);
 
         $receptionist = User::create([
-            'TenTaiKhoan' => 'receptionist',
+            'TenDangNhap' => 'receptionist',
             'MatKhau' => Hash::make('receptionist'),
-            'PhanQuyenId' => 4,
-            'MoTa' => 'receptionist',
-        ]);
-
-        Admin::create([
-            'HoVaTen' => 'Quản trị viên',
-            "DienThoai" => '0707295002',
-            "DiaChi" => "Hải Phòng",
-            "TaiKhoanId" => $admin['idTK']
+            'QuyenId' => 4,
         ]);
 
         NhanVien::create([
             'HoVaTen' => 'Nguyễn Thái Hưng',
-            "DienThoai" => '0707295002',
             "NgaySinh" => $faker->dateTime(),
             "DiaChi" => "Hải Phòng",
-            "ChucVuId" => 1,
-            "TaiKhoanId" => $doctor['idTK']
+            "MaChucVu" => 1,
+            "MaTaiKhoan" => $doctor['Id']
         ]);
 
         NhanVien::create([
             'HoVaTen' => 'Ngô Bích Ngọc',
-            "DienThoai" => '0707295002',
             "NgaySinh" => $faker->dateTime(),
             "DiaChi" => "Hải Phòng",
-            "ChucVuId" => 2,
-            "TaiKhoanId" => $receptionist['idTK']
+            "MaChucVu" => 2,
+            "MaTaiKhoan" => $receptionist['Id']
         ]);
 
         NhanVien::create([
             'HoVaTen' => 'Tiểu Vy',
-            "DienThoai" => '0707295002',
             "NgaySinh" => $faker->dateTime(),
             "DiaChi" => "Hải Phòng",
-            "ChucVuId" => 3,
-            "TaiKhoanId" => $nurse['idTK']
+            "MaChucVu" => 3,
+            "MaTaiKhoan" => $nurse['Id']
         ]);
 
-        $patient1 = BenhNhan::create([
+        BenhNhan::create([
             'HoVaTen' => 'Nguyên Văn A',
             'DiaChi' => $faker->address(),
-            "DienThoai" => $faker->randomNumber(9, true),
             "NgaySinh" => $faker->dateTime(),
-            'cccd' => $faker->ean8()
+            'CMND' => $faker->ean8(),
+            'CanNang' => 80,
+            'ChieuCao' => 150,
+            'NhomMau' => 'B'
         ]);
-
-        $patient2 = BenhNhan::create([
+        BenhNhan::create([
             'HoVaTen' => 'Nguyên Văn B',
             'DiaChi' => $faker->address(),
-            "DienThoai" => $faker->randomNumber(9, true),
             "NgaySinh" => $faker->dateTime(),
-            'cccd' => $faker->ean8()
+            'CMND' => $faker->ean8(),
+            'CanNang' => 80,
+            'ChieuCao' => 150,
+            'NhomMau' => 'B'
         ]);
-
-        $patient3 = BenhNhan::create([
+        BenhNhan::create([
             'HoVaTen' => 'Nguyên Văn C',
             'DiaChi' => $faker->address(),
-            "DienThoai" => $faker->randomNumber(9, true),
             "NgaySinh" => $faker->dateTime(),
-            'cccd' => $faker->ean8()
+            'CMND' => $faker->ean8(),
+            'CanNang' => 80,
+            'ChieuCao' => 150,
+            'NhomMau' => 'O'
         ]);
 
         $kindService1 = LoaiDichVu::create([
-            'Ten' => 'Răng',
-            'MieuTa' => 'Răng',
+            'LoaiDichVu' => 'Răng',
         ]);
 
         $kindService2 = LoaiDichVu::create([
-            'Ten' => 'Hàm',
-            'MieuTa' => 'Hàm',
+            'LoaiDichVu' => 'Hàm',
         ]);
 
         $kindService3 = LoaiDichVu::create([
-            'Ten' => 'Mặt',
-            'MieuTa' => 'Mặt',
+            'LoaiDichVu' => 'Mặt',
         ]);
 
         DichVu::create([
-            'Ten' => 'Răng',
-            'MieuTa' => 'Răng',
+            'TenDichVu' => 'Răng',
+            'MoTa' => 'Răng',
             'Gia' => 1000,
-            'idLoaiDV' => $kindService1['idLDV']
+            'LoaiDichVuID' => $kindService1['Id']
         ]);
 
         DichVu::create([
-            'Ten' => 'Hàm',
-            'MieuTa' => 'Hàm',
+            'TenDichVu' => 'Hàm',
+            'MoTa' => 'Hàm',
             'Gia' => 2000,
-            'idLoaiDV' => $kindService1['idLDV']
+            'LoaiDichVuID' => $kindService1['Id']
         ]);
 
         DichVu::create([
-            'Ten' => 'Mặt',
-            'MieuTa' => 'Mặt',
+            'TenDichVu' => 'Mặt',
+            'MoTa' => 'Mặt',
             'Gia' => 3000,
-            'idLoaiDV' => $kindService1['idLDV']
-        ]);
-
-        ThanhToan::create([
-            'TenHinhThucThanhToan' => 'CK',
-            'TrangThai' => 'DangXuLy'
-        ]);
-
-        ThanhToan::create([
-            'TenHinhThucThanhToan' => 'TM',
-            'TrangThai' => 'ThanhCong'
-        ]);
-
-        ThanhToan::create([
-            'TenHinhThucThanhToan' => 'CK',
-            'TrangThai' => 'HuyBo'
+            'LoaiDichVuID' => $kindService1['Id']
         ]);
 
         HoaDon::create([
-            'MaHoaDon' => $faker->numerify('BILL-####'),
-            'TongTien' => 1000000,
-            'NguoiTao' => 2,
-            'BenhNhanId' => $patient1['idBN'],
-            'ThanhToanId' => 1,
+            'TenHoaDon' => $faker->numerify('BILL-####'),
+            'MaNhanVien' => 2,
+            'MaBenhNhan' => 1,
+            'TongSoTien' => 1000000,
+            'NgayLap' => $faker->dateTime(),
+            'TrangThai' => 'DaThanhToan'
         ]);
 
         HoaDon::create([
-            'MaHoaDon' => $faker->numerify('BILL-####'),
-            'TongTien' => 1000000,
-            'NguoiTao' => 2,
-            'BenhNhanId' => $patient3['idBN'],
-            'ThanhToanId' => 2,
+            'TenHoaDon' => $faker->numerify('BILL-####'),
+            'MaNhanVien' => 2,
+            'MaBenhNhan' => 2,
+            'TongSoTien' => 1000000,
+            'NgayLap' => $faker->dateTime(),
+            'TrangThai' => 'DaThanhToan'
         ]);
 
         HoaDon::create([
-            'MaHoaDon' => $faker->numerify('BILL-####'),
-            'TongTien' => 3000000,
-            'NguoiTao' => 2,
-            'BenhNhanId' => $patient2['idBN'],
-            'ThanhToanId' => 3,
+            'TenHoaDon' => $faker->numerify('BILL-####'),
+            'MaNhanVien' => 2,
+            'MaBenhNhan' => 3,
+            'TongSoTien' => 1000000,
+            'NgayLap' => $faker->dateTime(),
+            'TrangThai' => 'DaThanhToan'
         ]);
 
-        LichKham::create([
-            'NguoiTao' => 3,
-            'BacSi' => $doctor['idNV'],
-            'ThoiGian' => $faker->dateTime()
-        ]);
-
-        LichKham::create([
-            'NguoiTao' => 3,
-            'BacSi' => $doctor['idNV'],
-            'ThoiGian' => $faker->dateTime()
-        ]);
-
-        LichKham::create([
-            'NguoiTao' => 3,
-            'BacSi' => $doctor['idNV'],
-            'ThoiGian' => $faker->dateTime()
-        ]);
 
         $kindNew1 = LoaiTinTuc::create([
-            'Ten' => $faker->text(10),
-            'DuongDan' => $faker->slug()
+            'LoaiTinTuc' => $faker->text(10),
         ]);
 
         LoaiTinTuc::create([
-            'Ten' => $faker->text(10),
-            'DuongDan' => $faker->slug()
+            'LoaiTinTuc' => $faker->text(10),
         ]);
 
         TinTuc::create([
             'TieuDe' => $faker->text(20),
-            'MieuTa' => $faker->text(50),
-            'LoaiTinTucId' => $kindNew1['idLTT'],
-            'AdminId' => $admin['idTK']
+            'NoiDung' => $faker->text(50),
+            'LoaiTinTuc' => $kindNew1['Id'],
+            'TacGia' => $admin['Id']
         ]);
 
         TinTuc::create([
             'TieuDe' => $faker->text(20),
-            'MieuTa' => $faker->text(50),
-            'LoaiTinTucId' => $kindNew1['idLTT'],
-            'AdminId' => $admin['idTK']
+            'NoiDung' => $faker->text(50),
+            'LoaiTinTuc' => $kindNew1['Id'],
+            'TacGia' => $admin['Id']
         ]);
 
         TinTuc::create([
             'TieuDe' => $faker->text(20),
-            'MieuTa' => $faker->text(50),
-            'LoaiTinTucId' => $kindNew1['idLTT'],
-            'AdminId' => $admin['idTK']
+            'NoiDung' => $faker->text(50),
+            'LoaiTinTuc' => $kindNew1['Id'],
+            'TacGia' => $admin['Id']
         ]);
 
         DonViTinh::create([
-            'TenDVT' => 'Cái',
-            'Mota' => 'Cái',
-            'Hesotinh' => 1
+            'DonVi' => 'Cái',
+            'HeSo' => 1
         ]);
 
         DonViTinh::create([
-            'TenDVT' => 'Vỉ',
-            'Mota' => 'Vỉ',
-            'Hesotinh' => 1
+            'DonVi' => 'Vỉ',
+            'HeSo' => 1
         ]);
 
         LoaiVatTu::create([
-            'TenloaiVT' => 'Máy',
-            'MoTa' => 'Máy chiếu',
-            'Donvitinh' => 1
+            'LoaiVatTu' => 'Máy',
         ]);
 
         LoaiVatTu::create([
-            'TenloaiVT' => 'Dụng cụ',
-            'MoTa' => 'Dụng cụ',
-            'Donvitinh' => 1
+            'LoaiVatTu' => 'Dụng cụ',
         ]);
 
         LoaiThuoc::create([
-            'TenLT' => 'Kháng sinh',
-            'Mota' => 'Kháng sinh',
-            'idDonvitinh' => 2
+            'LoaiThuoc' => 'Kháng sinh',
         ]);
 
         LoaiThuoc::create([
-            'TenLT' => 'Thuốc tê',
-            'Mota' => 'Thuốc tê',
-            'idDonvitinh' => 2
+            'LoaiThuoc' => 'Thuốc tê',
         ]);
 
-        // SoKhamBenh::create([
-        //     'TieuSu' => 'Răng',
-        //     'BenhNhanId' => $patient1['idBN'],
-        //     'NguoiKham' => 1,
-        //     'idTTDT' => 1
-        // ]);
+        Thuoc::create([
+            'TenThuoc' => 'Kháng sinh',
+            'LoaiThuocId' => 1,
+            'MaDonVi' => 1,
+            'CongDung' => 'Chữa bệnh',
+            'CachDung' => 'Uống',
+            'SoLuong' => 10,
+            'HSD' => $faker->dateTime()
+        ]);
 
-        // SoKhamBenh::create([
-        //     'TieuSu' => 'Răng',
-        //     'BenhNhanId' => $patient2['idBN'],
-        //     'NguoiKham' => 1,
-        //     'idTTDT' => 1
-        // ]);
+        Thuoc::create([
+            'TenThuoc' => 'Nhỏ mũi',
+            'LoaiThuocId' => 1,
+            'MaDonVi' => 1,
+            'CongDung' => 'Chữa bệnh',
+            'CachDung' => 'Uống',
+            'SoLuong' => 10,
+            'HSD' => $faker->dateTime()
+        ]);
 
-        // SoKhamBenh::create([
-        //     'TieuSu' => 'Răng',
-        //     'BenhNhanId' => $patient3['idBN'],
-        //     'NguoiKham' => 1,
-        //     'idTTDT' => 1
-        // ]);
+        Thuoc::create([
+            'TenThuoc' => 'Kháng viêm',
+            'LoaiThuocId' => 1,
+            'MaDonVi' => 1,
+            'CongDung' => 'Chữa bệnh',
+            'CachDung' => 'Uống',
+            'SoLuong' => 100,
+            'HSD' => $faker->dateTime()
+        ]);
+
+        VatTu::create([
+            'TenVT' => 'Máy soi',
+            'LoaiVatTuID' => 1,
+            'MaDonVi' => 1,
+            'SoLuong' => 1
+        ]);
+
+        VatTu::create([
+            'TenVT' => 'Máy chiếu',
+            'LoaiVatTuID' => 1,
+            'MaDonVi' => 1,
+            'SoLuong' => 20
+        ]);
     }
 }

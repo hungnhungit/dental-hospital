@@ -13,7 +13,7 @@ class NhanVien extends Model
 
     public $table = 'nhanvien';
 
-    protected $primaryKey = 'idNV';
+    protected $primaryKey = 'Id';
 
     public $timestamps = false;
 
@@ -21,11 +21,11 @@ class NhanVien extends Model
 
     public function taiKhoan(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'TaiKhoanId');
+        return $this->belongsTo(User::class, 'MaTaiKhoan');
     }
 
     public function chucVu(): BelongsTo
     {
-        return $this->belongsTo(ChucVu::class, 'ChucVuId');
+        return $this->belongsTo(ChucVu::class, 'MaChucVu');
     }
 }

@@ -7,8 +7,20 @@ const columnHelper = createColumnHelper();
 const useCols = ({ handleDelete, handleEdit }) => {
     const cols = useMemo(() => {
         return [
-            columnHelper.accessor("name", {
-                header: "Tên loại tin tức",
+            columnHelper.accessor("TenVT", {
+                header: "Tên vật tư",
+                cell: (info) => info.getValue(),
+            }),
+            columnHelper.accessor("LoaiVatTu", {
+                header: "Tên loại vật tư",
+                cell: (info) => info.getValue(),
+            }),
+            columnHelper.accessor("DonVi", {
+                header: "Đơn vị tính",
+                cell: (info) => info.getValue(),
+            }),
+            columnHelper.accessor("SoLuong", {
+                header: "Số lượng",
                 cell: (info) => info.getValue(),
             }),
             columnHelper.accessor("actions", {

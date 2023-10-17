@@ -19,10 +19,6 @@ const useCols = ({ handleDelete }) => {
                 header: "Ngày sinh",
                 cell: (info) => info.getValue(),
             }),
-            columnHelper.accessor("phone", {
-                header: "Số điện thoại",
-                cell: (info) => info.getValue(),
-            }),
             columnHelper.accessor("address", {
                 header: "Địa chỉ",
                 cell: (info) => info.getValue(),

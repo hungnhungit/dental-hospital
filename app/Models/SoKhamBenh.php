@@ -14,7 +14,7 @@ class SoKhamBenh extends Model
 
     public $timestamps = false;
 
-    protected $primaryKey = 'idSKB';
+    protected $primaryKey = 'Id';
 
     protected $fillable = [];
 

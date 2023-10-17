@@ -15,7 +15,7 @@ class User extends Authenticatable
 
     public $table = 'taikhoan';
 
-    protected $primaryKey = 'idTK';
+    protected $primaryKey = 'Id';
 
     public $timestamps = false;
 
@@ -62,16 +62,16 @@ class User extends Authenticatable
 
     public function role(): HasOne
     {
-        return $this->hasOne(PhanQuyen::class, 'idPQ', 'PhanQuyenId');
+        return $this->hasOne(PhanQuyen::class, 'Id', 'QuyenId');
     }
 
     public function employee(): HasOne
     {
-        return $this->hasOne(NhanVien::class, 'idNV');
+        return $this->hasOne(NhanVien::class, 'Id');
     }
 
     public function admin(): HasOne
     {
-        return $this->hasOne(Admin::class, 'idAD');
+        return $this->hasOne(Admin::class, 'Id');
     }
 }

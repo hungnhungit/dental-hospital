@@ -13,7 +13,7 @@ class DonViTinh extends Model
 
     public $timestamps = false;
 
-    protected $primaryKey = 'idDVT';
+    protected $primaryKey = 'Id';
 
-    protected $fillable = [];
+    protected $guarded = [];
 }

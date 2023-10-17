@@ -13,7 +13,7 @@ class KetQuaXetNghiem extends Model
 
     public $timestamps = false;
 
-    protected $primaryKey = 'idKQXN';
+    protected $primaryKey = 'Id';
 
     protected $fillable = [];
 }

@@ -13,21 +13,19 @@ class KindMedicineController extends Controller
 {
     public function index(): Response
     {
-        $kindMedicine = LoaiThuoc::with('donViTinh')->paginate(10);
+        $kindMedicine = LoaiThuoc::paginate(10);
         return Inertia::render('KindMedicine/List', [
             "kindMedicine" => collect($kindMedicine->items())->map(function ($item) {
                 return [
-                    "id" => $item['idLoaithuoc'],
-                    "name" => $item['TenLT'],
-                    "desc" => $item['Mota'],
-                    "unit" => $item['donViTinh']['TenDVT'],
+                    "id" => $item['Id'],
+                    "name" => $item['LoaiThuoc'],
                 ];
             }),
             "totalPage" => $kindMedicine->total(),
         ]);
     }
 
-    public function new()
+    public function create()
     {
         return Inertia::render('KindMedicine/New', [
             'units' => DonViTinh::all(),
@@ -40,10 +38,8 @@ class KindMedicineController extends Controller
         return Inertia::render('KindMedicine/New', [
             'units' => DonViTinh::all(),
             'kindMedicine' => [
-                "id" => $record['idLoaithuoc'],
-                "name" => $record['TenLT'],
-                "desc" => $record['Mota'],
-                "unit" => $record['idDonvitinh']
+                "id" => $record['Id'],
+                "name" => $record['LoaiThuoc'],
             ]
         ]);
     }
@@ -53,9 +49,7 @@ class KindMedicineController extends Controller
         $record = LoaiThuoc::query()->findOrFail($id);
 
         $record->update([
-            'TenLT' => $request['name'],
-            'Mota' => $request['desc'],
-            'idDonvitinh' => $request['unit']
+            'LoaiThuoc' => $request['name'],
         ]);
 
         return redirect('/loai-thuoc');
@@ -64,17 +58,15 @@ class KindMedicineController extends Controller
     public function store(Request $request)
     {
         LoaiThuoc::create([
-            'TenLT' => $request['name'],
-            'Mota' => $request['desc'],
-            'idDonvitinh' => $request['unit']
+            'LoaiThuoc' => $request['name'],
         ]);
         return redirect('/loai-thuoc');
     }
 
-    public function destroy(Request $request)
+    public function destroy(int $id)
     {
-        LoaiThuoc::destroy($request['id']);
+        LoaiThuoc::destroy($id);
 
-        return redirect('/loai-thuoc');
+        return back();
     }
 }

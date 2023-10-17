@@ -7,29 +7,25 @@ import { BsCreditCard2Back, BsTrash } from "react-icons/bs";
 const columnHelper = createColumnHelper();
 
 const stylesPayment = {
-    HuyBo: "uppercase bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300",
-    DangXuLy:
+    Huy: "uppercase bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300",
+    ChuaThanhToan:
         "uppercase bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300",
-    ThanhCong:
+    DaThanhToan:
         "uppercase bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300",
 };
 
 const useCols = () => {
     const cols = useMemo(() => {
         return [
-            columnHelper.accessor("code", {
-                header: "Mã hoá đơn",
+            columnHelper.accessor("TenHoaDon", {
+                header: "Tên hoá đơn",
                 cell: (info) => info.getValue(),
             }),
-            columnHelper.accessor("total", {
+            columnHelper.accessor("TongSoTien", {
                 header: "Tổng tiền",
                 cell: (info) => formatNumber(info.getValue()),
             }),
-            columnHelper.accessor("payment", {
-                header: "Hình thức thanh toán",
-                cell: (info) => getPaymentText(info.getValue()),
-            }),
-            columnHelper.accessor("status", {
+            columnHelper.accessor("TrangThai", {
                 header: "trạng thái",
                 cell: (info) => (
                     <span className={stylesPayment[info.getValue()]}>
@@ -37,11 +33,11 @@ const useCols = () => {
                     </span>
                 ),
             }),
-            columnHelper.accessor("created_by", {
+            columnHelper.accessor("NguoiTao", {
                 header: "người tạo",
                 cell: (info) => info.getValue(),
             }),
-            columnHelper.accessor("patient", {
+            columnHelper.accessor("BenhNhan", {
                 header: "bệnh nhân",
                 cell: (info) => info.getValue(),
             }),
