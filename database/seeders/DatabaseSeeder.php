@@ -319,5 +319,17 @@ class DatabaseSeeder extends Seeder
             'MaDonVi' => 1,
             'SoLuong' => 20
         ]);
+
+        SoKhamBenh::create([
+            'MaBenhNhan' => 1,
+            'MaBacSi' => $doctor['Id'],
+            'ChanDoanBenh' => 'Đau răng'
+        ]);
+
+        SoKhamBenh::create([
+            'MaBenhNhan' => 2,
+            'MaBacSi' => $doctor['Id'],
+            'ChanDoanBenh' => 'Đau răng'
+        ]);
     }
 }

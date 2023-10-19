@@ -32,6 +32,14 @@ class LoginRequest extends FormRequest
         ];
     }
 
+    public function messages()
+    {
+        return [
+            'username.required' => 'Tài khoản không để trống',
+            'password.required' => 'Mật khẩu không để trống'
+        ];
+    }
+
     /**
      * Attempt to authenticate the request's credentials.
      *
@@ -48,7 +56,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'username' => trans('auth.failed'),
+                'username' => 'Tài khoản hoặc mật khẩu không đúng',
             ]);
         }
 

@@ -16,25 +16,15 @@ class SoKhamBenh extends Model
 
     protected $primaryKey = 'Id';
 
-    protected $fillable = [];
-
-    public function nguoiTao(): BelongsTo
-    {
-        return $this->belongsTo(NhanVien::class, 'NguoiTao');
-    }
+    protected $guarded = [];
 
     public function bacSi(): BelongsTo
     {
-        return $this->belongsTo(NhanVien::class, 'NguoiKham');
+        return $this->belongsTo(NhanVien::class, 'MaBacSi');
     }
 
     public function benhNhan(): BelongsTo
     {
-        return $this->belongsTo(BenhNhan::class, 'BenhNhanId');
-    }
-
-    public function tinhTrang(): BelongsTo
-    {
-        return $this->belongsTo(TinhTrangBenh::class, 'TinhTrangBenhId');
+        return $this->belongsTo(BenhNhan::class, 'MaBenhNhan');
     }
 }
