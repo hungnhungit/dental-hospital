@@ -1,14 +1,16 @@
-import { paginate } from "@/Api/bill.api";
 import PageContainer from "@/Components/PageContainer";
+import Pagination from "@/Components/Pagination";
 import Table from "@/Components/Table";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
 import _get from "lodash/get";
-import { useAsync } from "react-use";
+import qs from "query-string";
+import { useState } from "react";
 import useCols from "./Cols";
 
 export default function ListBill(props) {
-    console.log(props);
+    const { page } = qs.parse(location.search);
+    const [currentPage, setCurrentPage] = useState(Number(page || 1));
     const cols = useCols();
     return (
         <AuthenticatedLayout
@@ -32,6 +34,21 @@ export default function ListBill(props) {
 
             <PageContainer>
                 <Table data={_get(props, "bills", [])} columns={cols} />
+                <Pagination
+                    totalCount={_get(props, "totalPage")}
+                    currentPage={currentPage}
+                    onPageChange={(page) => {
+                        setCurrentPage(page);
+                        router.get(
+                            route(route().current()),
+                            { page, query },
+                            {
+                                preserveState: true,
+                                replace: true,
+                            }
+                        );
+                    }}
+                />
             </PageContainer>
         </AuthenticatedLayout>
     );

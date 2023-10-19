@@ -12,16 +12,8 @@ const MENUS = {
         { name: "tin-tuc.index", label: "Tin tức" },
         { name: "loai-tin-tuc.index", label: "Loại tin tức" },
     ],
-    doctor: [
-        ...common,
-        { name: "sick.list", label: "QL tình trạng bệnh" },
-        { name: "health_records.list", label: "QL sổ khám bệnh" },
-    ],
-    nurse: [
-        ...common,
-        { name: "sick.list", label: "QL tình trạng bệnh" },
-        { name: "health_records.list", label: "QL sổ khám bệnh" },
-    ],
+    doctor: [...common, { name: "sokhambenh.index", label: "Sổ khám bệnh" }],
+    nurse: [...common, { name: "sokhambenh.index", label: "Sổ khám bệnh" }],
     receptionist: [
         ...common,
         { name: "hoadon.index", label: "Hoá đơn" },

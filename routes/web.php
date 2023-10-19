@@ -56,6 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('thuoc', MedicineController::class);
     Route::resource('vat-tu', SuppliesController::class);
     Route::resource('hoadon', BillController::class);
+    Route::resource('sokhambenh', HealthRecordsController::class);
 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
