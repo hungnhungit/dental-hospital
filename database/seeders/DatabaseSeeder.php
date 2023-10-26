@@ -20,6 +20,7 @@ use App\Models\PhanQuyen;
 use App\Models\SoKhamBenh;
 use App\Models\ThanhToan;
 use App\Models\Thuoc;
+use App\Models\TienTrinhDieuTri;
 use App\Models\TinhTrangBenh;
 use App\Models\TinTuc;
 use Illuminate\Database\Seeder;
@@ -50,6 +51,7 @@ class DatabaseSeeder extends Seeder
         LoaiDichVu::truncate();
         DichVu::truncate();
         SoKhamBenh::truncate();
+        TienTrinhDieuTri::truncate();
         LoaiVatTu::truncate();
         LoaiThuoc::truncate();
         DonViTinh::truncate();
@@ -322,14 +324,35 @@ class DatabaseSeeder extends Seeder
 
         SoKhamBenh::create([
             'MaBenhNhan' => 1,
-            'MaBacSi' => $doctor['Id'],
+            'MaBacSi' => 1,
             'ChanDoanBenh' => 'Đau răng'
         ]);
 
         SoKhamBenh::create([
             'MaBenhNhan' => 2,
-            'MaBacSi' => $doctor['Id'],
+            'MaBacSi' => 1,
             'ChanDoanBenh' => 'Đau răng'
+        ]);
+
+        TienTrinhDieuTri::create([
+            'MaSoKhamBenh' => 1,
+            'MaThuoc' => 1,
+            'SoThuoc' => 1,
+            'NgayDieuTri' => $faker->dateTime(),
+            'ChiTietDieuTri' => 'Điều trị',
+            'MaVatTu' => 1,
+            'SoVatTu' => 1,
+            'MaDichVu' => 1
+        ]);
+        TienTrinhDieuTri::create([
+            'MaSoKhamBenh' => 2,
+            'MaThuoc' => 1,
+            'SoThuoc' => 1,
+            'NgayDieuTri' => $faker->dateTime(),
+            'ChiTietDieuTri' => 'Điều trị',
+            'MaVatTu' => 1,
+            'SoVatTu' => 1,
+            'MaDichVu' => 2
         ]);
     }
 }

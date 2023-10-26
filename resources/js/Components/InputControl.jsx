@@ -5,7 +5,7 @@ import InputError from "./InputError";
 import InputLabel from "./InputLabel";
 
 export default function InputControl(props) {
-    const { className, label, type, control, name, rules } = props;
+    const { className, label, type, control, name, rules, disabled } = props;
     const {
         field,
         fieldState: { error },
@@ -27,6 +27,7 @@ export default function InputControl(props) {
                 value={field.value || ""}
                 type={type}
                 className={cls}
+                disabled={disabled}
             />
             {error ? <InputError message={get(error, "message")} /> : null}
         </div>

@@ -10,6 +10,7 @@ use App\Http\Controllers\KindSuppliesController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\ProccessController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SickConditionController;
 use App\Http\Controllers\UnitController;
@@ -55,9 +56,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('benhnhan', PatientController::class);
     Route::resource('thuoc', MedicineController::class);
     Route::resource('vat-tu', SuppliesController::class);
+    Route::post('api/hoadon/{id}/pdf', [BillController::class, 'pdf'])->name('hoadon.pdf');
     Route::resource('hoadon', BillController::class);
+    Route::delete('tientrinhdieutri', [ProccessController::class, 'destroy']);
+    Route::get('sokhambenh/{id}tientrinhdieutri/create', [ProccessController::class, 'create']);
+    Route::post('api/sokhambenh/{id}/pdf', [HealthRecordsController::class, 'pdf'])->name('sokhambenh.pdf');
     Route::resource('sokhambenh', HealthRecordsController::class);
-    Route::resource('tientrinhdieutri', HealthRecordsController::class);
+    Route::post('sokhambenh/{id}/changeStatus', [HealthRecordsController::class, 'changeStatus'])->name('sokhambenh.changeStatus');
 
 
     Route::get('/caidat', [ProfileController::class, 'edit'])->name('profile.edit');

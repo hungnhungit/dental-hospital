@@ -16,6 +16,8 @@ class HoaDon extends Model
 
     protected $primaryKey = 'Id';
 
+    protected $guarded = [];
+
     public function nhanVien(): BelongsTo
     {
         return $this->belongsTo(NhanVien::class, 'MaNhanVien', 'Id');

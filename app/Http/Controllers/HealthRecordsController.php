@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\BenhNhan;
 use App\Models\NhanVien;
 use App\Models\SoKhamBenh;
+use App\Models\TienTrinhDieuTri;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use PDF;
 
 class HealthRecordsController extends Controller
 {
@@ -21,7 +24,8 @@ class HealthRecordsController extends Controller
                     "id" => $item['Id'],
                     "BenhNhan" => $item['benhNhan']['HoVaTen'],
                     "BacSi" => $item['bacSi']['HoVaTen'],
-                    "ChanDoanBenh" => $item['ChanDoanBenh']
+                    "ChanDoanBenh" => $item['ChanDoanBenh'],
+                    "TrangThai" => $item['TrangThai']
                 ];
             }),
             "totalPage" => $healthRecords->total(),
@@ -43,6 +47,43 @@ class HealthRecordsController extends Controller
                     "name" => $item['HoVaTen']
                 ];
             })
+        ]);
+    }
+
+    public function changeStatus(int $id, Request $request)
+    {
+        $record = SoKhamBenh::query()->findOrFail($id);
+
+        $record->update([
+            'TrangThai' => $request['status']
+        ]);
+
+        return to_route('sokhambenh.show', $id);
+    }
+
+    public function show(int $id)
+    {
+        $record = SoKhamBenh::query()->with(['bacSi', 'benhNhan'])->findOrFail($id);
+        $process = TienTrinhDieuTri::query()->with(['thuoc', 'vatTu', 'dichVu'])->where('MaSoKhamBenh', $id)->paginate();
+        return Inertia::render('HealthRecords/Detail', [
+            "records" => [
+                "id" => $record['Id'],
+                "BenhNhan" => $record['benhNhan']['HoVaTen'],
+                "BacSi" => $record['bacSi']['HoVaTen'],
+                "ChanDoanBenh" => $record['ChanDoanBenh'],
+                "TrangThai" => $record['TrangThai']
+            ],
+            "process" => collect($process->items())->map(function ($item) {
+                return [
+                    "id" => $item["Id"],
+                    "Thuoc" => $item['thuoc']['TenThuoc'],
+                    "VatTu" => $item['vatTu']['TenVT'],
+                    "DichVu" => $item['dichVu']['TenDichVu'],
+                    'ChiTietDieuTri' => $item['ChiTietDieuTri'],
+                    'NgayDieuTri' => Carbon::parse($item['NgayDieuTri'])->format('d/m/Y'),
+                ];
+            }),
+            "totalPage" => $process->total(),
         ]);
     }
 
@@ -84,5 +125,31 @@ class HealthRecordsController extends Controller
         SoKhamBenh::destroy($id);
 
         return back();
+    }
+
+    public function pdf(int $id)
+    {
+        $record = SoKhamBenh::query()->with(['bacSi', 'benhNhan'])->findOrFail($id);
+        $process = TienTrinhDieuTri::query()->with(['thuoc', 'vatTu', 'dichVu'])->where('MaSoKhamBenh', $id)->get();
+        $data = [
+            "records" => [
+                "BenhNhan" => $record['benhNhan']['HoVaTen'],
+                "BacSi" => $record['bacSi']['HoVaTen'],
+                "ChanDoanBenh" => $record['ChanDoanBenh'],
+                "TrangThai" => $record['TrangThai']
+            ],
+            "process" => collect($process)->map(function ($item) {
+                return [
+                    "id" => $item["Id"],
+                    "Thuoc" => $item['thuoc']['TenThuoc'],
+                    "VatTu" => $item['vatTu']['TenVT'],
+                    "DichVu" => $item['dichVu']['TenDichVu'],
+                    'ChiTietDieuTri' => $item['ChiTietDieuTri'],
+                    'NgayDieuTri' => Carbon::parse($item['NgayDieuTri'])->format('d/m/Y'),
+                ];
+            }),
+        ];
+        $pdf = PDF::loadView('sokhambenh', $data);
+        return $pdf->download('sokhambenh.pdf');
     }
 }

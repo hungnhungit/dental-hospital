@@ -13,9 +13,23 @@ const STATUS_MAP_TO_STATUS_TEXT = {
     Huy: "Hủy thanh toán",
 };
 
+const STATUS_RECORD_MAP_TO_STATUS_TEXT = {
+    ChoPheDuyet: "Chờ phê duyệt",
+    DangDieutri: "Đang điều trị",
+    Huy: "Hủy bỏ",
+};
+
 const PAYMENT_MAP_TO_PAYMENT_TEXT = {
     ck: "Chuyển khoản",
     tm: "Tiền mặt",
+};
+
+const isReceptionist = (role) => {
+    return role === "receptionist";
+};
+
+const isDoctor = (role) => {
+    return role === "doctor";
 };
 
 const getPostion = (role) => {
@@ -30,9 +44,21 @@ const getPaymentText = (payment) => {
     return PAYMENT_MAP_TO_PAYMENT_TEXT[lowerCase(payment)];
 };
 
+const getRecordsText = (records) => {
+    return STATUS_RECORD_MAP_TO_STATUS_TEXT[records];
+};
+
 const formatNumber = (number, currency = "VND") => {
     const nf = new Intl.NumberFormat();
     return `${nf.format(number)} ${currency}`;
 };
 
-export { getPostion, getStatusText, getPaymentText, formatNumber };
+export {
+    getPostion,
+    getStatusText,
+    getPaymentText,
+    formatNumber,
+    isReceptionist,
+    getRecordsText,
+    isDoctor,
+};

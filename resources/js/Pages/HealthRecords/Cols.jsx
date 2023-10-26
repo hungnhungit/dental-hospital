@@ -1,10 +1,18 @@
 import { createColumnHelper } from "@/Components/Table";
+import { getRecordsText, isReceptionist } from "@/Utils/helpers";
 import { useMemo } from "react";
-import { BsEye, BsPencil, BsTrash } from "react-icons/bs";
+import { BsEye, BsPencil, BsPrinter, BsTrash } from "react-icons/bs";
 
 const columnHelper = createColumnHelper();
 
-const useCols = ({ handleDelete, handleEdit, handleShow }) => {
+const useCols = ({
+    handleDelete,
+    handleEdit,
+    handleShow,
+    handlePrint,
+    user,
+}) => {
+    const receptionist = isReceptionist(user.role);
     const cols = useMemo(() => {
         return [
             columnHelper.accessor("BenhNhan", {
@@ -19,34 +27,56 @@ const useCols = ({ handleDelete, handleEdit, handleShow }) => {
                 header: "Chuẩn đoán bệnh",
                 cell: (info) => info.getValue(),
             }),
+            columnHelper.accessor("TrangThai", {
+                header: "Trạng thái",
+                cell: (info) => getRecordsText(info.getValue()),
+            }),
             columnHelper.accessor("actions", {
                 header: "Thao tác",
                 cell: (info) => (
                     <>
-                        <BsEye className="cursor-pointer" />
-                        <BsTrash
+                        {receptionist ? null : (
+                            <BsEye
+                                className="cursor-pointer"
+                                onClick={() => {
+                                    handleShow(info.row.original.id);
+                                }}
+                            />
+                        )}
+
+                        {receptionist ? (
+                            <BsTrash
+                                className="cursor-pointer"
+                                onClick={() => {
+                                    if (
+                                        confirm(
+                                            "Bạn có muốn xoá bản ghi này không ?"
+                                        )
+                                    ) {
+                                        handleDelete(info.row.original.id);
+                                    }
+                                }}
+                            />
+                        ) : null}
+                        {receptionist ? null : (
+                            <BsPencil
+                                className="cursor-pointer"
+                                onClick={() => {
+                                    handleEdit(info.row.original.id);
+                                }}
+                            />
+                        )}
+                        <BsPrinter
                             className="cursor-pointer"
                             onClick={() => {
-                                if (
-                                    confirm(
-                                        "Bạn có muốn xoá bản ghi này không ?"
-                                    )
-                                ) {
-                                    handleDelete(info.row.original.id);
-                                }
-                            }}
-                        />
-                        <BsPencil
-                            className="cursor-pointer"
-                            onClick={() => {
-                                handleEdit(info.row.original.id);
+                                handlePrint(info.row.original.id);
                             }}
                         />
                     </>
                 ),
             }),
         ];
-    }, []);
+    }, [user]);
 
     return cols;
 };

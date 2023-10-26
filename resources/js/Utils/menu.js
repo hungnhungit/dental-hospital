@@ -12,8 +12,16 @@ const MENUS = {
         { name: "tin-tuc.index", label: "Tin tức" },
         { name: "loai-tin-tuc.index", label: "Loại tin tức" },
     ],
-    doctor: [...common, { name: "sokhambenh.index", label: "Sổ khám bệnh" }],
-    nurse: [...common, { name: "sokhambenh.index", label: "Sổ khám bệnh" }],
+    doctor: [
+        { name: "benhnhan.index", label: "Bệnh nhân" },
+        { name: "sokhambenh.index", label: "Sổ khám bệnh" },
+        { name: "profile.edit", label: "Cài đặt" },
+    ],
+    nurse: [
+        ...common,
+        { name: "sokhambenh.index", label: "Sổ khám bệnh" },
+        { name: "profile.edit", label: "Cài đặt" },
+    ],
     receptionist: [
         ...common,
         { name: "hoadon.index", label: "Hoá đơn" },
@@ -22,6 +30,8 @@ const MENUS = {
         { name: "donvitinh.index", label: "Đơn vị tính" },
         { name: "loai-vat-tu.index", label: "Loại vật tư" },
         { name: "loai-thuoc.index", label: "Loại thuốc" },
+        { name: "sokhambenh.index", label: "Sổ khám bệnh" },
+        { name: "profile.edit", label: "Cài đặt" },
     ],
 };
 

@@ -8,21 +8,25 @@ import _get from "lodash/get";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
-export default function NewHealthRecords(props) {
-    const { records } = props;
-    const isModeEdit = records ? true : false;
+export default function NewBill(props) {
+    const { bill } = props;
+    const isModeEdit = bill ? true : false;
 
     const { register, handleSubmit, control } = useForm({
-        defaultValues: isModeEdit ? records : {},
+        defaultValues: isModeEdit
+            ? bill
+            : {
+                  TenHoaDon: "BILL-" + Math.floor(Math.random() * 100000),
+              },
     });
 
     const onSubmit = (data) => {
         if (!isModeEdit) {
-            router.post("/sokhambenh", data);
-            toast.success("Thêm sổ khám bệnh thành công !");
+            router.post("/hoadon", data);
+            toast.success("Thêm hoá đơn thành công !");
         } else {
-            router.put(`/sokhambenh/${records.Id}`, data);
-            toast.success("Sửa sổ khám bệnh thành công !");
+            router.put(`/hoadon/${bill.Id}`, data);
+            toast.success("Sửa hoá đơn thành công !");
         }
     };
 
@@ -33,15 +37,13 @@ export default function NewHealthRecords(props) {
             header={
                 <div className="flex justify-between">
                     <h2 className="font-semibold text-xl text-gray-800 leading-tight uppercase">
-                        {isModeEdit
-                            ? "sửa sổ khám bệnh"
-                            : "thêm mới sổ khám bệnh"}
+                        {isModeEdit ? "sửa hoá đơn" : "thêm mới hoá đơn"}
                     </h2>
                     <Link
                         className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
-                        href={route("sokhambenh.index")}
+                        href={route("hoadon.index")}
                     >
-                        Danh sách sổ khám bệnh
+                        Danh sách hoá đơn
                     </Link>
                 </div>
             }
@@ -51,6 +53,17 @@ export default function NewHealthRecords(props) {
             <PageContainer>
                 <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
                     <div className="grid grid-cols-2 gap-10">
+                        <InputControl
+                            control={control}
+                            name="TenHoaDon"
+                            className="mt-1 block w-full"
+                            label="Tên hoá đơn"
+                            maxLength={10}
+                            rules={{
+                                required: "Tên hoá đơn không để trống",
+                            }}
+                            disabled
+                        />
                         <div>
                             <InputLabel
                                 htmlFor="MaBenhNhan"
@@ -62,44 +75,39 @@ export default function NewHealthRecords(props) {
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                             >
                                 {_get(props, "BenhNhan", []).map(
-                                    (kind, index) => {
+                                    (item, index) => {
                                         return (
-                                            <option key={index} value={kind.id}>
-                                                {kind.name}
+                                            <option key={index} value={item.id}>
+                                                {item.name}
                                             </option>
                                         );
                                     }
                                 )}
                             </select>
                         </div>
-                        <div>
-                            <InputLabel htmlFor="MaBacSi" value="Bác sĩ" />
-                            <select
-                                {...register("MaBacSi")}
-                                id="MaBacSi"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                            >
-                                {_get(props, "BacSi", []).map((kind, index) => {
-                                    return (
-                                        <option key={index} value={kind.id}>
-                                            {kind.name}
-                                        </option>
-                                    );
-                                })}
-                            </select>
-                        </div>
                     </div>
                     <div className="grid grid-cols-2 gap-10 mt-5">
-                        <InputControl
-                            control={control}
-                            name="ChanDoanBenh"
-                            className="mt-1 block w-full"
-                            label="Chuẩn đoán bệnh"
-                            maxLength={10}
-                            rules={{
-                                required: "Chuẩn đoán bệnh không để trống",
-                            }}
-                        />
+                        <div>
+                            <InputLabel
+                                htmlFor="MaTienTrinh"
+                                value="Tiến trình điều trị"
+                            />
+                            <select
+                                {...register("MaTienTrinh")}
+                                id="MaTienTrinh"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            >
+                                {_get(props, "TienTrinhDieuTri", []).map(
+                                    (item, index) => {
+                                        return (
+                                            <option key={index} value={item.id}>
+                                                {item.id} - {item.NgayDieuTri}
+                                            </option>
+                                        );
+                                    }
+                                )}
+                            </select>
+                        </div>
                     </div>
                     <PrimaryButton type="submit" className="mt-4">
                         {isModeEdit ? "Sửa" : "Thêm mới"}

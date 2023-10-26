@@ -1,8 +1,7 @@
 import { createColumnHelper } from "@/Components/Table";
-import { formatNumber, getPaymentText, getStatusText } from "@/Utils/helpers";
-import _get from "lodash/get";
+import { formatNumber, getStatusText } from "@/Utils/helpers";
 import { useMemo } from "react";
-import { BsCreditCard2Back, BsTrash } from "react-icons/bs";
+import { BsCreditCard2Back, BsPrinter, BsTrash } from "react-icons/bs";
 
 const columnHelper = createColumnHelper();
 
@@ -14,7 +13,7 @@ const stylesPayment = {
         "uppercase bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300",
 };
 
-const useCols = () => {
+const useCols = ({ handlePrint }) => {
     const cols = useMemo(() => {
         return [
             columnHelper.accessor("TenHoaDon", {
@@ -47,6 +46,12 @@ const useCols = () => {
                     <>
                         <BsTrash className="cursor-pointer" />
                         <BsCreditCard2Back className="cursor-pointer" />
+                        <BsPrinter
+                            className="cursor-pointer"
+                            onClick={() => {
+                                handlePrint(info.row.original.id);
+                            }}
+                        />
                     </>
                 ),
             }),
