@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BillController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExaminationScheduleController;
 use App\Http\Controllers\HealthRecordsController;
 use App\Http\Controllers\KindMedicineController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\SickConditionController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SuppliesController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,14 +35,8 @@ use Inertia\Inertia;
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('Dashboard');
-    });
-
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
-
+    Route::get('/', [DashboardController::class, 'index']);
+    Route::get('/trangchu', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/taikhoan', [UsersController::class, 'index'])->name('users.list');
     Route::post('/taikhoan', [UsersController::class, 'store'])->name('users.store');
     Route::get('/taikhoan/tao-moi', [UsersController::class, 'new'])->name('users.new');
@@ -63,6 +59,9 @@ Route::middleware('auth')->group(function () {
     Route::post('api/sokhambenh/{id}/pdf', [HealthRecordsController::class, 'pdf'])->name('sokhambenh.pdf');
     Route::resource('sokhambenh', HealthRecordsController::class);
     Route::post('sokhambenh/{id}/changeStatus', [HealthRecordsController::class, 'changeStatus'])->name('sokhambenh.changeStatus');
+    Route::get('quyen', [RoleController::class, 'index'])->name('quyen.index');
+    Route::get('quyen/{id}/phanquyen', [RoleController::class, 'show'])->name('quyen.show');
+    Route::post('quyen/{id}/phanquyen', [RoleController::class, 'update'])->name('quyen.update');
 
 
     Route::get('/caidat', [ProfileController::class, 'edit'])->name('profile.edit');

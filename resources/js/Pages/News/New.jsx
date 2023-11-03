@@ -5,8 +5,39 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import _get from "lodash/get";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
+
+const modules = {
+    toolbar: [
+        [{ header: [1, 2, false] }],
+        ["bold", "italic", "underline", "strike", "blockquote"],
+        [
+            { list: "ordered" },
+            { list: "bullet" },
+            { indent: "-1" },
+            { indent: "+1" },
+        ],
+        ["link", "image"],
+        ["clean"],
+    ],
+};
+
+const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+];
 
 export default function NewKindNew(props) {
     console.log(props);
@@ -18,6 +49,7 @@ export default function NewKindNew(props) {
     });
 
     const onSubmit = (data) => {
+        console.log(data);
         if (!isModeEdit) {
             router.post("/tin-tuc", data);
             toast.success("Thêm tin tức thành công !");
@@ -77,18 +109,32 @@ export default function NewKindNew(props) {
                             </select>
                         </div>
                     </div>
-                    <div className="mt-5">
-                        <InputControl
+                    <div className="mt-5 h-[380px]">
+                        <Controller
                             control={control}
                             name="desc"
-                            label="Miêu tả"
-                            className="mt-1 block w-full"
-                            rules={{ required: "Miêu tả không để trống" }}
+                            render={({ field: { onChange, value } }) => (
+                                <>
+                                    <label htmlFor="desc">Miêu tả</label>
+                                    <ReactQuill
+                                        id="desc"
+                                        formats={formats}
+                                        style={{
+                                            height: 300,
+                                        }}
+                                        modules={modules}
+                                        value={value}
+                                        onChange={onChange}
+                                    />
+                                </>
+                            )}
                         />
                     </div>
-                    <PrimaryButton type="submit" className="mt-4">
-                        {isModeEdit ? "Sửa" : "Thêm mới"}
-                    </PrimaryButton>
+                    <div>
+                        <PrimaryButton type="submit" className="mt-4">
+                            {isModeEdit ? "Sửa" : "Thêm mới"}
+                        </PrimaryButton>
+                    </div>
                 </form>
             </PageContainer>
         </AuthenticatedLayout>

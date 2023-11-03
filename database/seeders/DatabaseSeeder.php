@@ -9,6 +9,7 @@ use App\Models\BenhNhan;
 use App\Models\ChucVu;
 use App\Models\DichVu;
 use App\Models\DonViTinh;
+use App\Models\Ham;
 use App\Models\HoaDon;
 use App\Models\LichKham;
 use App\Models\LoaiDichVu;
@@ -55,6 +56,8 @@ class DatabaseSeeder extends Seeder
         LoaiVatTu::truncate();
         LoaiThuoc::truncate();
         DonViTinh::truncate();
+        Ham::truncate();
+        DB::table('phanquyenham')->truncate();
         DB::statement("SET foreign_key_checks=1");
 
         ChucVu::create([
@@ -354,5 +357,30 @@ class DatabaseSeeder extends Seeder
             'SoVatTu' => 1,
             'MaDichVu' => 2
         ]);
+
+        $permissions = ['thuoc', 'vat-tu', 'hoadon', 'loai-thuoc', 'loai-vat-tu', 'sokhambenh', 'benhnhan', 'dichvu', 'loai-dich-vu', 'donvitinh', 'tientrinhdieutri'];
+
+        foreach ($permissions as $permission) {
+            foreach (['index', 'store', 'update', 'destroy'] as $action) {
+                Ham::create([
+                    'TenHam' => $permission . '.' . $action
+                ]);
+            }
+        }
+
+        $roles = PhanQuyen::query()->where('Quyen', '!=', 'admin')->get();
+        $hams = Ham::query()->get();
+
+        foreach ($roles as $role) {
+            $insert = [];
+            foreach ($hams as $key => $ham) {
+                array_push($insert, [
+                    "PhanQuyenId" => $role['Id'],
+                    "HamId" => $ham['Id'],
+                    "on" => true
+                ]);
+            }
+            DB::table('phanquyenham')->insert($insert);
+        }
     }
 }

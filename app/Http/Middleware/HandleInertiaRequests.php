@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Admin;
 use App\Models\NhanVien;
+use App\Models\PhanQuyen;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -40,10 +41,22 @@ class HandleInertiaRequests extends Middleware
             if ($currentUser->role['Quyen'] === 'admin') {
                 $user['role'] =  'admin';
                 $user['full_name'] = 'Admin';
+                $user['isAdmin'] = true;
             } else {
                 $employee = NhanVien::query()->where('MaTaiKhoan', $currentUser['Id'])->first();
+                $role = PhanQuyen::query()->with('ham')->where('Id', $currentUser['role']['Id'])->first();
+                $permssions = collect($role->ham)->filter(function ($item) {
+                    return $item['payload']['on'];
+                })->map(function ($item) {
+                    return [
+                        'id' => $item['Id'],
+                        'permission' => $item['TenHam'],
+                        'on' => boolval($item['payload']['on'])
+                    ];
+                });
                 $user['role'] =  $currentUser['role']['Quyen'];
                 $user['full_name'] = $employee['HoVaTen'];
+                $user['permssions'] = $permssions;
             }
         }
 

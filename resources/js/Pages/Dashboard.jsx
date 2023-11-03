@@ -1,19 +1,21 @@
 import PageContainer from "@/Components/PageContainer";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { formatNumber } from "@/Utils/helpers";
 import { Head } from "@inertiajs/react";
 
 export default function Dashboard(props) {
+    const { TongBenhNhan, DoanhThu, TongThuoc, TongVatTu } = props;
     return (
         <AuthenticatedLayout
             auth={props.auth}
             errors={props.errors}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight uppercase">
-                    Tổng Quan
+                    Trang chủ
                 </h2>
             }
         >
-            <Head title="Tổng Quan" />
+            <Head title="Trang chủ" />
             <PageContainer>
                 <div className="grid gap-2 grid-cols-4">
                     <div className="min-w-0 rounded-lg border border-gray-600 shadow-xs overflow-hidden">
@@ -32,7 +34,7 @@ export default function Dashboard(props) {
                                     Số bệnh nhân
                                 </p>
                                 <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                    6389
+                                    {TongBenhNhan}
                                 </p>
                             </div>
                         </div>
@@ -57,7 +59,7 @@ export default function Dashboard(props) {
                                     Doanh thu
                                 </p>
                                 <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                    46,760.89 VND
+                                    {formatNumber(DoanhThu)}
                                 </p>
                             </div>
                         </div>
@@ -75,10 +77,10 @@ export default function Dashboard(props) {
                             </div>
                             <div>
                                 <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                                    Bán hàng
+                                    Số lượng vật tư
                                 </p>
                                 <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                    376
+                                    {TongVatTu}
                                 </p>
                             </div>
                         </div>
@@ -100,10 +102,10 @@ export default function Dashboard(props) {
                             </div>
                             <div>
                                 <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                                    Lịch hẹn
+                                    Số lượng thuốc
                                 </p>
                                 <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                    35
+                                    {TongThuoc}
                                 </p>
                             </div>
                         </div>

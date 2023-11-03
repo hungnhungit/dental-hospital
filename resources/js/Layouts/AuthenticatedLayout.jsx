@@ -5,10 +5,12 @@ import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { getPostion } from "@/Utils/helpers";
 import { MENUS } from "@/Utils/menu";
 import { Link } from "@inertiajs/react";
+import { map } from "lodash";
 import { useState } from "react";
 
 export default function Authenticated({ auth, header, children }) {
-    const { full_name, role, email } = auth.user;
+    const { full_name, role, permssions } = auth.user;
+    const permssionsMap = map(permssions, "permission");
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
@@ -26,15 +28,26 @@ export default function Authenticated({ auth, header, children }) {
 
                             <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 {MENUS[role].map((menu) => {
-                                    return (
-                                        <NavLink
-                                            key={menu.name}
-                                            href={route(menu.name)}
-                                            active={route().current(menu.name)}
-                                        >
-                                            {menu.label}
-                                        </NavLink>
-                                    );
+                                    if (
+                                        permssionsMap.includes(
+                                            menu.permission
+                                        ) ||
+                                        menu.permission === "access" ||
+                                        role === "admin"
+                                    ) {
+                                        return (
+                                            <NavLink
+                                                key={menu.name}
+                                                href={route(menu.name)}
+                                                active={route().current(
+                                                    menu.name
+                                                )}
+                                            >
+                                                {menu.label}
+                                            </NavLink>
+                                        );
+                                    }
+                                    return null;
                                 })}
                             </div>
                         </div>
@@ -149,9 +162,7 @@ export default function Authenticated({ auth, header, children }) {
                             <div className="font-medium text-base text-gray-800">
                                 {full_name} ({getPostion(role)})
                             </div>
-                            <div className="font-medium text-sm text-gray-500">
-                                {email}
-                            </div>
+                            <div className="font-medium text-sm text-gray-500"></div>
                         </div>
 
                         <div className="mt-3 space-y-1">

@@ -6,13 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\DonViTinh;
 use App\Models\LoaiThuoc;
 use App\Models\Thuoc;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class MedicineController extends Controller
 {
-    public function index(): Response
+    public function index()
     {
         $medicines = Thuoc::with(['loaiThuoc', 'donVi'])->paginate(10);
         return Inertia::render('Medicine/List', [

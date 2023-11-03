@@ -1,12 +1,16 @@
-export default function Checkbox({ className = '', ...props }) {
+export default function Checkbox({ label = "", className = "", id, ...props }) {
     return (
-        <input
-            {...props}
-            type="checkbox"
-            className={
-                'rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 ' +
-                className
-            }
-        />
+        <div className="flex gap-2 items-center">
+            <input
+                {...props}
+                type="checkbox"
+                className={
+                    "rounded border-gray-300 text-indigo-600 shadow-sm " +
+                    className
+                }
+                id={id}
+            />
+            <label htmlFor={id}>{label}</label>
+        </div>
     );
 }

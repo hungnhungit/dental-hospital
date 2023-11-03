@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class PhanQuyen extends Model
 {
@@ -16,4 +17,9 @@ class PhanQuyen extends Model
     protected $primaryKey = 'Id';
 
     protected $fillable = [];
+
+    public function ham(): BelongsToMany
+    {
+        return $this->belongsToMany(Ham::class, 'phanquyenham', 'PhanQuyenId', 'HamId')->as('payload')->withPivot('on');
+    }
 }

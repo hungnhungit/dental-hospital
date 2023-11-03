@@ -4,10 +4,10 @@ import Table from "@/Components/Table";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import _get from "lodash/get";
-import { useState } from "react";
-import useCols from "./Cols";
 import qs from "query-string";
+import { useState } from "react";
 import { toast } from "react-toastify";
+import useCols from "./Cols";
 
 export default function ListMedicine(props) {
     const { page } = qs.parse(location.search);
@@ -50,7 +50,7 @@ export default function ListMedicine(props) {
                         setCurrentPage(page);
                         router.get(
                             route(route().current()),
-                            { page, query },
+                            { page },
                             {
                                 preserveState: true,
                                 replace: true,
