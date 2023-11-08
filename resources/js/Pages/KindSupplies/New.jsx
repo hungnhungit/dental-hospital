@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
 export default function NewKindSupplies(props) {
-    const {} = props;
+    const { kindSupplies } = props;
     const isModeEdit = kindSupplies ? true : false;
 
     const { handleSubmit, control } = useForm({
@@ -16,11 +16,23 @@ export default function NewKindSupplies(props) {
 
     const onSubmit = (data) => {
         if (!isModeEdit) {
-            router.post("/loai-vat-tu", data);
-            toast.success("Thêm loại vật tư thành công !");
+            router.post("/loai-vat-tu", data, {
+                onSuccess: () => {
+                    toast.success("Thêm loại vật tư thành công !");
+                },
+                onError: () => {
+                    toast.error("Loại vật tư đã tồn tại !");
+                },
+            });
         } else {
-            router.put(`/loai-vat-tu/${kindSupplies.id}`, data);
-            toast.success("Sửa loại vật tư thành công !");
+            router.put(`/loai-vat-tu/${kindSupplies.id}`, data, {
+                onSuccess: () => {
+                    toast.success("Sửa loại vật tư thành công !");
+                },
+                onError: () => {
+                    toast.error("Loại vật tư đã tồn tại !");
+                },
+            });
         }
     };
 
@@ -37,7 +49,7 @@ export default function NewKindSupplies(props) {
                     </h2>
                     <Link
                         className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
-                        href={route("loai-dich-vu.index")}
+                        href={route("loai-vat-tu.index")}
                     >
                         Danh sách loại vật tư
                     </Link>

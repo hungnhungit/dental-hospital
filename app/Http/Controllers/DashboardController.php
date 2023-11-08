@@ -12,6 +12,7 @@ use App\Models\TienTrinhDieuTri;
 use App\Models\VatTu;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use PDF;
@@ -24,7 +25,7 @@ class DashboardController extends Controller
             'TongBenhNhan' => BenhNhan::query()->count(),
             'TongThuoc' => Thuoc::query()->get()->sum->SoLuong,
             'TongVatTu' => VatTu::query()->get()->sum->SoLuong,
-            'DoanhThu' => HoaDon::query()->get()->sum->TongSoTien,
+            'DoanhThu' => HoaDon::whereMonth('NgayLap', Carbon::now())->get()->sum->TongSoTien,
         ]);
     }
 }

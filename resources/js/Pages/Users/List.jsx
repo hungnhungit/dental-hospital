@@ -16,12 +16,11 @@ export default function ListUser(props) {
     const [query, setQuery] = useState(account || "");
     const cols = useCols({
         handleDelete: (id) => {
-            router.delete(route("users.destroy"), {
-                data: {
-                    id,
-                },
-            });
+            router.delete(route("taikhoan.destroy", id));
             toast.success("Xoá tài khoản thành công !");
+        },
+        handleEdit: (id) => {
+            router.visit(route("taikhoan.edit", id));
         },
     });
     const search = (event) => {
@@ -48,7 +47,7 @@ export default function ListUser(props) {
                     </h2>
                     <Link
                         className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
-                        href={route("users.new")}
+                        href={route("taikhoan.create")}
                     >
                         Thêm mới
                     </Link>

@@ -1,12 +1,25 @@
+import InputSearch from "@/Components/InputSearch";
 import PageContainer from "@/Components/PageContainer";
+import Pagination from "@/Components/Pagination";
 import Table from "@/Components/Table";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { getRouter } from "@/Utils/router";
 import { Head, Link, router } from "@inertiajs/react";
 import _get from "lodash/get";
+import qs from "query-string";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import useCols from "./Cols";
 
 export default function ListServices(props) {
+    const { page, sortCols, sortType } = qs.parse(location.search);
+    const [sorting, setSorting] = useState([
+        {
+            id: sortCols,
+            desc: sortType === "desc",
+        },
+    ]);
+    const [currentPage, setCurrentPage] = useState(Number(page || 1));
     const cols = useCols({
         handleDelete: (id) => {
             router.delete(route("dichvu.destroy", id));
@@ -37,7 +50,39 @@ export default function ListServices(props) {
             <Head title="QL dịch vụ" />
 
             <PageContainer>
-                <Table data={_get(props, "services", [])} columns={cols} />
+                <InputSearch
+                    placeholder="tên"
+                    onSearch={(query) => {
+                        getRouter({ q: query, page: 1 });
+                        setCurrentPage(1);
+                    }}
+                />
+                <Table
+                    sorting={sorting}
+                    setSorting={(e) => {
+                        const sorts = e(sorting);
+                        setSorting(sorts);
+                        getRouter({
+                            sortCols: sorts[0]?.id,
+                            sortType: sorts[0]
+                                ? sorts[0]?.desc
+                                    ? "desc"
+                                    : "asc"
+                                : undefined,
+                        });
+                    }}
+                    data={_get(props, "services", [])}
+                    columns={cols}
+                />
+                <Pagination
+                    totalCount={_get(props, "totalPage")}
+                    currentPage={currentPage}
+                    pageSize={10}
+                    onPageChange={(page) => {
+                        getRouter({ page });
+                        setCurrentPage(page);
+                    }}
+                />
             </PageContainer>
         </AuthenticatedLayout>
     );

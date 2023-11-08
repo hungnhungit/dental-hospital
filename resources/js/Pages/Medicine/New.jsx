@@ -4,9 +4,9 @@ import PageContainer from "@/Components/PageContainer";
 import PrimaryButton from "@/Components/PrimaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
+import _get from "lodash/get";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import _get from "lodash/get";
 
 export default function NewMedicine(props) {
     const { medicine } = props;
@@ -37,7 +37,7 @@ export default function NewMedicine(props) {
                     </h2>
                     <Link
                         className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
-                        href={route("loai-dich-vu.index")}
+                        href={route("thuoc.index")}
                     >
                         Danh sách thuốc
                     </Link>
@@ -121,6 +121,17 @@ export default function NewMedicine(props) {
                                 })}
                             </select>
                         </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-10 mt-5">
+                        <InputControl
+                            type="date"
+                            control={control}
+                            name="HSD"
+                            className="mt-1 block w-full"
+                            label="HSD"
+                            maxLength={10}
+                            rules={{ required: "HSD không để trống" }}
+                        />
                     </div>
                     <PrimaryButton type="submit" className="mt-4">
                         {isModeEdit ? "Sửa" : "Thêm mới"}

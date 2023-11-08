@@ -50,8 +50,12 @@ class DatabaseSeeder extends Seeder
         ChucVu::truncate();
         BenhNhan::truncate();
         LoaiDichVu::truncate();
+        VatTu::truncate();
+        Thuoc::truncate();
         DichVu::truncate();
         SoKhamBenh::truncate();
+        TinTuc::truncate();
+        LoaiTinTuc::truncate();
         TienTrinhDieuTri::truncate();
         LoaiVatTu::truncate();
         LoaiThuoc::truncate();
@@ -118,7 +122,8 @@ class DatabaseSeeder extends Seeder
             "NgaySinh" => $faker->dateTime(),
             "DiaChi" => "Hải Phòng",
             "MaChucVu" => 1,
-            "MaTaiKhoan" => $doctor['Id']
+            "MaTaiKhoan" => $doctor['Id'],
+            "DienThoai" => $faker->phoneNumber()
         ]);
 
         NhanVien::create([
@@ -126,7 +131,8 @@ class DatabaseSeeder extends Seeder
             "NgaySinh" => $faker->dateTime(),
             "DiaChi" => "Hải Phòng",
             "MaChucVu" => 2,
-            "MaTaiKhoan" => $receptionist['Id']
+            "MaTaiKhoan" => $receptionist['Id'],
+            "DienThoai" => $faker->phoneNumber()
         ]);
 
         NhanVien::create([
@@ -134,7 +140,8 @@ class DatabaseSeeder extends Seeder
             "NgaySinh" => $faker->dateTime(),
             "DiaChi" => "Hải Phòng",
             "MaChucVu" => 3,
-            "MaTaiKhoan" => $nurse['Id']
+            "MaTaiKhoan" => $nurse['Id'],
+            "DienThoai" => $faker->phoneNumber()
         ]);
 
         BenhNhan::create([
@@ -292,6 +299,16 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Thuoc::create([
+            'TenThuoc' => 'Lipitor',
+            'LoaiThuocId' => 1,
+            'MaDonVi' => 1,
+            'CongDung' => 'Chữa bệnh',
+            'CachDung' => 'Uống',
+            'SoLuong' => 0,
+            'HSD' => $faker->dateTime()
+        ]);
+
+        Thuoc::create([
             'TenThuoc' => 'Nhỏ mũi',
             'LoaiThuocId' => 1,
             'MaDonVi' => 1,
@@ -323,6 +340,13 @@ class DatabaseSeeder extends Seeder
             'LoaiVatTuID' => 1,
             'MaDonVi' => 1,
             'SoLuong' => 20
+        ]);
+
+        VatTu::create([
+            'TenVT' => 'X-Quang',
+            'LoaiVatTuID' => 1,
+            'MaDonVi' => 1,
+            'SoLuong' => 0
         ]);
 
         SoKhamBenh::create([

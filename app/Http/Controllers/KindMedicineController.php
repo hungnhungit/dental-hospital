@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DonViTinh;
 use App\Models\LoaiThuoc;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -48,6 +49,12 @@ class KindMedicineController extends Controller
     {
         $record = LoaiThuoc::query()->findOrFail($id);
 
+        $checkDuplicate = LoaiThuoc::where('LoaiThuoc', $request['name'])->first();
+
+        if ($checkDuplicate && $checkDuplicate['Id'] !== $record['Id']) {
+            throw ValidationException::withMessages(['message' => "DUPLICATE"]);
+        }
+
         $record->update([
             'LoaiThuoc' => $request['name'],
         ]);
@@ -57,6 +64,12 @@ class KindMedicineController extends Controller
 
     public function store(Request $request)
     {
+        $checkDuplicate = LoaiThuoc::where('LoaiThuoc', $request['name'])->first();
+
+        if ($checkDuplicate) {
+            throw ValidationException::withMessages(['message' => "DUPLICATE"]);
+        }
+
         LoaiThuoc::create([
             'LoaiThuoc' => $request['name'],
         ]);

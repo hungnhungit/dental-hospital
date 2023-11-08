@@ -10,6 +10,7 @@ const useCols = ({ handleDelete, handleEdit }) => {
             columnHelper.accessor("TenVT", {
                 header: "Tên vật tư",
                 cell: (info) => info.getValue(),
+                enableSorting: true,
             }),
             columnHelper.accessor("LoaiVatTu", {
                 header: "Tên loại vật tư",

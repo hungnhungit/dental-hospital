@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\LoaiTinTuc;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -45,6 +46,12 @@ class KindNewController extends Controller
     {
         $record = LoaiTinTuc::query()->findOrFail($id);
 
+        $checkDuplicate = LoaiTinTuc::where('LoaiTinTuc', $request['name'])->first();
+
+        if ($checkDuplicate && $checkDuplicate['Id'] !== $record['Id']) {
+            throw ValidationException::withMessages(['message' => "DUPLICATE"]);
+        }
+
         $record->update([
             'LoaiTinTuc' => $request['name'],
         ]);
@@ -54,6 +61,12 @@ class KindNewController extends Controller
 
     public function store(Request $request)
     {
+        $checkDuplicate = LoaiTinTuc::where('LoaiTinTuc', $request['name'])->first();
+
+        if ($checkDuplicate) {
+            throw ValidationException::withMessages(['message' => "DUPLICATE"]);
+        }
+
         LoaiTinTuc::create([
             'LoaiTinTuc' => $request['name'],
         ]);

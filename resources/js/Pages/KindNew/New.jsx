@@ -20,11 +20,23 @@ export default function NewKindNew(props) {
 
     const onSubmit = (data) => {
         if (!isModeEdit) {
-            router.post("/loai-tin-tuc", data);
-            toast.success("Thêm loại thuốc thành công !");
+            router.post("/loai-tin-tuc", data, {
+                onSuccess: () => {
+                    toast.success("Thêm loại tin tức thành công !");
+                },
+                onError: () => {
+                    toast.error("Loại tin tức đã tồn tại !");
+                },
+            });
         } else {
-            router.put(`/loai-tin-tuc/${kindNew.id}`, data);
-            toast.success("Sửa loại thuốc thành công !");
+            router.put(`/loai-tin-tuc/${kindNew.id}`, data, {
+                onSuccess: () => {
+                    toast.success("Sửa loại tin tức thành công !");
+                },
+                onError: () => {
+                    toast.error("Loại tin tức đã tồn tại !");
+                },
+            });
         }
     };
 

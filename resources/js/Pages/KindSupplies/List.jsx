@@ -6,7 +6,6 @@ import _get from "lodash/get";
 import useCols from "./Cols";
 
 export default function ListKindSupplies(props) {
-    console.log(props);
     const cols = useCols({
         handleDelete: (id) => {
             router.delete(route("loai-vat-tu.destroy", id));

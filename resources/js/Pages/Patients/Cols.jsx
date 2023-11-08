@@ -7,9 +7,10 @@ const columnHelper = createColumnHelper();
 const useCols = ({ handleDelete, handleEdit }) => {
     const cols = useMemo(() => {
         return [
-            columnHelper.accessor("full_name", {
+            columnHelper.accessor("HoVaTen", {
                 header: "Họ và tên",
                 cell: (info) => info.getValue(),
+                enableSorting: true,
             }),
             columnHelper.accessor("dob", {
                 header: "Ngày sinh",

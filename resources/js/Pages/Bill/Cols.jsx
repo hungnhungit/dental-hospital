@@ -1,7 +1,7 @@
 import { createColumnHelper } from "@/Components/Table";
 import { formatNumber, getStatusText } from "@/Utils/helpers";
 import { useMemo } from "react";
-import { BsCreditCard2Back, BsPrinter, BsTrash } from "react-icons/bs";
+import { BsPrinter, BsTrash } from "react-icons/bs";
 
 const columnHelper = createColumnHelper();
 
@@ -19,6 +19,7 @@ const useCols = ({ handlePrint }) => {
             columnHelper.accessor("TenHoaDon", {
                 header: "Tên hoá đơn",
                 cell: (info) => info.getValue(),
+                enableSorting: true,
             }),
             columnHelper.accessor("TongSoTien", {
                 header: "Tổng tiền",
@@ -31,6 +32,10 @@ const useCols = ({ handlePrint }) => {
                         {getStatusText(info.getValue())}
                     </span>
                 ),
+            }),
+            columnHelper.accessor("NgayLap", {
+                header: "Ngày tạo",
+                cell: (info) => info.getValue(),
             }),
             columnHelper.accessor("NguoiTao", {
                 header: "người tạo",
@@ -45,7 +50,6 @@ const useCols = ({ handlePrint }) => {
                 cell: (info) => (
                     <>
                         <BsTrash className="cursor-pointer" />
-                        <BsCreditCard2Back className="cursor-pointer" />
                         <BsPrinter
                             className="cursor-pointer"
                             onClick={() => {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\LoaiVatTu;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -46,6 +47,12 @@ class KindSuppliesController extends Controller
     {
         $record = LoaiVatTu::query()->findOrFail($id);
 
+        $checkDuplicate = LoaiVatTu::where('LoaiVatTu', $request['name'])->first();
+
+        if ($checkDuplicate && $checkDuplicate['Id'] !== $record['Id']) {
+            throw ValidationException::withMessages(['message' => "DUPLICATE"]);
+        }
+
         $record->update([
             'LoaiVatTu' => $request['name'],
         ]);
@@ -55,6 +62,12 @@ class KindSuppliesController extends Controller
 
     public function store(Request $request)
     {
+        $checkDuplicate = LoaiVatTu::where('LoaiVatTu', $request['name'])->first();
+
+        if ($checkDuplicate) {
+            throw ValidationException::withMessages(['message' => "DUPLICATE"]);
+        }
+
         LoaiVatTu::create([
             'LoaiVatTu' => $request['name'],
         ]);

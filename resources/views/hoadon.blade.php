@@ -6,6 +6,18 @@
         body {
             font-family: DejaVu Sans, sans-serif;
         }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table,
+        td,
+        th {
+            border: 1px solid;
+            text-align: center;
+        }
     </style>
     <title>Bill</title>
 </head>

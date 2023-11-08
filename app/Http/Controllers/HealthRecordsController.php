@@ -8,6 +8,7 @@ use App\Models\NhanVien;
 use App\Models\SoKhamBenh;
 use App\Models\TienTrinhDieuTri;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -17,12 +18,15 @@ class HealthRecordsController extends Controller
 {
     public function index(): Response
     {
-        $healthRecords = SoKhamBenh::with(['bacSi', 'benhNhan'])->paginate(10);
+        $healthRecords = SoKhamBenh::query()->join('benhnhan', 'sokhambenh.MaBenhNhan', '=', 'benhnhan.id')->with(['bacSi', 'benhNhan'])->whereHas('benhNhan', function (Builder $q) {
+            $q->where('HoVaTen', 'LIKE', '%' . request('q') . '%');
+        })->orderBy('benhnhan.HoVaTen', request('sortType', 'asc'))->paginate(10);
+
         return Inertia::render('HealthRecords/List', [
             "healthRecords" => collect($healthRecords->items())->map(function ($item) {
                 return [
                     "id" => $item['Id'],
-                    "BenhNhan" => $item['benhNhan']['HoVaTen'],
+                    "HoVaTen" => $item['benhNhan']['HoVaTen'],
                     "BacSi" => $item['bacSi']['HoVaTen'],
                     "ChanDoanBenh" => $item['ChanDoanBenh'],
                     "TrangThai" => $item['TrangThai']
@@ -64,7 +68,7 @@ class HealthRecordsController extends Controller
     public function show(int $id)
     {
         $record = SoKhamBenh::query()->with(['bacSi', 'benhNhan'])->findOrFail($id);
-        $process = TienTrinhDieuTri::query()->with(['thuoc', 'vatTu', 'dichVu'])->where('MaSoKhamBenh', $id)->paginate();
+        $process = TienTrinhDieuTri::query()->with(['thuoc', 'vatTu', 'dichVu'])->where('MaSoKhamBenh', $id)->paginate(10);
         return Inertia::render('HealthRecords/Detail', [
             "records" => [
                 "id" => $record['Id'],
@@ -80,6 +84,8 @@ class HealthRecordsController extends Controller
                     "VatTu" => $item['vatTu']['TenVT'],
                     "DichVu" => $item['dichVu']['TenDichVu'],
                     'ChiTietDieuTri' => $item['ChiTietDieuTri'],
+                    'Sothuoc' => $item['Sothuoc'],
+                    'SoVatTu' => $item['SoVatTu'],
                     'NgayDieuTri' => Carbon::parse($item['NgayDieuTri'])->format('d/m/Y'),
                 ];
             }),

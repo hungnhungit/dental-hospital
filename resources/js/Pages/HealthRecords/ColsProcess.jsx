@@ -15,8 +15,16 @@ const useColsProcess = ({ handleDelete, handleEdit }) => {
                 header: "Thuốc",
                 cell: (info) => info.getValue(),
             }),
+            columnHelper.accessor("Sothuoc", {
+                header: "Số lượng thuốc",
+                cell: (info) => info.getValue(),
+            }),
             columnHelper.accessor("VatTu", {
                 header: "Vật tư",
+                cell: (info) => info.getValue(),
+            }),
+            columnHelper.accessor("SoVatTu", {
+                header: "Số lượng vật tư",
                 cell: (info) => info.getValue(),
             }),
             columnHelper.accessor("ChiTietDieuTri", {

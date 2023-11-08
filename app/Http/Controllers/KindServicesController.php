@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\LoaiDichVu;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -46,6 +47,12 @@ class KindServicesController extends Controller
     {
         $record = LoaiDichVu::query()->findOrFail($id);
 
+        $checkDuplicate = LoaiDichVu::where('LoaiDichVu', $request['name'])->first();
+
+        if ($checkDuplicate && $checkDuplicate['Id'] !== $record['Id']) {
+            throw ValidationException::withMessages(['message' => "DUPLICATE"]);
+        }
+
         $record->update([
             'LoaiDichVu' => $request['name'],
         ]);
@@ -55,6 +62,12 @@ class KindServicesController extends Controller
 
     public function store(Request $request)
     {
+        $checkDuplicate = LoaiDichVu::where('LoaiDichVu', $request['name'])->first();
+
+        if ($checkDuplicate) {
+            throw ValidationException::withMessages(['message' => "DUPLICATE"]);
+        }
+
         LoaiDichVu::create([
             'LoaiDichVu' => $request['name'],
         ]);

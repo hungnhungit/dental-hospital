@@ -7,6 +7,7 @@ use App\Models\BenhNhan;
 use App\Models\HoaDon;
 use App\Models\NhanVien;
 use App\Models\TienTrinhDieuTri;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -14,9 +15,9 @@ use PDF;
 
 class BillController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $bills = HoaDon::with(['nhanVien', 'benhNhan'])->paginate(10);
+        $bills = HoaDon::query()->with(['nhanVien', 'benhNhan'])->where('TenHoaDon', 'LIKE', '%' . request('q') . '%')->orderBy('TenHoaDon', $request['sortType'] ?? 'asc')->paginate(10);
         return Inertia::render('Bill/List', [
             "bills" => collect($bills->items())->map(function ($item) {
                 return [
@@ -25,7 +26,8 @@ class BillController extends Controller
                     "TongSoTien" => $item['TongSoTien'],
                     "NguoiTao" => $item['nhanVien']['HoVaTen'],
                     "BenhNhan" => $item['benhNhan']['HoVaTen'],
-                    'TrangThai' => $item['TrangThai']
+                    'TrangThai' => $item['TrangThai'],
+                    'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y')
                 ];
             }),
             "totalPage" => $bills->total(),

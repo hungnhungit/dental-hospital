@@ -14,6 +14,7 @@ import useColsProcess from "./ColsProcess";
 export default function DetailHealthRecords(props) {
     const { records } = props;
     const { page } = qs.parse(location.search);
+    console.log(records);
     const [currentPage, setCurrentPage] = useState(Number(page || 1));
     const handleChangeStatus = (status) => {
         router.post(route("sokhambenh.changeStatus", records.id), { status });
@@ -24,7 +25,9 @@ export default function DetailHealthRecords(props) {
             router.delete(route("tientrinhdieutri.destroy", id));
             toast.success("Xoá tiến trình điểu trị thành công !");
         },
-        handleEdit: (id) => {},
+        handleEdit: (id) => {
+            router.visit(route("tientrinhdieutri.edit", [records.id, id]));
+        },
     });
 
     return (
@@ -86,26 +89,43 @@ export default function DetailHealthRecords(props) {
                         )}
                     </div>
                 </div>
-                <div className="mt-10 mb-5 flex justify-between">
-                    <h1 className="text-3xl font-bold">Tiến trình điều trị</h1>
-                    <PrimaryButton>Thêm mới</PrimaryButton>
-                </div>
-                <Table data={_get(props, "process", [])} columns={cols} />
-                <Pagination
-                    totalCount={_get(props, "totalPage")}
-                    currentPage={currentPage}
-                    onPageChange={(page) => {
-                        setCurrentPage(page);
-                        router.get(
-                            route(route().current()),
-                            { page, query },
-                            {
-                                preserveState: true,
-                                replace: true,
-                            }
-                        );
-                    }}
-                />
+                {records.TrangThai === "DangDieutri" ? (
+                    <>
+                        <div className="mt-10 mb-5 flex justify-between">
+                            <h1 className="text-3xl font-bold">
+                                Tiến trình điều trị
+                            </h1>
+                            <Link
+                                className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
+                                href={route(
+                                    "tientrinhdieutri.create",
+                                    records["id"]
+                                )}
+                            >
+                                Thêm mới
+                            </Link>
+                        </div>
+                        <Table
+                            data={_get(props, "process", [])}
+                            columns={cols}
+                        />
+                        <Pagination
+                            totalCount={_get(props, "totalPage")}
+                            currentPage={currentPage}
+                            onPageChange={(page) => {
+                                setCurrentPage(page);
+                                router.get(
+                                    route(route().current()),
+                                    { page, query },
+                                    {
+                                        preserveState: true,
+                                        replace: true,
+                                    }
+                                );
+                            }}
+                        />
+                    </>
+                ) : null}
             </PageContainer>
         </AuthenticatedLayout>
     );

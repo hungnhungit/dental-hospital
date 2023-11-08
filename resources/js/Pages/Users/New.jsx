@@ -8,27 +8,43 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
 export default function NewUser(props) {
+    const { user } = props;
+    const isModeEdit = user ? true : false;
+    console.log(user);
     const { register, handleSubmit, control } = useForm({
-        defaultValues: {
-            fullName: "Nguyễn Thái Hưng",
-            phone: "0707295002",
-            address: "Hải Phòng",
-            username: "hungnt",
-            password: "123456",
-            role: "2",
-            pos: "1",
-            dob: "1994-03-09",
-        },
+        defaultValues: user
+            ? user
+            : {
+                  fullName: "Nguyễn Thái Hưng",
+                  phone: "0707295002",
+                  address: "Hải Phòng",
+                  username: "hungnt",
+                  password: "123456",
+                  role: "2",
+                  pos: "1",
+                  dob: "1994-03-09",
+              },
     });
     const onSubmit = (data) => {
-        const res = router.post(route("users.store"), data, {
-            onError: (errors) => {
-                toast.error("Tài khoản đã tồn tại !");
-            },
-            onSuccess: (data) => {
-                toast.success("Thêm tà khoản thành công !");
-            },
-        });
+        if (!isModeEdit) {
+            router.post(route("taikhoan.store"), data, {
+                onError: (errors) => {
+                    toast.error("Tài khoản đã tồn tại !");
+                },
+                onSuccess: (data) => {
+                    toast.success("Thêm tà khoản thành công !");
+                },
+            });
+        } else {
+            router.put(route("taikhoan.update", user.id), data, {
+                onError: (errors) => {
+                    toast.error("Tài khoản đã tồn tại !");
+                },
+                onSuccess: (data) => {
+                    toast.success("Thêm tà khoản thành công !");
+                },
+            });
+        }
     };
 
     return (
@@ -38,11 +54,11 @@ export default function NewUser(props) {
             header={
                 <div className="flex justify-between">
                     <h2 className="font-semibold text-xl text-gray-800 leading-tight uppercase">
-                        thêm mới tài khoản
+                        {isModeEdit ? "Sửa tài khoản" : "Thêm mới tài khoản"}
                     </h2>
                     <Link
                         className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
-                        href={route("users.list")}
+                        href={route("taikhoan.index")}
                     >
                         Danh sách tài khoản
                     </Link>
@@ -94,14 +110,16 @@ export default function NewUser(props) {
                             label="Tên tài khoản"
                             rules={{ required: "Tên tài khoản không để trống" }}
                         />
-                        <InputControl
-                            control={control}
-                            name="password"
-                            className="mt-1 block w-full"
-                            label="Mật khẩu"
-                            type="password"
-                            rules={{ required: "Mật khẩu không để trống" }}
-                        />
+                        {isModeEdit ? null : (
+                            <InputControl
+                                control={control}
+                                name="password"
+                                className="mt-1 block w-full"
+                                label="Mật khẩu"
+                                type="password"
+                                rules={{ required: "Mật khẩu không để trống" }}
+                            />
+                        )}
                     </div>
                     <div className="grid grid-cols-2 gap-10 mt-7">
                         <div>
@@ -130,7 +148,7 @@ export default function NewUser(props) {
                         </div>
                     </div>
                     <PrimaryButton type="submit" className="mt-4">
-                        Thêm mới
+                        {isModeEdit ? "Sửa" : "Thêm mới"}
                     </PrimaryButton>
                 </form>
             </PageContainer>

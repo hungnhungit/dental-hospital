@@ -1,14 +1,18 @@
 const common = [
-    { name: "dashboard", label: "Trang chủ" },
-    { name: "benhnhan.index", label: "Bệnh nhân" },
-    { name: "thuoc.index", label: "Thuốc" },
-    { name: "vat-tu.index", label: "Vật tư" },
+    { name: "dashboard", label: "Trang chủ", permission: "access" },
+    {
+        name: "benhnhan.index",
+        label: "Bệnh nhân",
+        permission: "benhnhan.index",
+    },
+    { name: "thuoc.index", label: "Thuốc", permission: "thuoc.index" },
+    { name: "vat-tu.index", label: "Vật tư", permission: "vat-tu.index" },
 ];
 
 const MENUS = {
     admin: [
         { name: "dashboard", label: "Trang chủ" },
-        { name: "users.list", label: "Tài khoản" },
+        { name: "taikhoan.index", label: "Tài khoản" },
         { name: "tin-tuc.index", label: "Tin tức" },
         { name: "loai-tin-tuc.index", label: "Loại tin tức" },
         { name: "quyen.index", label: "Quyền" },
@@ -40,14 +44,14 @@ const MENUS = {
         { name: "hoadon.index", label: "Hoá đơn", permission: "hoadon.index" },
         { name: "dichvu.index", label: "Dịch vụ", permission: "dichvu.index" },
         {
-            name: "loai-dich-vu.index",
-            label: "Loại dịch vụ",
-            permission: "loai-dich-vu.index",
-        },
-        {
             name: "donvitinh.index",
             label: "Đơn vị tính",
             permission: "donvitinh.index",
+        },
+        {
+            name: "loai-dich-vu.index",
+            label: "Loại dịch vụ",
+            permission: "loai-dich-vu.index",
         },
         {
             name: "loai-vat-tu.index",

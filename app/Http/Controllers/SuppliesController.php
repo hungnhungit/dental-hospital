@@ -9,12 +9,13 @@ use App\Models\VatTu;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use PDF;
 
 class SuppliesController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $supplies = VatTu::with(['loaiVatTu', 'donVi'])->paginate(10);
+        $supplies = VatTu::query()->with(['loaiVatTu', 'donVi'])->where('TenVT', 'LIKE', '%' . request('q') . '%')->orderBy('TenVT', $request['sortType'] ?? 'asc')->paginate(10);
 
         return Inertia::render('Supplies/List', [
             "supplies" => collect($supplies->items())->map(function ($item) {
@@ -89,5 +90,21 @@ class SuppliesController extends Controller
         VatTu::destroy($id);
 
         return back();
+    }
+
+    public function pdfRemainingAmount()
+    {
+        $supplies = VatTu::with(['loaiVatTu', 'donVi'])->where('SoLuong', '>', 0)->get();
+        $data = ["data" => collect($supplies)->map(function ($item) {
+            return [
+                "id" => $item['Id'],
+                "TenVT" => $item['TenVT'],
+                "LoaiVatTu" => $item['loaiVatTu']['LoaiVatTu'],
+                "DonVi" => $item['donVi']['DonVi'],
+                "SoLuong" => $item['SoLuong'],
+            ];
+        })];
+        $pdf = PDF::loadView('vattu', $data);
+        return $pdf->download('vattu.pdf');
     }
 }

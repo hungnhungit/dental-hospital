@@ -6,7 +6,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import _get from "lodash/get";
 
 export default function NewMedicine(props) {
     const { patient } = props;
@@ -37,7 +36,7 @@ export default function NewMedicine(props) {
                     </h2>
                     <Link
                         className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
-                        href={route("loai-dich-vu.index")}
+                        href={route("benhnhan.index")}
                     >
                         Danh sách bệnh nhân
                     </Link>

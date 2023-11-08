@@ -10,15 +10,15 @@ use Inertia\Response;
 
 class PatientController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $patients = BenhNhan::paginate(10);
+        $patients = BenhNhan::query()->where('HoVaTen', 'LIKE', '%' . request('q') . '%')->orderBy('HoVaTen', $request['sortType'] ?? 'asc')->paginate(10);
 
         return Inertia::render('Patients/List', [
             "patients" => collect($patients->items())->map(function ($item) {
                 return [
                     "id" => $item['Id'],
-                    "full_name" => $item['HoVaTen'],
+                    "HoVaTen" => $item['HoVaTen'],
                     "dob" => $item['NgaySinh'],
                     "phone" => $item['DienThoai'],
                     "address" => $item['DiaChi'],

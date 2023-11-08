@@ -16,11 +16,23 @@ export default function NewKindService(props) {
 
     const onSubmit = (data) => {
         if (!isModeEdit) {
-            router.post("/loai-dich-vu", data);
-            toast.success("Thêm loại dịch vụ thành công !");
+            router.post("/loai-dich-vu", data, {
+                onSuccess: () => {
+                    toast.success("Thêm loại dịch vụ thành công !");
+                },
+                onError: () => {
+                    toast.error("Loại dịch vụ đã tồn tại !");
+                },
+            });
         } else {
-            router.put(`/loai-dich-vu/${kindService.id}`, data);
-            toast.success("Sửa loại dịch vụ thành công !");
+            router.put(`/loai-dich-vu/${kindService.id}`, data, {
+                onSuccess: () => {
+                    toast.success("Sửa loại dịch vụ thành công  !");
+                },
+                onError: () => {
+                    toast.error("Loại dịch vụ đã tồn tại !");
+                },
+            });
         }
     };
 

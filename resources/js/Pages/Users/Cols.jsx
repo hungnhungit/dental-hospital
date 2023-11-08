@@ -1,10 +1,10 @@
 import { createColumnHelper } from "@/Components/Table";
 import { useMemo } from "react";
-import { BsTrash } from "react-icons/bs";
+import { BsPencil, BsTrash } from "react-icons/bs";
 
 const columnHelper = createColumnHelper();
 
-const useCols = ({ handleDelete }) => {
+const useCols = ({ handleDelete, handleEdit }) => {
     const cols = useMemo(() => {
         return [
             columnHelper.accessor("full_name", {
@@ -21,6 +21,10 @@ const useCols = ({ handleDelete }) => {
             }),
             columnHelper.accessor("address", {
                 header: "Địa chỉ",
+                cell: (info) => info.getValue(),
+            }),
+            columnHelper.accessor("phone", {
+                header: "Số điện thoại",
                 cell: (info) => info.getValue(),
             }),
             columnHelper.accessor("position", {
@@ -41,6 +45,12 @@ const useCols = ({ handleDelete }) => {
                                 ) {
                                     handleDelete(info.row.original.id);
                                 }
+                            }}
+                        />
+                        <BsPencil
+                            className="cursor-pointer"
+                            onClick={() => {
+                                handleEdit(info.row.original.id);
                             }}
                         />
                     </>

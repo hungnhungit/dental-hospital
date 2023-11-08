@@ -11,14 +11,14 @@ use Inertia\Response;
 
 class ServiceController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $services = DichVu::with('loaiDichVu')->paginate(10);
+        $services = DichVu::query()->with('loaiDichVu')->where('TenDichVu', 'LIKE', '%' . request('q') . '%')->orderBy('TenDichVu', $request['sortType'] ?? 'asc')->paginate(10);
         return Inertia::render('Services/List', [
             "services" => collect($services->items())->map(function ($item) {
                 return [
                     "id" => $item['Id'],
-                    "name" => $item['TenDichVu'],
+                    "TenDichVu" => $item['TenDichVu'],
                     "desc" => $item['MoTa'],
                     "price" => $item['Gia'],
                     'kindService' => $item['loaiDichVu']['LoaiDichVu']

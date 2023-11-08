@@ -28,6 +28,22 @@ class NewsController extends Controller
         ]);
     }
 
+    public function blog(): Response
+    {
+        $news = TinTuc::with(['loaiTinTuc'])->get();
+
+        return Inertia::render('Blog/List', [
+            "news" => collect($news)->map(function ($item) {
+                return [
+                    "id" => $item['Id'],
+                    "title" => $item['TieuDe'],
+                    "desc" => $item['NoiDung'],
+                    "kindNew" => $item['loaiTinTuc']['LoaiTinTuc']
+                ];
+            }),
+        ]);
+    }
+
     public function create()
     {
         $kindNews = LoaiTinTuc::all();

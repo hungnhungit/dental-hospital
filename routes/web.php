@@ -18,6 +18,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StatisticalController;
 use App\Http\Controllers\SuppliesController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -37,11 +38,8 @@ use Inertia\Inertia;
 Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
     Route::get('/trangchu', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/taikhoan', [UsersController::class, 'index'])->name('users.list');
-    Route::post('/taikhoan', [UsersController::class, 'store'])->name('users.store');
-    Route::get('/taikhoan/tao-moi', [UsersController::class, 'new'])->name('users.new');
-    Route::delete('/taikhoan', [UsersController::class, 'destroy'])->name('users.destroy');
 
+    Route::resource('taikhoan', UsersController::class);
     Route::resource('tin-tuc', NewsController::class);
     Route::resource('loai-tin-tuc', KindNewController::class);
     Route::resource('loai-thuoc', KindMedicineController::class);
@@ -50,12 +48,17 @@ Route::middleware('auth')->group(function () {
     Route::resource('loai-vat-tu', KindSuppliesController::class);
     Route::resource('dichvu', ServiceController::class);
     Route::resource('benhnhan', PatientController::class);
+    Route::post('api/thuoc/pdf', [MedicineController::class, 'pdfRemainingAmount'])->name('thuoc.pdf');
     Route::resource('thuoc', MedicineController::class);
+    Route::post('api/vat-tu/pdf', [SuppliesController::class, 'pdfRemainingAmount'])->name('vat-tu.pdf');
     Route::resource('vat-tu', SuppliesController::class);
     Route::post('api/hoadon/{id}/pdf', [BillController::class, 'pdf'])->name('hoadon.pdf');
     Route::resource('hoadon', BillController::class);
     Route::delete('tientrinhdieutri', [ProccessController::class, 'destroy']);
-    Route::get('sokhambenh/{id}tientrinhdieutri/create', [ProccessController::class, 'create']);
+    Route::get('sokhambenh/{id}/tientrinhdieutri/create', [ProccessController::class, 'create'])->name('tientrinhdieutri.create');
+    Route::post('sokhambenh/{id}/tientrinhdieutri/store', [ProccessController::class, 'store'])->name('tientrinhdieutri.store');
+    Route::get('sokhambenh/{id}/tientrinhdieutri/edit/{idT}', [ProccessController::class, 'edit'])->name('tientrinhdieutri.edit');
+    Route::put('sokhambenh/{id}/tientrinhdieutri/edit/{idT}', [ProccessController::class, 'update'])->name('tientrinhdieutri.update');
     Route::post('api/sokhambenh/{id}/pdf', [HealthRecordsController::class, 'pdf'])->name('sokhambenh.pdf');
     Route::resource('sokhambenh', HealthRecordsController::class);
     Route::post('sokhambenh/{id}/changeStatus', [HealthRecordsController::class, 'changeStatus'])->name('sokhambenh.changeStatus');
@@ -68,5 +71,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/danh-sach-bai-viet', [NewsController::class, 'blog'])->name('blog.index');
 
 require __DIR__ . '/auth.php';

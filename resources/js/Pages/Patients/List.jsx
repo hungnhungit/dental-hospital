@@ -1,15 +1,23 @@
+import InputSearch from "@/Components/InputSearch";
 import PageContainer from "@/Components/PageContainer";
 import Pagination from "@/Components/Pagination";
 import Table from "@/Components/Table";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { getRouter } from "@/Utils/router";
 import { Head, Link, router } from "@inertiajs/react";
 import _get from "lodash/get";
+import qs from "query-string";
 import { useState } from "react";
 import useCols from "./Cols";
-import qs from "query-string";
 
 export default function ListPatients(props) {
-    const { page } = qs.parse(location.search);
+    const { page, sortCols, sortType } = qs.parse(location.search);
+    const [sorting, setSorting] = useState([
+        {
+            id: sortCols,
+            desc: sortType === "desc",
+        },
+    ]);
     const [currentPage, setCurrentPage] = useState(Number(page || 1));
     const cols = useCols({
         handleDelete: (id) => {
@@ -41,20 +49,36 @@ export default function ListPatients(props) {
             <Head title="Quản lý bệnh nhân" />
 
             <PageContainer>
-                <Table data={_get(props, "patients", [])} columns={cols} />
+                <InputSearch
+                    placeholder="tên"
+                    onSearch={(query) => {
+                        getRouter({ q: query, page: 1 });
+                        setCurrentPage(1);
+                    }}
+                />
+                <Table
+                    sorting={sorting}
+                    setSorting={(e) => {
+                        const sorts = e(sorting);
+                        setSorting(sorts);
+                        getRouter({
+                            sortCols: sorts[0]?.id,
+                            sortType: sorts[0]
+                                ? sorts[0]?.desc
+                                    ? "desc"
+                                    : "asc"
+                                : undefined,
+                        });
+                    }}
+                    data={_get(props, "patients", [])}
+                    columns={cols}
+                />
                 <Pagination
                     totalCount={_get(props, "totalPage")}
                     currentPage={currentPage}
                     onPageChange={(page) => {
+                        getRouter({ page });
                         setCurrentPage(page);
-                        router.get(
-                            route(route().current()),
-                            { page, query },
-                            {
-                                preserveState: true,
-                                replace: true,
-                            }
-                        );
                     }}
                 />
             </PageContainer>
