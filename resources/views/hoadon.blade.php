@@ -27,6 +27,32 @@
     <p>Bệnh nhân: {{ $bill['BenhNhan'] }}</p>
     <p>Người tạo: {{ $bill['NguoiTao'] }}</p>
     <p>Tổng số tiền: {{ $bill['TongSoTien'] }} VND</p>
+    <p>GiamGia: {{ $bill['GiamGia'] ?? 0 ?  }} %</p>
+
+    <h2>Tiến trình điểu trị</h2>
+
+    <table>
+        <tr>
+            <th>MÃ</th>
+            <th>DỊCH VỤ</th>
+            <th>THUỐC</th>
+            <th>SỐ THUỐC</th>
+            <th>VẬT TƯ</th>
+            <th>SỐ VẬT TƯ</th>
+            <th>CHI TIẾT ĐIỀU TRỊ</th>
+            <th>NGÀY ĐIỀU TRỊ</th>
+        </tr>
+        <tr>
+            <td>{{ $process['TenTienTrinh'] }}</td>
+            <td>{{ $process['DichVu'] }}</td>
+            <td>{{ $process['Thuoc'] }}</td>
+            <td>{{ $process['Sothuoc'] }}</td>
+            <td>{{ $process['VatTu'] }}</td>
+            <td>{{ $process['SoVatTu'] }}</td>
+            <td>{{ $process['ChiTietDieuTri'] }}</td>
+            <td>{{ $process['NgayDieuTri'] }}</td>
+        </tr>
+    </table>
 </body>
 
 </html>

@@ -1,7 +1,7 @@
 import { createColumnHelper } from "@/Components/Table";
 import { formatNumber, getStatusText } from "@/Utils/helpers";
 import { useMemo } from "react";
-import { BsPrinter, BsTrash } from "react-icons/bs";
+import { BsCreditCard, BsPrinter, BsTrash } from "react-icons/bs";
 
 const columnHelper = createColumnHelper();
 
@@ -13,7 +13,7 @@ const stylesPayment = {
         "uppercase bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300",
 };
 
-const useCols = ({ handlePrint }) => {
+const useCols = ({ handlePrint, handleDelete, handlePay }) => {
     const cols = useMemo(() => {
         return [
             columnHelper.accessor("TenHoaDon", {
@@ -23,7 +23,22 @@ const useCols = ({ handlePrint }) => {
             }),
             columnHelper.accessor("TongSoTien", {
                 header: "Tổng tiền",
-                cell: (info) => formatNumber(info.getValue()),
+                cell: (info) =>
+                    info.row.original["GiamGia"] > 0
+                        ? formatNumber(
+                              info.getValue() -
+                                  (info.getValue() *
+                                      info.row.original["GiamGia"]) /
+                                      100
+                          )
+                        : formatNumber(info.getValue()),
+            }),
+            columnHelper.accessor("GiamGia", {
+                header: "Giảm giá",
+                cell: (info) =>
+                    info.getValue() > 0
+                        ? `${info.getValue()}%`
+                        : "Không giảm giá",
             }),
             columnHelper.accessor("TrangThai", {
                 header: "trạng thái",
@@ -49,7 +64,34 @@ const useCols = ({ handlePrint }) => {
                 header: "Thao tác",
                 cell: (info) => (
                     <>
-                        <BsTrash className="cursor-pointer" />
+                        {info.row.original["TrangThai"] !== "DaThanhToan" ? (
+                            <BsCreditCard
+                                className="cursor-pointer"
+                                onClick={() => {
+                                    if (
+                                        confirm(
+                                            "Bạn có muốn thanh toán hoá đơn này không ?"
+                                        )
+                                    ) {
+                                        handlePay(info.row.original.id);
+                                    }
+                                }}
+                            />
+                        ) : null}
+                        {info.row.original["TrangThai"] !== "DaThanhToan" ? (
+                            <BsTrash
+                                className="cursor-pointer"
+                                onClick={() => {
+                                    if (
+                                        confirm(
+                                            "Bạn có muốn xoá bản ghi này không ?"
+                                        )
+                                    ) {
+                                        handleDelete(info.row.original.id);
+                                    }
+                                }}
+                            />
+                        ) : null}
                         <BsPrinter
                             className="cursor-pointer"
                             onClick={() => {

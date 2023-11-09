@@ -12,6 +12,7 @@ use App\Models\TienTrinhDieuTri;
 use App\Models\TinhTrangBenh;
 use App\Models\VatTu;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -76,6 +77,24 @@ class ProccessController extends Controller
 
     public function store(int $id, Request $request)
     {
+        $thuoc = Thuoc::query()->findOrFail($request['MaThuoc']);
+        $vattu = VatTu::query()->findOrFail($request['MaVatTu']);
+
+        if ($thuoc['SoLuong'] < $request['Sothuoc']) {
+            throw ValidationException::withMessages(['message' => 'QUANTITY_LIMIT_MEDICINE']);
+        }
+
+        if ($vattu['SoLuong'] < $request['SoVatTu']) {
+            throw  ValidationException::withMessages(['message' => 'QUANTITY_LIMIT_SUPPLIES']);
+        }
+
+        $thuoc->update([
+            'SoLuong' => $thuoc['SoLuong'] - $request['Sothuoc']
+        ]);
+
+        $vattu->update([
+            'SoLuong' => $vattu['SoLuong'] - $request['SoVatTu']
+        ]);
 
         TienTrinhDieuTri::create(array_merge($request->all(), ['MaSoKhamBenh' => $id]));
         return to_route('sokhambenh.show', $id);

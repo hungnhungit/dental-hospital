@@ -5,7 +5,16 @@ import InputError from "./InputError";
 import InputLabel from "./InputLabel";
 
 export default function InputControl(props) {
-    const { className, label, type, control, name, rules, disabled } = props;
+    const {
+        className,
+        label,
+        type,
+        control,
+        name,
+        maxLength,
+        rules,
+        disabled,
+    } = props;
     const {
         field,
         fieldState: { error },
@@ -14,6 +23,8 @@ export default function InputControl(props) {
         control,
         rules,
     });
+    console.log(rules);
+    console.log(error);
     const cls = cx([
         "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5",
         error && "border-red-600",
@@ -28,6 +39,7 @@ export default function InputControl(props) {
                 type={type}
                 className={cls}
                 disabled={disabled}
+                maxLength={maxLength}
             />
             {error ? <InputError message={get(error, "message")} /> : null}
         </div>

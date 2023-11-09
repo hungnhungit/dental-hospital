@@ -4,17 +4,14 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { getPostion } from "@/Utils/helpers";
 import { Head, Link, router } from "@inertiajs/react";
-import { chunk, findIndex, partition } from "lodash";
+import { chunk, findIndex, partition, values } from "lodash";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
 const MAP_GROUP_TO_TEXT = {
     ["thuoc"]: "Thuốc",
-    ["loai-thuoc"]: "Loại thuốc",
     ["vat-tu"]: "Vật tư",
     ["dichvu"]: "Dịch vụ",
-    ["loai-dich-vu"]: "Loại dịch vụ",
-    ["loai-vat-tu"]: "Loại vật tư",
     ["benhnhan"]: "Bệnh nhân",
     ["donvitinh"]: "Đơn vị tính",
     ["sokhambenh"]: "Sổ khám bệnh",
@@ -27,16 +24,6 @@ const MAP_PERMISSION_TO_LABEL = {
     ["thuoc.store"]: "Thêm thuốc",
     ["thuoc.update"]: "Sửa thuốc",
     ["thuoc.destroy"]: "Xoá thuốc",
-
-    ["loai-thuoc.index"]: "Danh sách loại thuốc",
-    ["loai-thuoc.store"]: "Thêm loại thuốc",
-    ["loai-thuoc.update"]: "Sửa loại thuốc",
-    ["loai-thuoc.destroy"]: "Xoá loại thuốc",
-
-    ["loai-vat-tu.index"]: "Danh sách loại vật tư",
-    ["loai-vat-tu.store"]: "Thêm loại vật tư",
-    ["loai-vat-tu.update"]: "Sửa loại vật tư",
-    ["loai-vat-tu.destroy"]: "Xoá loại vật tư",
 
     ["vat-tu.index"]: "Danh sách vật tư",
     ["vat-tu.store"]: "Thêm vật tư",
@@ -59,11 +46,6 @@ const MAP_PERMISSION_TO_LABEL = {
     ["dichvu.update"]: "Sửa dịch vụ",
     ["dichvu.destroy"]: "Xoá dịch vụ",
 
-    ["loai-dich-vu.index"]: "Danh sách loại dịch vụ",
-    ["loai-dich-vu.store"]: "Thêm loại dịch vụ",
-    ["loai-dich-vu.update"]: "Sửa loại dịch vụ",
-    ["loai-dich-vu.destroy"]: "Xoá loại dịch vụ",
-
     ["donvitinh.index"]: "Danh sách đơn vị tính",
     ["donvitinh.store"]: "Thêm đơn vị tính",
     ["donvitinh.update"]: "Sửa đơn vị tính",
@@ -81,9 +63,9 @@ const MAP_PERMISSION_TO_LABEL = {
 };
 
 export default function RoleSettings(props) {
-    const { role, permssions } = props;
-    const [permissions, setPermissions] = useState(permssions);
-
+    const { role, permssions, kindP } = props;
+    const [permissions, setPermissions] = useState(values(permssions));
+    const [kindPermission, setKindPermission] = useState(kindP);
     const handleOnChangePermission = (permission, on) => {
         const index = findIndex(permissions, { permission });
 
@@ -104,6 +86,7 @@ export default function RoleSettings(props) {
             {
                 permissionsOn,
                 permissionsOff,
+                kindPermission,
             },
             {
                 onSuccess: () => {
@@ -135,7 +118,16 @@ export default function RoleSettings(props) {
                 <h3 className="text-lg mb-10">
                     Quyền: <strong>{getPostion(role["Quyen"])}</strong>
                 </h3>
-
+                <div className="mb-5">
+                    <Checkbox
+                        key="loai"
+                        id="loai"
+                        label="Loại (Thuốc, Vật tư, Dịch vụ)"
+                        checked={kindPermission}
+                        value={kindPermission}
+                        onChange={(e) => setKindPermission(e.target.checked)}
+                    />
+                </div>
                 <div className="grid grid-cols-3 gap-10">
                     {chunk(permissions, 4).map((chunk, index) => {
                         const group = chunk[0].permission.split(".")[0];

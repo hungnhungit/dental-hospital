@@ -27,6 +27,7 @@ use App\Models\TinTuc;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\VatTu;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Faker\Factory;
 use Illuminate\Support\Facades\DB;
@@ -205,32 +206,7 @@ class DatabaseSeeder extends Seeder
             'LoaiDichVuID' => $kindService1['Id']
         ]);
 
-        HoaDon::create([
-            'TenHoaDon' => $faker->numerify('BILL-####'),
-            'MaNhanVien' => 2,
-            'MaBenhNhan' => 1,
-            'TongSoTien' => 1000000,
-            'NgayLap' => $faker->dateTime(),
-            'TrangThai' => 'DaThanhToan'
-        ]);
 
-        HoaDon::create([
-            'TenHoaDon' => $faker->numerify('BILL-####'),
-            'MaNhanVien' => 2,
-            'MaBenhNhan' => 2,
-            'TongSoTien' => 1000000,
-            'NgayLap' => $faker->dateTime(),
-            'TrangThai' => 'DaThanhToan'
-        ]);
-
-        HoaDon::create([
-            'TenHoaDon' => $faker->numerify('BILL-####'),
-            'MaNhanVien' => 2,
-            'MaBenhNhan' => 3,
-            'TongSoTien' => 1000000,
-            'NgayLap' => $faker->dateTime(),
-            'TrangThai' => 'DaThanhToan'
-        ]);
 
 
         $kindNew1 = LoaiTinTuc::create([
@@ -362,20 +338,22 @@ class DatabaseSeeder extends Seeder
         ]);
 
         TienTrinhDieuTri::create([
+            'TenTienTrinh' => $faker->numerify('TTDT-####'),
             'MaSoKhamBenh' => 1,
             'MaThuoc' => 1,
             'SoThuoc' => 1,
-            'NgayDieuTri' => $faker->dateTime(),
+            'NgayDieuTri' => now()->format('Y-m-d'),
             'ChiTietDieuTri' => 'Điều trị',
             'MaVatTu' => 1,
             'SoVatTu' => 1,
             'MaDichVu' => 1
         ]);
         TienTrinhDieuTri::create([
+            'TenTienTrinh' => $faker->numerify('TTDT-####'),
             'MaSoKhamBenh' => 2,
             'MaThuoc' => 1,
             'SoThuoc' => 1,
-            'NgayDieuTri' => $faker->dateTime(),
+            'NgayDieuTri' => now()->format('Y-m-d'),
             'ChiTietDieuTri' => 'Điều trị',
             'MaVatTu' => 1,
             'SoVatTu' => 1,

@@ -20,6 +20,8 @@ export default function NewBill(props) {
               },
     });
 
+    const hasTT = _get(props, "TienTrinhDieuTri", []).length > 0;
+
     const onSubmit = (data) => {
         if (!isModeEdit) {
             router.post("/hoadon", data);
@@ -101,17 +103,35 @@ export default function NewBill(props) {
                                     (item, index) => {
                                         return (
                                             <option key={index} value={item.id}>
-                                                {item.id} - {item.NgayDieuTri}
+                                                {item.name}
                                             </option>
                                         );
                                     }
                                 )}
                             </select>
                         </div>
+                        <InputControl
+                            type="number"
+                            control={control}
+                            name="GiamGia"
+                            className="mt-1 block w-full"
+                            label="Giảm giá"
+                            rules={{
+                                max: {
+                                    value: 100,
+                                    message: "Nhập mã giảm giá khoảng 0 - 100",
+                                },
+                            }}
+                        />
                     </div>
-                    <PrimaryButton type="submit" className="mt-4">
-                        {isModeEdit ? "Sửa" : "Thêm mới"}
-                    </PrimaryButton>
+                    <div className="flex gap-2 items-center mt-4">
+                        <PrimaryButton type="submit" disabled={!hasTT}>
+                            {isModeEdit ? "Sửa" : "Thêm mới"}
+                        </PrimaryButton>
+                        {!hasTT ? (
+                            <strong>Không còn tiến trình điểu trị</strong>
+                        ) : null}
+                    </div>
                 </form>
             </PageContainer>
         </AuthenticatedLayout>

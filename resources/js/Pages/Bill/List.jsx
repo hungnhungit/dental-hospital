@@ -5,10 +5,11 @@ import Table from "@/Components/Table";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { request } from "@/Utils/request";
 import { getRouter } from "@/Utils/router";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import _get from "lodash/get";
 import qs from "query-string";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import useCols from "./Cols";
 
 export default function ListBill(props) {
@@ -20,8 +21,22 @@ export default function ListBill(props) {
         },
     ]);
     const [currentPage, setCurrentPage] = useState(Number(page || 1));
-    const [filter, setFilter] = useState("today");
     const cols = useCols({
+        handlePay: (id) => {
+            router.post(
+                route("hoadon.pay", id),
+                {},
+                {
+                    onSuccess: () => {
+                        toast.success("Thanh toán thành công !");
+                    },
+                }
+            );
+        },
+        handleDelete: (id) => {
+            router.delete(route("hoadon.destroy", id));
+            toast.success("Xoá hoá đơn thành công !");
+        },
         handlePrint: async (id) => {
             const res = await request.post(
                 route("hoadon.pdf", id),
@@ -58,36 +73,13 @@ export default function ListBill(props) {
             <Head title="QL tài khoản" />
 
             <PageContainer>
-                <div className="flex gap-3">
-                    <InputSearch
-                        placeholder="tên"
-                        onSearch={(query) => {
-                            getRouter({ q: query, page: 1 });
-                            setCurrentPage(1);
-                        }}
-                    />
-                    <div className="w-[150px]">
-                        <select
-                            value={filter}
-                            onChange={(e) => {
-                                getRouter({ filter: e.target.value, page: 1 });
-                                setFilter(e.target.value);
-                                setCurrentPage(1);
-                            }}
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                        >
-                            <option key="today" value="today">
-                                Hôm nay
-                            </option>
-                            <option key="month" value="month">
-                                Tháng này
-                            </option>
-                            <option key="precious" value="precious">
-                                Quý này
-                            </option>
-                        </select>
-                    </div>
-                </div>
+                <InputSearch
+                    placeholder="tên"
+                    onSearch={(query) => {
+                        getRouter({ q: query, page: 1 });
+                        setCurrentPage(1);
+                    }}
+                />
                 <Table
                     setSorting={(e) => {
                         const sorts = e(sorting);

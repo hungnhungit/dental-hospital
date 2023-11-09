@@ -27,4 +27,9 @@ class HoaDon extends Model
     {
         return $this->belongsTo(BenhNhan::class, 'MaBenhNhan', 'Id');
     }
+
+    public function tienTrinh(): BelongsTo
+    {
+        return $this->belongsTo(TienTrinhDieuTri::class, 'MaTienTrinh', 'Id');
+    }
 }

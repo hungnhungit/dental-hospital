@@ -28,6 +28,7 @@ const MENUS = {
             label: "Sổ khám bệnh",
             permission: "sokhambenh.index",
         },
+        { name: "doanhthu.index", label: "Doanh thu", permission: "access" },
         { name: "profile.edit", label: "Cài đặt" },
     ],
     nurse: [
@@ -37,6 +38,7 @@ const MENUS = {
             label: "Sổ khám bệnh",
             permission: "sokhambenh.index",
         },
+        { name: "doanhthu.index", label: "Doanh thu", permission: "access" },
         { name: "profile.edit", label: "Cài đặt", permission: "access" },
     ],
     receptionist: [
@@ -68,6 +70,7 @@ const MENUS = {
             label: "Sổ khám bệnh",
             permission: "sokhambenh.index",
         },
+        { name: "doanhthu.index", label: "Doanh thu", permission: "access" },
         { name: "profile.edit", label: "Cài đặt", permission: "access" },
     ],
 };

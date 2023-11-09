@@ -1,10 +1,17 @@
 import PageContainer from "@/Components/PageContainer";
+import Table from "@/Components/Table";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { formatNumber } from "@/Utils/helpers";
 import { Head } from "@inertiajs/react";
+import useColsMedicine from "./ColsMedicine";
+import useColsSupplies from "./ColsSupplies";
+import _get from "lodash/get";
 
 export default function Dashboard(props) {
     const { TongBenhNhan, DoanhThu, TongThuoc, TongVatTu } = props;
+
+    const colsMedicine = useColsMedicine();
+    const colsSupplies = useColsSupplies();
     return (
         <AuthenticatedLayout
             auth={props.auth}
@@ -109,6 +116,26 @@ export default function Dashboard(props) {
                                 </p>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div className="grid grid-cols-2 mt-10 gap-10">
+                    <div>
+                        <h2 className="text-lg font-semibold mb-3">
+                            Danh sách thuốc sắp hết
+                        </h2>
+                        <Table
+                            data={_get(props, "Thuoc", [])}
+                            columns={colsMedicine}
+                        />
+                    </div>
+                    <div>
+                        <h2 className="text-lg font-semibold mb-3">
+                            Danh sách vật tư sắp hết
+                        </h2>
+                        <Table
+                            data={_get(props, "VatTu", [])}
+                            columns={colsSupplies}
+                        />
                     </div>
                 </div>
             </PageContainer>

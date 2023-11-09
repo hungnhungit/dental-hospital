@@ -10,7 +10,9 @@ export default function Checkbox({ label = "", className = "", id, ...props }) {
                 }
                 id={id}
             />
-            <label htmlFor={id}>{label}</label>
+            <label className="cursor-pointer" htmlFor={id}>
+                {label}
+            </label>
         </div>
     );
 }

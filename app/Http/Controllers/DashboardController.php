@@ -21,7 +21,9 @@ class DashboardController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('Dashboard', [
+        return Inertia::render('Dashboard/Dashboard', [
+            'Thuoc' => Thuoc::query()->where('SoLuong', '<', 5)->get(),
+            'VatTu' => VatTu::query()->where('SoLuong', '<', 5)->get(),
             'TongBenhNhan' => BenhNhan::query()->count(),
             'TongThuoc' => Thuoc::query()->get()->sum->SoLuong,
             'TongVatTu' => VatTu::query()->get()->sum->SoLuong,

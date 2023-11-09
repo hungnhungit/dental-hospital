@@ -33,7 +33,6 @@ export default function Authenticated({ auth, header, children }) {
                             menu.permission === "access" ||
                             role === "admin"
                         ) {
-                            console.log(route().current(), menu.name);
                             return (
                                 <li
                                     key={menu.name}

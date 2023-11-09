@@ -19,6 +19,7 @@ export default function NewProccess(props) {
                   NgayDieuTri: format(new Date(), "yyyy-MM-dd"),
                   Sothuoc: 1,
                   SoVatTu: 1,
+                  TenTienTrinh: "TTDT-" + Math.floor(Math.random() * 100000),
               },
     });
 
@@ -27,6 +28,14 @@ export default function NewProccess(props) {
             router.post(route("tientrinhdieutri.store", SoKhamBenhId), data, {
                 onSuccess: () => {
                     toast.success("Sửa tiến trình điều trị thành công !");
+                },
+                onError: ({ message }) => {
+                    if (message === "QUANTITY_LIMIT_SUPPLIES") {
+                        toast.error("Vật tư không đủ !");
+                    }
+                    if (message === "QUANTITY_LIMIT_MEDICINE") {
+                        toast.error("Thuốc không đủ !");
+                    }
                 },
             });
         } else {

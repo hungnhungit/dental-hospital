@@ -27,6 +27,7 @@ class BillController extends Controller
                     "NguoiTao" => $item['nhanVien']['HoVaTen'],
                     "BenhNhan" => $item['benhNhan']['HoVaTen'],
                     'TrangThai' => $item['TrangThai'],
+                    'GiamGia' => $item['GiamGia'],
                     'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y')
                 ];
             }),
@@ -43,10 +44,10 @@ class BillController extends Controller
                     "name" => $item['HoVaTen']
                 ];
             }),
-            'TienTrinhDieuTri' => collect(TienTrinhDieuTri::all())->map(function ($item) {
+            'TienTrinhDieuTri' => collect(TienTrinhDieuTri::query()->whereDoesntHave('hoadon')->get())->map(function ($item) {
                 return [
                     "id" => $item["Id"],
-                    'NgayDieuTri' => $item['NgayDieuTri']
+                    'name' => $item['TenTienTrinh']
                 ];
             }),
         ]);
@@ -55,12 +56,16 @@ class BillController extends Controller
     public function store(Request $request)
     {
         $empl = NhanVien::query()->where('MaTaiKhoan', $request->user()['Id'])->firstOrFail();
+        $process = TienTrinhDieuTri::query()->with(['dichVu'])->findOrFail($request['MaTienTrinh']);
 
         HoaDon::create([
             'TenHoaDon' => $request['TenHoaDon'],
-            'TongSoTien' => 10000,
+            'TongSoTien' => $process['dichVu']['Gia'],
             'MaBenhNhan' => $request['MaBenhNhan'],
-            'MaNhanVien' => $empl['Id']
+            'MaNhanVien' => $empl['Id'],
+            'MaTienTrinh' => $request['MaTienTrinh'],
+            'GiamGia' => $request['GiamGia'],
+            'NgayLap' => now()
         ]);
         return redirect('/hoadon');
     }
@@ -68,13 +73,41 @@ class BillController extends Controller
     public function pdf(int $id)
     {
         $bill = HoaDon::query()->with(['nhanVien', 'benhNhan'])->findOrFail($id);
+        $process = TienTrinhDieuTri::query()->with(['thuoc', 'vatTu', 'dichVu'])->findOrFail($bill['MaTienTrinh']);
         $data = ['bill' => [
             "TenHoaDon" =>  $bill['TenHoaDon'],
             "TongSoTien" => number_format($bill['TongSoTien']),
             "NguoiTao" => $bill['nhanVien']['HoVaTen'],
             "BenhNhan" => $bill['benhNhan']['HoVaTen'],
+            "GiamGia" => $bill['GiamGia'],
+        ], 'process' =>   [
+            "id" => $process["Id"],
+            "Thuoc" => $process['thuoc']['TenThuoc'],
+            "VatTu" => $process['vatTu']['TenVT'],
+            "DichVu" => $process['dichVu']['TenDichVu'],
+            'ChiTietDieuTri' => $process['ChiTietDieuTri'],
+            'Sothuoc' => $process['Sothuoc'],
+            'SoVatTu' => $process['SoVatTu'],
+            'TenTienTrinh' => $process['TenTienTrinh'],
+            'NgayDieuTri' => Carbon::parse($process['NgayDieuTri'])->format('d/m/Y'),
         ]];
         $pdf = PDF::loadView('hoadon', $data);
         return $pdf->download('hoadon.pdf');
+    }
+
+    public function destroy(int $id)
+    {
+        HoaDon::destroy($id);
+
+        return back();
+    }
+
+    public function pay(int $id)
+    {
+        HoaDon::query()->findOrFail($id)->update([
+            'TrangThai' => 'DaThanhToan'
+        ]);
+
+        return back();
     }
 }

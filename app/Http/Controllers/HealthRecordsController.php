@@ -86,6 +86,7 @@ class HealthRecordsController extends Controller
                     'ChiTietDieuTri' => $item['ChiTietDieuTri'],
                     'Sothuoc' => $item['Sothuoc'],
                     'SoVatTu' => $item['SoVatTu'],
+                    'TenTienTrinh' => $item['TenTienTrinh'],
                     'NgayDieuTri' => Carbon::parse($item['NgayDieuTri'])->format('d/m/Y'),
                 ];
             }),

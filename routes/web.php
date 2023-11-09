@@ -17,6 +17,7 @@ use App\Http\Controllers\SickConditionController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RevenueController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StatisticalController;
 use App\Http\Controllers\SuppliesController;
@@ -39,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
     Route::get('/trangchu', [DashboardController::class, 'index'])->name('dashboard');
 
+    Route::get('doanhthu', [RevenueController::class, 'index'])->name('doanhthu.index');
     Route::resource('taikhoan', UsersController::class);
     Route::resource('tin-tuc', NewsController::class);
     Route::resource('loai-tin-tuc', KindNewController::class);
@@ -53,6 +55,7 @@ Route::middleware('auth')->group(function () {
     Route::post('api/vat-tu/pdf', [SuppliesController::class, 'pdfRemainingAmount'])->name('vat-tu.pdf');
     Route::resource('vat-tu', SuppliesController::class);
     Route::post('api/hoadon/{id}/pdf', [BillController::class, 'pdf'])->name('hoadon.pdf');
+    Route::post('hoadon/{id}/pay', [BillController::class, 'pay'])->name('hoadon.pay');
     Route::resource('hoadon', BillController::class);
     Route::delete('tientrinhdieutri', [ProccessController::class, 'destroy']);
     Route::get('sokhambenh/{id}/tientrinhdieutri/create', [ProccessController::class, 'create'])->name('tientrinhdieutri.create');
