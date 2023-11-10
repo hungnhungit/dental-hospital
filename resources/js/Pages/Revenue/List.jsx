@@ -42,15 +42,16 @@ export const options = {
 
                     return formatNumber(data[dataIndex]);
                 },
+                title: (context) => {
+                    const {
+                        dataset: { label },
+                    } = context[0];
+                    return label;
+                },
             },
         },
     },
 };
-
-function randomIntFromInterval(min, max) {
-    // min and max included
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}
 
 const labels = Array(12)
     .fill("")
@@ -58,19 +59,24 @@ const labels = Array(12)
         return `Tháng ${index + 1}`;
     });
 
-export const data = {
-    labels,
-    datasets: [
-        {
-            label: "VND",
-            data: labels.map(() => randomIntFromInterval(1000000, 100000000)),
-            backgroundColor: "rgba(17, 105, 46, 0.5)",
-        },
-    ],
-};
-
 export default function ListRevenue(props) {
-    const { today, month, year } = props;
+    const { months, today } = props;
+    const data = {
+        labels,
+        datasets: [
+            {
+                label: "Tháng",
+                data: months,
+                backgroundColor: "rgba(17, 105, 46, 0.5)",
+            },
+            {
+                label: "Ngày",
+                data: today,
+                backgroundColor: "rgba(199, 36, 109, 0.5)",
+            },
+        ],
+    };
+
     return (
         <AuthenticatedLayout
             auth={props.auth}

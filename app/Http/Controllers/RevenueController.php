@@ -12,16 +12,19 @@ class RevenueController extends Controller
 {
     public function index(): Response
     {
+        $months = array_fill(0, 12, 0);
+        $today = array_fill(0, 12, 0);
+        HoaDon::whereYear('NgayLap', Carbon::now()->format('Y'))->where('TrangThai', 'DaThanhToan')->get()->each(function ($item) use (&$months, &$today) {
+            $date = Carbon::parse($item['NgayLap']);
+            $total = $item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0) / 100);
+            $months[$date->month - 1] += $total;
+            if ($date->isToday()) {
+                $today[$date->month - 1] += $total;
+            }
+        });
         return Inertia::render('Revenue/List', [
-            "today" => HoaDon::whereDate('NgayLap', Carbon::now())->where('TrangThai', 'DaThanhToan')->get()->sum(function ($item) {
-                return $item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0) / 100);
-            }),
-            "month" => HoaDon::whereMonth('NgayLap', Carbon::now())->where('TrangThai', 'DaThanhToan')->get()->sum(function ($item) {
-                return $item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0) / 100);
-            }),
-            "year" => HoaDon::whereYear('NgayLap', Carbon::now())->where('TrangThai', 'DaThanhToan')->get()->sum(function ($item) {
-                return $item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0) / 100);
-            }),
+            "today" => $today,
+            "months" => $months
         ]);
     }
 }
