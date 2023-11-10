@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@/Components/Table";
-import { getRecordsText, isReceptionist } from "@/Utils/helpers";
+import { getRecordsText } from "@/Utils/helpers";
 import { useMemo } from "react";
 import { BsEye, BsPencil, BsPrinter, BsTrash } from "react-icons/bs";
 
@@ -12,7 +12,6 @@ const useCols = ({
     handlePrint,
     user,
 }) => {
-    const receptionist = isReceptionist(user.role);
     const cols = useMemo(() => {
         return [
             columnHelper.accessor("HoVaTen", {
@@ -55,12 +54,17 @@ const useCols = ({
                                 }
                             }}
                         />
-                        <BsPencil
-                            className="cursor-pointer"
-                            onClick={() => {
-                                handleEdit(info.row.original.id);
-                            }}
-                        />
+                        {["ChoPheDuyet", "DangDieuTri"].includes(
+                            info.row.original["TrangThai"]
+                        ) ? (
+                            <BsPencil
+                                className="cursor-pointer"
+                                onClick={() => {
+                                    handleEdit(info.row.original.id);
+                                }}
+                            />
+                        ) : null}
+
                         <BsPrinter
                             className="cursor-pointer"
                             onClick={() => {

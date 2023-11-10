@@ -8,6 +8,7 @@ import { Head, Link, router } from "@inertiajs/react";
 import _get from "lodash/get";
 import qs from "query-string";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import useCols from "./Cols";
 
 export default function ListPatients(props) {
@@ -21,8 +22,11 @@ export default function ListPatients(props) {
     const [currentPage, setCurrentPage] = useState(Number(page || 1));
     const cols = useCols({
         handleDelete: (id) => {
-            router.delete(route("benhnhan.destroy", id));
-            toast.success("Xoá bệnh nhân thành công !");
+            router.delete(route("benhnhan.destroy", id), {
+                onSuccess: () => {
+                    toast.success("Xoá bệnh nhân thành công !");
+                },
+            });
         },
         handleEdit: (id) => {
             router.visit(route("benhnhan.edit", id));

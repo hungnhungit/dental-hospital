@@ -4,9 +4,9 @@ import PageContainer from "@/Components/PageContainer";
 import PrimaryButton from "@/Components/PrimaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
+import _get from "lodash/get";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import _get from "lodash/get";
 
 export default function NewMedicine(props) {
     const { supplie } = props;
@@ -54,7 +54,7 @@ export default function NewMedicine(props) {
                             name="TenVT"
                             className="mt-1 block w-full"
                             label="Tên vật tư"
-                            maxLength={10}
+                            maxLength={255}
                             rules={{ required: "Tên vật tư không để trống" }}
                         />
                         <div>

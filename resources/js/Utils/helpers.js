@@ -17,6 +17,7 @@ const STATUS_RECORD_MAP_TO_STATUS_TEXT = {
     ChoPheDuyet: "Chờ phê duyệt",
     DangDieutri: "Đang điều trị",
     Huy: "Hủy bỏ",
+    ThanhCong: "Thành công",
 };
 
 const PAYMENT_MAP_TO_PAYMENT_TEXT = {

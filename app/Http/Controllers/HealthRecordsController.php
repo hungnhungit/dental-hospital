@@ -18,15 +18,15 @@ class HealthRecordsController extends Controller
 {
     public function index(): Response
     {
-        $healthRecords = SoKhamBenh::query()->join('benhnhan', 'sokhambenh.MaBenhNhan', '=', 'benhnhan.id')->with(['bacSi', 'benhNhan'])->whereHas('benhNhan', function (Builder $q) {
+        $healthRecords = SoKhamBenh::query()->join('benhnhan', 'sokhambenh.MaBenhNhan', '=', 'benhnhan.id')->with(['bacSi'])->whereHas('benhNhan', function (Builder $q) {
             $q->where('HoVaTen', 'LIKE', '%' . request('q') . '%');
-        })->orderBy('benhnhan.HoVaTen', request('sortType', 'asc'))->paginate(10);
+        })->orderBy('benhnhan.HoVaTen', request('sortType', 'asc'))->select(['HoVaTen', 'sokhambenh.Id as id', 'TrangThai', 'MaBacSi', 'ChanDoanBenh'])->paginate(10);
 
         return Inertia::render('HealthRecords/List', [
             "healthRecords" => collect($healthRecords->items())->map(function ($item) {
                 return [
-                    "id" => $item['Id'],
-                    "HoVaTen" => $item['benhNhan']['HoVaTen'],
+                    "id" => $item['id'],
+                    "HoVaTen" => $item['HoVaTen'],
                     "BacSi" => $item['bacSi']['HoVaTen'],
                     "ChanDoanBenh" => $item['ChanDoanBenh'],
                     "TrangThai" => $item['TrangThai']
@@ -57,7 +57,6 @@ class HealthRecordsController extends Controller
     public function changeStatus(int $id, Request $request)
     {
         $record = SoKhamBenh::query()->findOrFail($id);
-
         $record->update([
             'TrangThai' => $request['status']
         ]);

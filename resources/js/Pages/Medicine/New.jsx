@@ -54,7 +54,7 @@ export default function NewMedicine(props) {
                             name="TenThuoc"
                             className="mt-1 block w-full"
                             label="Tên thuốc"
-                            maxLength={10}
+                            maxLength={255}
                             rules={{ required: "Tên thuốc không để trống" }}
                         />
                         <div>
@@ -83,7 +83,7 @@ export default function NewMedicine(props) {
                             name="CongDung"
                             className="mt-1 block w-full"
                             label="Công dụng"
-                            maxLength={10}
+                            maxLength={255}
                             rules={{ required: "Công dụng không để trống" }}
                         />
                         <InputControl
@@ -91,7 +91,7 @@ export default function NewMedicine(props) {
                             name="CachDung"
                             className="mt-1 block w-full"
                             label="Cách dùng"
-                            maxLength={10}
+                            maxLength={255}
                             rules={{ required: "Cách dùng không để trống" }}
                         />
                     </div>

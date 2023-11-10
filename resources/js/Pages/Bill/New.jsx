@@ -68,29 +68,6 @@ export default function NewBill(props) {
                         />
                         <div>
                             <InputLabel
-                                htmlFor="MaBenhNhan"
-                                value="Bệnh nhân"
-                            />
-                            <select
-                                {...register("MaBenhNhan")}
-                                id="MaBenhNhan"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                            >
-                                {_get(props, "BenhNhan", []).map(
-                                    (item, index) => {
-                                        return (
-                                            <option key={index} value={item.id}>
-                                                {item.name}
-                                            </option>
-                                        );
-                                    }
-                                )}
-                            </select>
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-10 mt-5">
-                        <div>
-                            <InputLabel
                                 htmlFor="MaTienTrinh"
                                 value="Tiến trình điều trị"
                             />
@@ -103,13 +80,15 @@ export default function NewBill(props) {
                                     (item, index) => {
                                         return (
                                             <option key={index} value={item.id}>
-                                                {item.name}
+                                                {item.name} - {item["HoVaTen"]}
                                             </option>
                                         );
                                     }
                                 )}
                             </select>
                         </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-10 mt-5">
                         <InputControl
                             type="number"
                             control={control}

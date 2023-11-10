@@ -12,7 +12,7 @@ class PatientController extends Controller
 {
     public function index(Request $request): Response
     {
-        $patients = BenhNhan::query()->where('HoVaTen', 'LIKE', '%' . request('q') . '%')->orderBy('HoVaTen', $request['sortType'] ?? 'asc')->paginate(10);
+        $patients = BenhNhan::query()->where('XoaMem', 0)->where('HoVaTen', 'LIKE', '%' . request('q') . '%')->orderBy('HoVaTen', $request['sortType'] ?? 'asc')->paginate(10);
 
         return Inertia::render('Patients/List', [
             "patients" => collect($patients->items())->map(function ($item) {
@@ -62,7 +62,9 @@ class PatientController extends Controller
 
     public function destroy(int $id)
     {
-        BenhNhan::destroy($id);
+        BenhNhan::query()->findOrFail($id)->update([
+            'XoaMem' => '1'
+        ]);
 
         return back();
     }

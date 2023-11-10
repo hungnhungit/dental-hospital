@@ -30,7 +30,6 @@ export default function ListHealthRecords(props) {
             router.visit(route("sokhambenh.edit", id));
         },
         handleShow: (id) => {
-            console.log(id);
             router.visit(route("sokhambenh.show", id));
         },
         handlePrint: async (id) => {

@@ -44,10 +44,14 @@ class BillController extends Controller
                     "name" => $item['HoVaTen']
                 ];
             }),
-            'TienTrinhDieuTri' => collect(TienTrinhDieuTri::query()->whereDoesntHave('hoadon')->get())->map(function ($item) {
+            'TienTrinhDieuTri' => collect(TienTrinhDieuTri::query()->with(['sokham' => function ($q) {
+                $q->with('benhNhan');
+            }])->whereDoesntHave('hoadon')->get())->map(function ($item) {
                 return [
                     "id" => $item["Id"],
-                    'name' => $item['TenTienTrinh']
+                    'name' => $item['TenTienTrinh'],
+                    'MaBenhNhan' => $item['sokham']['benhNhan']['Id'],
+                    "HoVaTen" => $item['sokham']['benhNhan']['HoVaTen']
                 ];
             }),
         ]);
@@ -56,12 +60,12 @@ class BillController extends Controller
     public function store(Request $request)
     {
         $empl = NhanVien::query()->where('MaTaiKhoan', $request->user()['Id'])->firstOrFail();
-        $process = TienTrinhDieuTri::query()->with(['dichVu'])->findOrFail($request['MaTienTrinh']);
+        $process = TienTrinhDieuTri::query()->with(['dichVu', 'sokham'])->findOrFail($request['MaTienTrinh']);
 
         HoaDon::create([
             'TenHoaDon' => $request['TenHoaDon'],
             'TongSoTien' => $process['dichVu']['Gia'],
-            'MaBenhNhan' => $request['MaBenhNhan'],
+            'MaBenhNhan' => $process['sokham']['MaBenhNhan'],
             'MaNhanVien' => $empl['Id'],
             'MaTienTrinh' => $request['MaTienTrinh'],
             'GiamGia' => $request['GiamGia'],

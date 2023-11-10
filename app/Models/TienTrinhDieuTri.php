@@ -38,4 +38,9 @@ class TienTrinhDieuTri extends Model
     {
         return $this->hasOne(HoaDon::class, 'MaTienTrinh', 'Id');
     }
+
+    public function sokham(): BelongsTo
+    {
+        return $this->belongsTo(SoKhamBenh::class, 'MaSoKhamBenh', 'Id');
+    }
 }

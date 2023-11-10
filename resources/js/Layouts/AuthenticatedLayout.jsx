@@ -1,6 +1,4 @@
-import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
-import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { getPostion } from "@/Utils/helpers";
 import { MENUS } from "@/Utils/menu";
@@ -17,7 +15,7 @@ export default function Authenticated({ auth, header, children }) {
 
     return (
         <div className="min-h-screen bg-gray-100 flex">
-            <div className="w-[300px] bg-black px-7 py-5">
+            <div className="min-w-[300px] bg-black px-7 py-5">
                 <div className="flex gap-2 items-center justify-center">
                     <Link href="/" className="text-white">
                         <BsHospital className="w-8 h-8" />
@@ -56,39 +54,6 @@ export default function Authenticated({ auth, header, children }) {
                 <nav className="bg-white border-b border-gray-100">
                     <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between items-center h-16">
-                            {/* <div className="flex">
-                                <div className="shrink-0 flex items-center">
-                                    <Link href="/">
-                                        <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
-                                    </Link>
-                                </div>
-
-                                <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                    {MENUS[role].map((menu) => {
-                                        if (
-                                            permssionsMap.includes(
-                                                menu.permission
-                                            ) ||
-                                            menu.permission === "access" ||
-                                            role === "admin"
-                                        ) {
-                                            return (
-                                                <NavLink
-                                                    key={menu.name}
-                                                    href={route(menu.name)}
-                                                    active={route().current(
-                                                        menu.name
-                                                    )}
-                                                >
-                                                    {menu.label}
-                                                </NavLink>
-                                            );
-                                        }
-                                        return null;
-                                    })}
-                                </div>
-                            </div> */}
-
                             <div>
                                 <strong>Quyền: {getPostion(role)}</strong>
                             </div>

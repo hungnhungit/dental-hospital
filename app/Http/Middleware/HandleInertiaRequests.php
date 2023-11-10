@@ -45,8 +45,9 @@ class HandleInertiaRequests extends Middleware
             } else {
                 $employee = NhanVien::query()->where('MaTaiKhoan', $currentUser['Id'])->first();
                 $role = PhanQuyen::query()->with('ham')->where('Id', $currentUser['role']['Id'])->first();
+
                 $permssions = collect($role->ham)->filter(function ($item) {
-                    return $item['payload']['on'];
+                    return $item['payload']['on'] === 1;
                 })->map(function ($item) {
                     return [
                         'id' => $item['Id'],

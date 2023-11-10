@@ -1,6 +1,7 @@
 import PageContainer from "@/Components/PageContainer";
 import Pagination from "@/Components/Pagination";
 import PrimaryButton from "@/Components/PrimaryButton";
+import SecondaryButton from "@/Components/SecondaryButton";
 import Table from "@/Components/Table";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { getRecordsText } from "@/Utils/helpers";
@@ -14,7 +15,6 @@ import useColsProcess from "./ColsProcess";
 export default function DetailHealthRecords(props) {
     const { records } = props;
     const { page } = qs.parse(location.search);
-    console.log(records);
     const [currentPage, setCurrentPage] = useState(Number(page || 1));
     const handleChangeStatus = (status) => {
         router.post(route("sokhambenh.changeStatus", records.id), { status });
@@ -70,26 +70,44 @@ export default function DetailHealthRecords(props) {
                         {getRecordsText(records.TrangThai)}
                     </div>
                     <div className="flex gap-3">
-                        {records.TrangThai !== "DangDieutri" ? (
-                            <PrimaryButton
-                                onClick={() =>
-                                    handleChangeStatus("DangDieutri")
-                                }
-                            >
-                                Điều trị
-                            </PrimaryButton>
+                        {records.TrangThai === "ChoPheDuyet" ? (
+                            <div className="flex gap-2">
+                                <PrimaryButton
+                                    onClick={() =>
+                                        handleChangeStatus("DangDieutri")
+                                    }
+                                >
+                                    Điều trị
+                                </PrimaryButton>
+                                <PrimaryButton
+                                    onClick={() => handleChangeStatus("Huy")}
+                                    className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300"
+                                >
+                                    Huỷ bỏ
+                                </PrimaryButton>
+                            </div>
                         ) : null}
-                        {records.TrangThai === "Huy" ? null : (
-                            <PrimaryButton
-                                onClick={() => handleChangeStatus("Huy")}
-                                className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300"
-                            >
-                                Huỷ bỏ
-                            </PrimaryButton>
-                        )}
+
+                        {records.TrangThai === "DangDieutri" ? (
+                            <div className="flex gap-2">
+                                <SecondaryButton
+                                    onClick={() =>
+                                        handleChangeStatus("ThanhCong")
+                                    }
+                                >
+                                    Thành công
+                                </SecondaryButton>
+                                <PrimaryButton
+                                    onClick={() => handleChangeStatus("Huy")}
+                                    className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300"
+                                >
+                                    Huỷ bỏ
+                                </PrimaryButton>
+                            </div>
+                        ) : null}
                     </div>
                 </div>
-                {records.TrangThai === "DangDieutri" ? (
+                {records.TrangThai !== "ChoPheDuyet" ? (
                     <>
                         <div className="mt-10 mb-5 flex justify-between">
                             <h1 className="text-3xl font-bold">
