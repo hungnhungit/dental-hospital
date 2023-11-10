@@ -54,7 +54,7 @@ export default function NewServices(props) {
                             name="name"
                             className="mt-1 block w-full"
                             label="Tên"
-                            maxLength={10}
+                            maxLength={255}
                             rules={{ required: "Tên không để trống" }}
                         />
                         <InputControl
@@ -62,7 +62,7 @@ export default function NewServices(props) {
                             name="desc"
                             className="mt-1 block w-full"
                             label="Miêu tả"
-                            maxLength={10}
+                            maxLength={255}
                             rules={{ required: "Miêu tả không để trống" }}
                         />
                     </div>
