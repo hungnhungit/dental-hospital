@@ -13,7 +13,7 @@ class KindSuppliesController extends Controller
 {
     public function index(): Response
     {
-        $supplies = LoaiVatTu::paginate(10);
+        $supplies = LoaiVatTu::query()->where('XoaMem', 0)->paginate(10);
 
         return Inertia::render('KindSupplies/List', [
             "supplies" => collect($supplies->items())->map(function ($item) {
@@ -76,7 +76,7 @@ class KindSuppliesController extends Controller
 
     public function destroy(int $id)
     {
-        LoaiVatTu::destroy($id);
+        LoaiVatTu::query()->findOrFail($id)->update(['XoaMem' => 1]);
 
         return back();
     }

@@ -27,31 +27,24 @@
     <p>Bệnh nhân: {{ $bill['BenhNhan'] }}</p>
     <p>Người tạo: {{ $bill['NguoiTao'] }}</p>
     <p>Tổng số tiền: {{ $bill['TongSoTien'] }} VND</p>
-    <p>GiamGia: {{ $bill['GiamGia'] ?? 0  }}%</p>
+    <p>Giảm giá: {{ $bill['GiamGia'] ?? 0  }}%</p>
 
     <h2>Tiến trình điểu trị</h2>
 
     <table>
         <tr>
-            <th>MÃ</th>
-            <th>DỊCH VỤ</th>
-            <th>THUỐC</th>
-            <th>SỐ THUỐC</th>
-            <th>VẬT TƯ</th>
-            <th>SỐ VẬT TƯ</th>
-            <th>CHI TIẾT ĐIỀU TRỊ</th>
-            <th>NGÀY ĐIỀU TRỊ</th>
+            <th>Tên dịch vụ</th>
+            <th>Giá</th>
+            <th>Số tiền</th>
         </tr>
+        @foreach ($services as $service)
         <tr>
-            <td>{{ $process['TenTienTrinh'] }}</td>
-            <td>{{ $process['DichVu'] }}</td>
-            <td>{{ $process['Thuoc'] }}</td>
-            <td>{{ $process['Sothuoc'] }}</td>
-            <td>{{ $process['VatTu'] }}</td>
-            <td>{{ $process['SoVatTu'] }}</td>
-            <td>{{ $process['ChiTietDieuTri'] }}</td>
-            <td>{{ $process['NgayDieuTri'] }}</td>
+            <td>{{ $service['TenDichVu'] }}</td>
+            <td>{{ $service['Gia'] }}</td>
+            <td>{{ $service['TongTien'] }} VND</td>
         </tr>
+        @endforeach
+
     </table>
 </body>
 

@@ -25,9 +25,11 @@ class DashboardController extends Controller
             'Thuoc' => Thuoc::query()->where('SoLuong', '<', 5)->get(),
             'VatTu' => VatTu::query()->where('SoLuong', '<', 5)->get(),
             'TongBenhNhan' => BenhNhan::query()->count(),
-            'TongThuoc' => Thuoc::query()->get()->sum->SoLuong,
-            'TongVatTu' => VatTu::query()->get()->sum->SoLuong,
-            'DoanhThu' => HoaDon::whereMonth('NgayLap', Carbon::now())->get()->sum->TongSoTien,
+            'SoKhamBenh' => SoKhamBenh::query()->where('TrangThai', 'DangDieuTri')->count(),
+            'HoaDonChuaThanhToan' => HoaDon::query()->where('TrangThai', 'ChuaThanhToan')->count(),
+            'DoanhThu' => HoaDon::whereMonth('NgayLap', Carbon::now())->get()->sum(function ($item) {
+                return $item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0) / 100);
+            }),
         ]);
     }
 }

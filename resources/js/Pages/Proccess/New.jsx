@@ -8,20 +8,86 @@ import _get from "lodash/get";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
+import { useEffect, useRef, useState } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import SecondaryButton from "@/Components/SecondaryButton";
+import { request } from "@/Utils/request";
+import { isEmpty, omit } from "lodash";
+
+const schema = yup
+    .object({
+        Sothuoc: yup
+            .string()
+            .nullable()
+            .when("MaThuoc", (maThuoc, schema) => {
+                if (!isEmpty(maThuoc[0])) {
+                    return schema.required(
+                        "Số lượng thuốc không được để trống"
+                    );
+                }
+                return schema;
+            }),
+        SoVatTu: yup
+            .string()
+            .nullable()
+            .when("MaVatTu", (maVatTu, schema) => {
+                if (!isEmpty(maVatTu[0])) {
+                    return schema.required("Số lượng vật tư không để trống");
+                }
+                return schema;
+            }),
+        NgayDieuTri: yup.string().required("Ngày điều trị không để trống"),
+        ChiTietDieuTri: yup
+            .string()
+            .required("Chi tiết điều trị không để trống"),
+        MaThuoc: yup.string().nullable(),
+        MaVatTu: yup.string().nullable(),
+    })
+    .required();
 
 export default function NewProccess(props) {
     const { process, SoKhamBenhId } = props;
     const isModeEdit = process ? true : false;
-    const { register, handleSubmit, control } = useForm({
+    const fileRef = useRef(null);
+    const [img, setImg] = useState(process?.LinkHinhAnh || null);
+    const {
+        register,
+        handleSubmit,
+        watch,
+        setValue,
+        clearErrors,
+        control,
+        formState: { errors },
+    } = useForm({
+        resolver: yupResolver(schema),
+        criteriaMode: "all",
         defaultValues: isModeEdit
             ? process
             : {
                   NgayDieuTri: format(new Date(), "yyyy-MM-dd"),
-                  Sothuoc: 1,
-                  SoVatTu: 1,
                   TenTienTrinh: "TTDT-" + Math.floor(Math.random() * 100000),
               },
     });
+    const hasMedicine = !isEmpty(watch("MaThuoc"));
+    const hasSupplier = !isEmpty(watch("MaVatTu"));
+    useEffect(() => {
+        const subscription = watch((value, { name, type }) => {
+            if (name === "MaThuoc" && type === "change") {
+                if (value[name] === "") {
+                    clearErrors("Sothuoc");
+                    setValue("Sothuoc", "");
+                }
+            }
+            if (name === "MaVatTu" && type === "change") {
+                if (value[name] === "") {
+                    clearErrors("SoVatTu");
+                    setValue("SoVatTu", "");
+                }
+            }
+        });
+        return () => subscription.unsubscribe();
+    }, []);
 
     const onSubmit = (data) => {
         if (!isModeEdit) {
@@ -41,7 +107,7 @@ export default function NewProccess(props) {
         } else {
             router.put(
                 route("tientrinhdieutri.update", [SoKhamBenhId, process["Id"]]),
-                data,
+                omit(data, ["LinkHinhAnh"]),
                 {
                     onSuccess: () => {
                         toast.success("Sửa tiến trình điều trị thành công !");
@@ -51,6 +117,36 @@ export default function NewProccess(props) {
         }
     };
 
+    const upload = async (file) => {
+        const form = new FormData();
+        form.append("file", file);
+        try {
+            const res = await request.post(route("upload.handle"), form);
+            console.log(res);
+            setImg(res.link);
+            setValue("HinhAnhXetNghiem", res.fileName);
+        } catch (error) {}
+    };
+
+    const handleSelectFile = (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const pickedFile = e.target.files[0];
+            if (!pickedFile) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.addEventListener("load", () => {
+                if (reader.result) {
+                    upload(pickedFile);
+                }
+            });
+            reader.readAsDataURL(pickedFile);
+
+            e.target.files = null;
+            e.target.value = "";
+        }
+    };
     return (
         <AuthenticatedLayout
             auth={props.auth}
@@ -76,24 +172,6 @@ export default function NewProccess(props) {
             <PageContainer>
                 <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
                     <div className="grid grid-cols-2 gap-10">
-                        <div>
-                            <InputLabel htmlFor="MaDichVu" value="Dịch vụ" />
-                            <select
-                                {...register("MaDichVu")}
-                                id="MaDichVu"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                            >
-                                {_get(props, "DichVu", []).map(
-                                    (item, index) => {
-                                        return (
-                                            <option key={index} value={item.id}>
-                                                {item.name}
-                                            </option>
-                                        );
-                                    }
-                                )}
-                            </select>
-                        </div>
                         <div className="grid grid-cols-2 gap-10">
                             <div>
                                 <InputLabel htmlFor="Thuoc" value="Thuốc" />
@@ -102,6 +180,9 @@ export default function NewProccess(props) {
                                     id="Thuoc"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                 >
+                                    <option key="khongdungthuoc" value="">
+                                        Không dùng
+                                    </option>
                                     {_get(props, "Thuoc", []).map(
                                         (item, index) => {
                                             return (
@@ -123,15 +204,12 @@ export default function NewProccess(props) {
                                 type="number"
                                 control={control}
                                 name="Sothuoc"
+                                disabled={!hasMedicine}
                                 className="mt-1 block w-full"
                                 label="Số lượng thuốc"
-                                rules={{
-                                    required: "Số lượng thuốc không để trống",
-                                }}
+                                required={hasMedicine}
                             />
                         </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-10 mt-5">
                         <div className="grid grid-cols-2 gap-10">
                             <div>
                                 <InputLabel htmlFor="MaVatTu" value="Vật tư" />
@@ -140,6 +218,9 @@ export default function NewProccess(props) {
                                     id="MaVatTu"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                 >
+                                    <option key="khongdungvattu" value="">
+                                        Không dùng
+                                    </option>
                                     {_get(props, "VatTu", []).map(
                                         (item, index) => {
                                             return (
@@ -163,32 +244,57 @@ export default function NewProccess(props) {
                                 name="SoVatTu"
                                 className="mt-1 block w-full"
                                 label="Số lượng vật tư"
-                                rules={{
-                                    required: "Số lượng vật tư không để trống",
-                                }}
+                                disabled={!hasSupplier}
+                                required={hasSupplier}
                             />
                         </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-10 mt-5">
                         <InputControl
                             control={control}
                             type="date"
                             name="NgayDieuTri"
                             className="mt-1 block w-full"
                             label="Ngày điều trị"
-                            rules={{
-                                required: "Ngày điều trị không để trống",
-                            }}
+                            required
                         />
-                    </div>
-                    <div className="mt-5">
                         <InputControl
                             control={control}
                             name="ChiTietDieuTri"
                             className="mt-1 block w-full"
                             label="Chi tiết điều trị"
-                            rules={{
-                                required: "Chi tiết điều trị không để trống",
-                            }}
+                            required
                         />
+                    </div>
+                    <div className="mt-5">
+                        <SecondaryButton
+                            onClick={() => {
+                                if (img) {
+                                    setImg(null);
+                                    setValue("HinhAnhXetNghiem", null);
+                                } else {
+                                    fileRef.current?.click();
+                                }
+                            }}
+                        >
+                            {img
+                                ? "Xoá Hình ảnh xét nghiệm"
+                                : "Chọn Hình ảnh xét nghiệm"}
+                        </SecondaryButton>
+                        <input
+                            className="hidden"
+                            ref={fileRef}
+                            accept="image/*"
+                            onChange={handleSelectFile}
+                            type="file"
+                        />
+                        {img ? (
+                            <img
+                                src={img}
+                                alt=""
+                                className="h-[300px] w-[300px] mt-5 object-cover"
+                            />
+                        ) : null}
                     </div>
                     <PrimaryButton type="submit" className="mt-4">
                         {isModeEdit ? "Sửa" : "Thêm mới"}

@@ -14,13 +14,14 @@ import { toast } from "react-toastify";
 import useCols from "./Cols";
 
 export default function ListMedicine(props) {
-    const { page, sortCols, sortType } = qs.parse(location.search);
+    const { page, sortCols, sortType, f } = qs.parse(location.search);
     const [sorting, setSorting] = useState([
         {
             id: sortCols,
             desc: sortType === "desc",
         },
     ]);
+    const [filter, setFilter] = useState(f);
     const [currentPage, setCurrentPage] = useState(Number(page || 1));
     const cols = useCols({
         handleDelete: (id) => {
@@ -33,11 +34,9 @@ export default function ListMedicine(props) {
     });
 
     const handlePrint = async () => {
-        const res = await request.post(
-            route("thuoc.pdf"),
-            {},
-            { responseType: "blob" }
-        );
+        const res = await request.post(route("thuoc.pdf"), route().params, {
+            responseType: "blob",
+        });
         let blob = new Blob([res], {
             type: "application/pdf",
         });
@@ -63,7 +62,7 @@ export default function ListMedicine(props) {
                             Thêm mới
                         </Link>
                         <SecondaryButton onClick={handlePrint}>
-                            In thuốc còn lại
+                            In danh sách
                         </SecondaryButton>
                     </div>
                 </div>
@@ -72,13 +71,33 @@ export default function ListMedicine(props) {
             <Head title="Quản lý thuốc" />
 
             <PageContainer>
-                <InputSearch
-                    placeholder="tên"
-                    onSearch={(query) => {
-                        getRouter({ q: query, page: 1 });
-                        setCurrentPage(1);
-                    }}
-                />
+                <div className="flex gap-10">
+                    <InputSearch
+                        placeholder="tên"
+                        onSearch={(query) => {
+                            getRouter({ q: query, page: 1 });
+                            setCurrentPage(1);
+                        }}
+                    />
+                    <select
+                        value={filter}
+                        onChange={(e) => {
+                            setFilter(e.target.value);
+                            getRouter({ f: e.target.value });
+                        }}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block"
+                    >
+                        <option key="tatca" value="">
+                            Tất cả
+                        </option>
+                        <option key="con" value="con">
+                            Còn thuốc
+                        </option>
+                        <option key="het" value="het">
+                            Hết thuốc
+                        </option>
+                    </select>
+                </div>
                 <Table
                     sorting={sorting}
                     setSorting={(e) => {

@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+input:disabled {
+    background-color: rgb(229, 223, 223);
+}

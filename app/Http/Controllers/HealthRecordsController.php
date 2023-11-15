@@ -10,6 +10,7 @@ use App\Models\TienTrinhDieuTri;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Inertia\Inertia;
 use Inertia\Response;
 use PDF;
@@ -67,7 +68,7 @@ class HealthRecordsController extends Controller
     public function show(int $id)
     {
         $record = SoKhamBenh::query()->with(['bacSi', 'benhNhan'])->findOrFail($id);
-        $process = TienTrinhDieuTri::query()->with(['thuoc', 'vatTu', 'dichVu'])->where('MaSoKhamBenh', $id)->paginate(10);
+        $process = TienTrinhDieuTri::query()->with(['thuoc', 'vatTu'])->where('MaSoKhamBenh', $id)->paginate(10);
         return Inertia::render('HealthRecords/Detail', [
             "records" => [
                 "id" => $record['Id'],
@@ -79,9 +80,8 @@ class HealthRecordsController extends Controller
             "process" => collect($process->items())->map(function ($item) {
                 return [
                     "id" => $item["Id"],
-                    "Thuoc" => $item['thuoc']['TenThuoc'],
-                    "VatTu" => $item['vatTu']['TenVT'],
-                    "DichVu" => $item['dichVu']['TenDichVu'],
+                    "Thuoc" => Arr::get($item, 'thuoc.TenThuoc'),
+                    "VatTu" =>  Arr::get($item, 'vatTu.TenVT'),
                     'ChiTietDieuTri' => $item['ChiTietDieuTri'],
                     'Sothuoc' => $item['Sothuoc'],
                     'SoVatTu' => $item['SoVatTu'],
@@ -136,7 +136,7 @@ class HealthRecordsController extends Controller
     public function pdf(int $id)
     {
         $record = SoKhamBenh::query()->with(['bacSi', 'benhNhan'])->findOrFail($id);
-        $process = TienTrinhDieuTri::query()->with(['thuoc', 'vatTu', 'dichVu'])->where('MaSoKhamBenh', $id)->get();
+        $process = TienTrinhDieuTri::query()->with(['thuoc', 'vatTu'])->where('MaSoKhamBenh', $id)->get();
         $data = [
             "records" => [
                 "BenhNhan" => $record['benhNhan']['HoVaTen'],
@@ -147,9 +147,8 @@ class HealthRecordsController extends Controller
             "process" => collect($process)->map(function ($item) {
                 return [
                     "id" => $item["Id"],
-                    "Thuoc" => $item['thuoc']['TenThuoc'],
-                    "VatTu" => $item['vatTu']['TenVT'],
-                    "DichVu" => $item['dichVu']['TenDichVu'],
+                    "Thuoc" => Arr::get($item, 'thuoc.TenThuoc'),
+                    "VatTu" =>  Arr::get($item, 'vatTu.TenVT'),
                     'ChiTietDieuTri' => $item['ChiTietDieuTri'],
                     'NgayDieuTri' => Carbon::parse($item['NgayDieuTri'])->format('d/m/Y'),
                 ];
@@ -157,5 +156,24 @@ class HealthRecordsController extends Controller
         ];
         $pdf = PDF::loadView('sokhambenh', $data);
         return $pdf->download('sokhambenh.pdf');
+    }
+
+    public function pdfList()
+    {
+        $healthRecords = SoKhamBenh::query()->join('benhnhan', 'sokhambenh.MaBenhNhan', '=', 'benhnhan.id')->with(['bacSi'])->whereHas('benhNhan', function (Builder $q) {
+            $q->where('HoVaTen', 'LIKE', '%' . request('q') . '%');
+        })->orderBy('benhnhan.HoVaTen', request('sortType', 'asc'))->select(['HoVaTen', 'sokhambenh.Id as id', 'TrangThai', 'MaBacSi', 'ChanDoanBenh'])->paginate(10);
+        $data = [
+            "healthRecords" => $healthRecords->map(function ($item) {
+                return [
+                    "HoVaTen" => $item['HoVaTen'],
+                    "BacSi" => $item['bacSi']['HoVaTen'],
+                    "ChanDoanBenh" => $item['ChanDoanBenh'],
+                    "TrangThai" => $item['TrangThai']
+                ];
+            }),
+        ];
+        $pdf = PDF::loadView('danhsachsokhambenh', $data);
+        return $pdf->download('danhsachsokhambenh.pdf');
     }
 }

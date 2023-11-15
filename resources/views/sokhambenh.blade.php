@@ -41,7 +41,6 @@
 
     <table>
         <tr>
-            <th>DỊCH VỤ</th>
             <th>THUỐC</th>
             <th>VẬT TƯ</th>
             <th>CHI TIẾT ĐIỀU TRỊ</th>
@@ -49,7 +48,6 @@
         </tr>
         @foreach ($process as $item)
         <tr>
-            <td>{{ $item['DichVu'] }}</td>
             <td>{{ $item['Thuoc'] }}</td>
             <td>{{ $item['VatTu'] }}</td>
             <td>{{ $item['ChiTietDieuTri'] }}</td>

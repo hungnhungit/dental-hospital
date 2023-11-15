@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\BenhNhan;
+use App\Models\DichVu;
 use App\Models\HoaDon;
 use App\Models\NhanVien;
 use App\Models\TienTrinhDieuTri;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use PDF;
@@ -44,14 +46,11 @@ class BillController extends Controller
                     "name" => $item['HoVaTen']
                 ];
             }),
-            'TienTrinhDieuTri' => collect(TienTrinhDieuTri::query()->with(['sokham' => function ($q) {
-                $q->with('benhNhan');
-            }])->whereDoesntHave('hoadon')->get())->map(function ($item) {
+            'DichVu' => DichVu::query()->where('XoaMem', 0)->get()->map(function ($item) {
                 return [
                     "id" => $item["Id"],
-                    'name' => $item['TenTienTrinh'],
-                    'MaBenhNhan' => $item['sokham']['benhNhan']['Id'],
-                    "HoVaTen" => $item['sokham']['benhNhan']['HoVaTen']
+                    "name" => $item['TenDichVu'],
+                    "p" => $item['Gia']
                 ];
             }),
         ]);
@@ -60,41 +59,37 @@ class BillController extends Controller
     public function store(Request $request)
     {
         $empl = NhanVien::query()->where('MaTaiKhoan', $request->user()['Id'])->firstOrFail();
-        $process = TienTrinhDieuTri::query()->with(['dichVu', 'sokham'])->findOrFail($request['MaTienTrinh']);
 
-        HoaDon::create([
+        $hoadon = HoaDon::create([
             'TenHoaDon' => $request['TenHoaDon'],
-            'TongSoTien' => $process['dichVu']['Gia'],
-            'MaBenhNhan' => $process['sokham']['MaBenhNhan'],
+            'TongSoTien' => $request['TongSoTien'],
+            'MaBenhNhan' => $request['MaBenhNhan'],
             'MaNhanVien' => $empl['Id'],
-            'MaTienTrinh' => $request['MaTienTrinh'],
             'GiamGia' => $request['GiamGia'],
             'NgayLap' => now()
         ]);
+        $hoadon->dichvu()->attach($request['services']);
+
+
         return redirect('/hoadon');
     }
 
     public function pdf(int $id)
     {
-        $bill = HoaDon::query()->with(['nhanVien', 'benhNhan'])->findOrFail($id);
-        $process = TienTrinhDieuTri::query()->with(['thuoc', 'vatTu', 'dichVu'])->findOrFail($bill['MaTienTrinh']);
+        $bill = HoaDon::query()->with(['nhanVien', 'benhNhan', 'dichvu'])->findOrFail($id);
         $data = ['bill' => [
             "TenHoaDon" =>  $bill['TenHoaDon'],
-            "TongSoTien" => number_format($bill['TongSoTien']),
+            "TongSoTien" => number_format($bill['TongSoTien'] - ($bill['TongSoTien'] * ($bill['GiamGia'] ?? 0)) / 100),
             "NguoiTao" => $bill['nhanVien']['HoVaTen'],
             "BenhNhan" => $bill['benhNhan']['HoVaTen'],
             "GiamGia" => $bill['GiamGia'],
-        ], 'process' =>   [
-            "id" => $process["Id"],
-            "Thuoc" => $process['thuoc']['TenThuoc'],
-            "VatTu" => $process['vatTu']['TenVT'],
-            "DichVu" => $process['dichVu']['TenDichVu'],
-            'ChiTietDieuTri' => $process['ChiTietDieuTri'],
-            'Sothuoc' => $process['Sothuoc'],
-            'SoVatTu' => $process['SoVatTu'],
-            'TenTienTrinh' => $process['TenTienTrinh'],
-            'NgayDieuTri' => Carbon::parse($process['NgayDieuTri'])->format('d/m/Y'),
-        ]];
+        ], 'services' =>   $bill['dichvu']->map(function ($service) {
+            return [
+                'TenDichVu' => $service['TenDichVu'],
+                'Gia' => $service['Gia'],
+                'TongTien' => number_format($service['Gia'] * $service['payload']['SoLuong'])
+            ];
+        })];
         $pdf = PDF::loadView('hoadon', $data);
         return $pdf->download('hoadon.pdf');
     }
@@ -113,5 +108,23 @@ class BillController extends Controller
         ]);
 
         return back();
+    }
+
+    public function pdfList()
+    {
+        $bills = HoaDon::query()->with(['nhanVien', 'benhNhan'])->where('TenHoaDon', 'LIKE', '%' . request('q') . '%')->orderBy('TenHoaDon', $request['sortType'] ?? 'asc')->get();
+        $data = ["bills" => $bills->map(function ($item) {
+            return [
+                "TenHoaDon" => $item['TenHoaDon'],
+                "TongSoTien" => number_format($item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0)) / 100),
+                "NguoiTao" => $item['nhanVien']['HoVaTen'],
+                "BenhNhan" => $item['benhNhan']['HoVaTen'],
+                'TrangThai' => $item['TrangThai'],
+                'GiamGia' => $item['GiamGia'],
+                'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y')
+            ];
+        }),];
+        $pdf = PDF::loadView('danhsachhoadon', $data);
+        return $pdf->download('danhsachhoadon.pdf');
     }
 }

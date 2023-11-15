@@ -8,7 +8,7 @@ import useColsSupplies from "./ColsSupplies";
 import _get from "lodash/get";
 
 export default function Dashboard(props) {
-    const { TongBenhNhan, DoanhThu, TongThuoc, TongVatTu } = props;
+    const { TongBenhNhan, DoanhThu, HoaDonChuaThanhToan, SoKhamBenh } = props;
 
     const colsMedicine = useColsMedicine();
     const colsSupplies = useColsSupplies();
@@ -63,7 +63,7 @@ export default function Dashboard(props) {
                             </div>
                             <div>
                                 <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                                    Doanh thu
+                                    Doanh thu tháng
                                 </p>
                                 <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
                                     {formatNumber(DoanhThu)}
@@ -84,10 +84,10 @@ export default function Dashboard(props) {
                             </div>
                             <div>
                                 <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                                    Số lượng vật tư
+                                    Hoá đơn chưa thanh toán
                                 </p>
                                 <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                    {TongVatTu}
+                                    {HoaDonChuaThanhToan}
                                 </p>
                             </div>
                         </div>
@@ -109,10 +109,10 @@ export default function Dashboard(props) {
                             </div>
                             <div>
                                 <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                                    Số lượng thuốc
+                                    Sổ khám bệnh đang điều trị
                                 </p>
                                 <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                    {TongThuoc}
+                                    {SoKhamBenh}
                                 </p>
                             </div>
                         </div>

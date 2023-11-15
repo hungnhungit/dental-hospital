@@ -7,6 +7,7 @@ use App\Models\BenhNhan;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use PDF;
 
 class PatientController extends Controller
 {
@@ -67,5 +68,24 @@ class PatientController extends Controller
         ]);
 
         return back();
+    }
+
+    public function pdf()
+    {
+        $patients = BenhNhan::query()->where('XoaMem', 0)->where('HoVaTen', 'LIKE', '%' . request('q') . '%')->orderBy('HoVaTen', $request['sortType'] ?? 'asc')->get();
+        $data = ["patients" => $patients->map(function ($item) {
+            return [
+                "HoVaTen" => $item['HoVaTen'],
+                "NgaySinh" => $item['NgaySinh'],
+                "DienThoai" => $item['DienThoai'],
+                "DiaChi" => $item['DiaChi'],
+                "CMND" => $item['CMND'],
+                "ChieuCao" => $item['ChieuCao'],
+                "CanNang" => $item['CanNang'],
+                "NhomMau" => $item['NhomMau'],
+            ];
+        })];
+        $pdf = PDF::loadView('benhnhan', $data);
+        return $pdf->download('benhnhan.pdf');
     }
 }

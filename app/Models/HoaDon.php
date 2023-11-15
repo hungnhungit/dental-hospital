@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class HoaDon extends Model
 {
@@ -28,8 +29,8 @@ class HoaDon extends Model
         return $this->belongsTo(BenhNhan::class, 'MaBenhNhan', 'Id');
     }
 
-    public function tienTrinh(): BelongsTo
+    public function dichvu(): BelongsToMany
     {
-        return $this->belongsTo(TienTrinhDieuTri::class, 'MaTienTrinh', 'Id');
+        return $this->belongsToMany(DichVu::class, 'chitiethoadon', 'HoaDonId', 'DichVuId')->as("payload")->withPivot('SoLuong');
     }
 }

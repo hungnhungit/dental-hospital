@@ -21,6 +21,7 @@ use App\Http\Controllers\RevenueController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StatisticalController;
 use App\Http\Controllers\SuppliesController;
+use App\Http\Controllers\UploadController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -40,6 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
     Route::get('/trangchu', [DashboardController::class, 'index'])->name('dashboard');
 
+    Route::post('luuanh', [UploadController::class, 'upload'])->name('upload.handle');
     Route::get('doanhthu', [RevenueController::class, 'index'])->name('doanhthu.index');
     Route::resource('taikhoan', UsersController::class);
     Route::resource('tin-tuc', NewsController::class);
@@ -49,15 +51,18 @@ Route::middleware('auth')->group(function () {
     Route::resource('loai-dich-vu', KindServicesController::class);
     Route::resource('loai-vat-tu', KindSuppliesController::class);
     Route::resource('dichvu', ServiceController::class);
+    Route::post('api/benhnhan/pdf', [PatientController::class, 'pdf'])->name('benhnhan.pdf');
     Route::resource('benhnhan', PatientController::class);
     Route::post('api/thuoc/pdf', [MedicineController::class, 'pdfRemainingAmount'])->name('thuoc.pdf');
     Route::resource('thuoc', MedicineController::class);
     Route::post('api/vat-tu/pdf', [SuppliesController::class, 'pdfRemainingAmount'])->name('vat-tu.pdf');
     Route::resource('vat-tu', SuppliesController::class);
+    Route::post('api/hoadon/pay', [BillController::class, 'pdfList'])->name('hoadon.pdfList');
     Route::post('api/hoadon/{id}/pdf', [BillController::class, 'pdf'])->name('hoadon.pdf');
     Route::post('hoadon/{id}/pay', [BillController::class, 'pay'])->name('hoadon.pay');
     Route::resource('hoadon', BillController::class);
     Route::delete('tientrinhdieutri', [ProccessController::class, 'destroy']);
+    Route::post('api/sokhambenh/pdf', [HealthRecordsController::class, 'pdfList'])->name('sokham.pdfList');
     Route::get('sokhambenh/{id}/tientrinhdieutri/create', [ProccessController::class, 'create'])->name('tientrinhdieutri.create');
     Route::post('sokhambenh/{id}/tientrinhdieutri/store', [ProccessController::class, 'store'])->name('tientrinhdieutri.store');
     Route::get('sokhambenh/{id}/tientrinhdieutri/edit/{idT}', [ProccessController::class, 'edit'])->name('tientrinhdieutri.edit');

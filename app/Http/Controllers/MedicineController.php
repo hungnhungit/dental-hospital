@@ -16,7 +16,9 @@ class MedicineController extends Controller
 {
     public function index(Request $request)
     {
-        $medicines = Thuoc::query()->with(['loaiThuoc', 'donVi'])->where('TenThuoc', 'LIKE', '%' . request('q') . '%')->orderBy('TenThuoc', $request['sortType'] ?? 'asc')->paginate(10);
+        $medicines = Thuoc::query()->with(['loaiThuoc', 'donVi'])->when(request('f'), function ($q, $val) {
+            $q->where('SoLuong', $val === 'het' ? '=' : '>', 0);
+        })->where('TenThuoc', 'LIKE', '%' . request('q') . '%')->orderBy('TenThuoc', $request['sortType'] ?? 'asc')->paginate(10);
         return Inertia::render('Medicine/List', [
             "medicines" => collect($medicines->items())->map(function ($item) {
                 return [
@@ -96,7 +98,9 @@ class MedicineController extends Controller
 
     public function pdfRemainingAmount()
     {
-        $medicines =  Thuoc::with(['loaiThuoc', 'donVi'])->where('SoLuong', '>', 0)->get();
+        $medicines =  Thuoc::with(['loaiThuoc', 'donVi'])->when(request('f'), function ($q, $val) {
+            $q->where('SoLuong', $val === 'het' ? '=' : '>', 0);
+        })->get();
         $data = ["data" => collect($medicines)->map(function ($item) {
             return [
                 "id" => $item['Id'],

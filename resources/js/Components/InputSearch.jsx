@@ -12,7 +12,7 @@ const InputSearch = ({ onSearch, placeholder }) => {
     };
     return (
         <TextInput
-            className="mb-4 w-[400px]"
+            className="w-[400px]"
             placeholder={`Tìm kiếm theo ${placeholder}`}
             value={query}
             onChange={(e) => setQuery(e.target.value)}

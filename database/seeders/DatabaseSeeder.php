@@ -346,7 +346,6 @@ class DatabaseSeeder extends Seeder
             'ChiTietDieuTri' => 'Điều trị',
             'MaVatTu' => 1,
             'SoVatTu' => 1,
-            'MaDichVu' => 1
         ]);
         TienTrinhDieuTri::create([
             'TenTienTrinh' => $faker->numerify('TTDT-####'),
@@ -357,7 +356,6 @@ class DatabaseSeeder extends Seeder
             'ChiTietDieuTri' => 'Điều trị',
             'MaVatTu' => 1,
             'SoVatTu' => 1,
-            'MaDichVu' => 2
         ]);
 
         $permissions = ['thuoc', 'vat-tu', 'hoadon', 'loai-thuoc', 'loai-vat-tu', 'sokhambenh', 'benhnhan', 'dichvu', 'loai-dich-vu', 'donvitinh', 'tientrinhdieutri'];

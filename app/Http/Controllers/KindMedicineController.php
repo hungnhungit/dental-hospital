@@ -14,7 +14,7 @@ class KindMedicineController extends Controller
 {
     public function index(): Response
     {
-        $kindMedicine = LoaiThuoc::paginate(10);
+        $kindMedicine = LoaiThuoc::query()->where('XoaMem', 0)->paginate(10);
         return Inertia::render('KindMedicine/List', [
             "kindMedicine" => collect($kindMedicine->items())->map(function ($item) {
                 return [
@@ -78,7 +78,7 @@ class KindMedicineController extends Controller
 
     public function destroy(int $id)
     {
-        LoaiThuoc::destroy($id);
+        LoaiThuoc::query()->findOrFail($id)->update(['XoaMem' => 1]);
 
         return back();
     }

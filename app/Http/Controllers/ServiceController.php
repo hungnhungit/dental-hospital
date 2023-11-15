@@ -13,7 +13,7 @@ class ServiceController extends Controller
 {
     public function index(Request $request): Response
     {
-        $services = DichVu::query()->with('loaiDichVu')->where('TenDichVu', 'LIKE', '%' . request('q') . '%')->orderBy('TenDichVu', $request['sortType'] ?? 'asc')->paginate(10);
+        $services = DichVu::query()->with('loaiDichVu')->where('XoaMem', 0)->where('TenDichVu', 'LIKE', '%' . request('q') . '%')->orderBy('TenDichVu', $request['sortType'] ?? 'asc')->paginate(10);
         return Inertia::render('Services/List', [
             "services" => collect($services->items())->map(function ($item) {
                 return [
@@ -89,7 +89,9 @@ class ServiceController extends Controller
 
     public function destroy(int $id)
     {
-        DichVu::destroy($id);
+        DichVu::query()->findOrFail($id)->update([
+            'XoaMem' => 1
+        ]);
 
         return back();
     }

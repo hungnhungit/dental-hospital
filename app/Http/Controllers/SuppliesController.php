@@ -15,7 +15,9 @@ class SuppliesController extends Controller
 {
     public function index(Request $request): Response
     {
-        $supplies = VatTu::query()->with(['loaiVatTu', 'donVi'])->where('TenVT', 'LIKE', '%' . request('q') . '%')->orderBy('TenVT', $request['sortType'] ?? 'asc')->paginate(10);
+        $supplies = VatTu::query()->with(['loaiVatTu', 'donVi'])->when(request('f'), function ($q, $val) {
+            $q->where('SoLuong', $val === 'het' ? '=' : '>', 0);
+        })->where('TenVT', 'LIKE', '%' . request('q') . '%')->orderBy('TenVT', $request['sortType'] ?? 'asc')->paginate(10);
 
         return Inertia::render('Supplies/List', [
             "supplies" => collect($supplies->items())->map(function ($item) {
@@ -94,7 +96,9 @@ class SuppliesController extends Controller
 
     public function pdfRemainingAmount()
     {
-        $supplies = VatTu::with(['loaiVatTu', 'donVi'])->where('SoLuong', '>', 0)->get();
+        $supplies = VatTu::with(['loaiVatTu', 'donVi'])->when(request('f'), function ($q, $val) {
+            $q->where('SoLuong', $val === 'het' ? '=' : '>', 0);
+        })->get();
         $data = ["data" => collect($supplies)->map(function ($item) {
             return [
                 "id" => $item['Id'],

@@ -3,18 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\BenhNhan;
-use App\Models\DichVu;
-use App\Models\NhanVien;
-use App\Models\SoKhamBenh;
 use App\Models\Thuoc;
 use App\Models\TienTrinhDieuTri;
-use App\Models\TinhTrangBenh;
 use App\Models\VatTu;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
-use Inertia\Response;
+
+use function PHPUnit\Framework\isNull;
 
 class ProccessController extends Controller
 {
@@ -22,12 +18,6 @@ class ProccessController extends Controller
     {
         return Inertia::render('Proccess/New', [
             "SoKhamBenhId" => $id,
-            'DichVu' => DichVu::query()->get()->map(function ($item) {
-                return [
-                    'id' => $item['Id'],
-                    'name' => $item['TenDichVu'],
-                ];
-            }),
             'Thuoc' => Thuoc::query()->get()->map(function ($item) {
                 return [
                     'id' => $item['Id'],
@@ -50,14 +40,10 @@ class ProccessController extends Controller
         $process = TienTrinhDieuTri::query()->findOrFail($idT);
 
         return Inertia::render('Proccess/New', [
-            "process" => $process->toArray(),
+            "process" => array_merge($process->toArray(), [
+                'LinkHinhAnh' =>  $process['HinhAnhXetNghiem'] ? asset('storage/' . $process['HinhAnhXetNghiem']) : null
+            ]),
             "SoKhamBenhId" => $id,
-            'DichVu' => DichVu::query()->get()->map(function ($item) {
-                return [
-                    'id' => $item['Id'],
-                    'name' => $item['TenDichVu'],
-                ];
-            }),
             'Thuoc' => Thuoc::query()->get()->map(function ($item) {
                 return [
                     'id' => $item['Id'],
@@ -77,24 +63,27 @@ class ProccessController extends Controller
 
     public function store(int $id, Request $request)
     {
-        $thuoc = Thuoc::query()->findOrFail($request['MaThuoc']);
-        $vattu = VatTu::query()->findOrFail($request['MaVatTu']);
+        if (!is_null($request['MaThuoc'])) {
+            $thuoc = Thuoc::query()->findOrFail($request['MaThuoc']);
+            if ($thuoc['SoLuong'] < $request['Sothuoc']) {
+                throw ValidationException::withMessages(['message' => 'QUANTITY_LIMIT_MEDICINE']);
+            }
 
-        if ($thuoc['SoLuong'] < $request['Sothuoc']) {
-            throw ValidationException::withMessages(['message' => 'QUANTITY_LIMIT_MEDICINE']);
+            $thuoc->update([
+                'SoLuong' => $thuoc['SoLuong'] - $request['Sothuoc']
+            ]);
         }
 
-        if ($vattu['SoLuong'] < $request['SoVatTu']) {
-            throw  ValidationException::withMessages(['message' => 'QUANTITY_LIMIT_SUPPLIES']);
+        if (!is_null($request['MaVatTu'])) {
+            $vattu = VatTu::query()->findOrFail($request['MaVatTu']);
+            if ($vattu['SoLuong'] < $request['SoVatTu']) {
+                throw  ValidationException::withMessages(['message' => 'QUANTITY_LIMIT_SUPPLIES']);
+            }
+
+            $vattu->update([
+                'SoLuong' => $vattu['SoLuong'] - $request['SoVatTu']
+            ]);
         }
-
-        $thuoc->update([
-            'SoLuong' => $thuoc['SoLuong'] - $request['Sothuoc']
-        ]);
-
-        $vattu->update([
-            'SoLuong' => $vattu['SoLuong'] - $request['SoVatTu']
-        ]);
 
         TienTrinhDieuTri::create(array_merge($request->all(), ['MaSoKhamBenh' => $id]));
         return to_route('sokhambenh.show', $id);

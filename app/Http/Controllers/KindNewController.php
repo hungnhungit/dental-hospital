@@ -13,7 +13,7 @@ class KindNewController extends Controller
 {
     public function index(): Response
     {
-        $kindNew = LoaiTinTuc::paginate(10);
+        $kindNew = LoaiTinTuc::query()->where('XoaMem', 0)->paginate(10);
 
         return Inertia::render('KindNew/List', [
             "kindNew" => collect($kindNew->items())->map(function ($item) {
@@ -75,7 +75,7 @@ class KindNewController extends Controller
 
     public function destroy(int $id)
     {
-        LoaiTinTuc::destroy($id);
+        LoaiTinTuc::query()->findOrFail($id)->update(['XoaMem' => 1]);
 
         return back();
     }

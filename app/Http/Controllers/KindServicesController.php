@@ -13,7 +13,7 @@ class KindServicesController extends Controller
 {
     public function index(): Response
     {
-        $kindService = LoaiDichVu::paginate(10);
+        $kindService = LoaiDichVu::query()->where('XoaMem', 0)->paginate(10);
 
         return Inertia::render('KindServices/List', [
             "kindServices" => collect($kindService->items())->map(function ($item) {
@@ -76,7 +76,7 @@ class KindServicesController extends Controller
 
     public function destroy(int $id)
     {
-        LoaiDichVu::destroy($id);
+        LoaiDichVu::query()->findOrFail($id)->update(['XoaMem' => 1]);
 
         return back();
     }

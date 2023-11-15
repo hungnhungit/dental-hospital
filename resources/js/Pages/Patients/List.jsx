@@ -1,8 +1,10 @@
 import InputSearch from "@/Components/InputSearch";
 import PageContainer from "@/Components/PageContainer";
 import Pagination from "@/Components/Pagination";
+import SecondaryButton from "@/Components/SecondaryButton";
 import Table from "@/Components/Table";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { request } from "@/Utils/request";
 import { getRouter } from "@/Utils/router";
 import { Head, Link, router } from "@inertiajs/react";
 import _get from "lodash/get";
@@ -32,6 +34,23 @@ export default function ListPatients(props) {
             router.visit(route("benhnhan.edit", id));
         },
     });
+
+    const handlePrint = async () => {
+        const res = await request.post(
+            route("benhnhan.pdf"),
+            {
+                ...route().params,
+            },
+            { responseType: "blob" }
+        );
+        let blob = new Blob([res], {
+            type: "application/pdf",
+        });
+        let link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "benhnhan.pdf";
+        link.click();
+    };
     return (
         <AuthenticatedLayout
             auth={props.auth}
@@ -41,12 +60,17 @@ export default function ListPatients(props) {
                     <h2 className="font-semibold text-xl text-gray-800 leading-tight uppercase">
                         bệnh nhân
                     </h2>
-                    <Link
-                        className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
-                        href={route("benhnhan.create")}
-                    >
-                        Thêm mới
-                    </Link>
+                    <div className="flex gap-5">
+                        <Link
+                            className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
+                            href={route("benhnhan.create")}
+                        >
+                            Thêm mới
+                        </Link>
+                        <SecondaryButton onClick={handlePrint}>
+                            In danh sách
+                        </SecondaryButton>
+                    </div>
                 </div>
             }
         >

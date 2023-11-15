@@ -14,6 +14,7 @@ export default function InputControl(props) {
         maxLength,
         rules,
         disabled,
+        required,
     } = props;
     const {
         field,
@@ -23,8 +24,6 @@ export default function InputControl(props) {
         control,
         rules,
     });
-    console.log(rules);
-    console.log(error);
     const cls = cx([
         "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5",
         error && "border-red-600",
@@ -32,7 +31,11 @@ export default function InputControl(props) {
     ]);
     return (
         <div className="flex flex-col items-start">
-            <InputLabel id={name} value={label} required={rules?.required} />
+            <InputLabel
+                id={name}
+                value={label}
+                required={required || rules?.required}
+            />
             <input
                 {...field}
                 value={field.value || ""}
