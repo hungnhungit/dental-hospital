@@ -8,16 +8,15 @@ import _get from "lodash/get";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { FaTrash } from "react-icons/fa";
-import InputError from "@/Components/InputError";
 import { formatNumber } from "@/Utils/helpers";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { filter, isEmpty, keyBy, reduce, size } from "lodash";
 
 export default function NewBill(props) {
     const { bill, DichVu } = props;
     const isModeEdit = bill ? true : false;
 
-    const { register, handleSubmit, control, watch } = useForm({
+    const { register, handleSubmit, setValue, control, watch } = useForm({
         defaultValues: isModeEdit
             ? bill
             : {
@@ -28,6 +27,17 @@ export default function NewBill(props) {
         control, // control props comes from useForm (optional: if you are using FormContext)
         name: "services", // unique name for your Field Array
     });
+
+    useEffect(() => {
+        const subscription = watch((value, { name, type }) => {
+            if (name === "GiamGia" && type === "change") {
+                setValue(name, String(value[name]).replace(/\D/g, ""));
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    }, [watch]);
+
     const wServices = watch("services");
 
     const servicesKeyBy = useMemo(() => {
@@ -104,7 +114,6 @@ export default function NewBill(props) {
                             </select>
                         </div>
                         <InputControl
-                            type="number"
                             control={control}
                             name="GiamGia"
                             className="mt-1 block w-full"

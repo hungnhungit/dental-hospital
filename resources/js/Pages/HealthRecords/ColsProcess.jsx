@@ -1,4 +1,5 @@
 import { createColumnHelper } from "@/Components/Table";
+import { isNull } from "lodash";
 import { useMemo } from "react";
 import { BsPencil, BsTrash } from "react-icons/bs";
 
@@ -30,6 +31,16 @@ const useColsProcess = ({ handleDelete, handleEdit }) => {
             columnHelper.accessor("ChiTietDieuTri", {
                 header: "Chi tiết điều trị",
                 cell: (info) => info.getValue(),
+            }),
+            columnHelper.accessor("HinhAnh", {
+                header: "Hỉnh ảnh",
+                cell: (info) =>
+                    !isNull(info.getValue()) ? (
+                        <img
+                            src={info.getValue()}
+                            className="h-[40px] w-[40px] object-cover"
+                        />
+                    ) : null,
             }),
             columnHelper.accessor("NgayDieuTri", {
                 header: "Ngày điều trị",

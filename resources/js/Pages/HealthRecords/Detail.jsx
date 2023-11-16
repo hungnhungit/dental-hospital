@@ -113,15 +113,17 @@ export default function DetailHealthRecords(props) {
                             <h1 className="text-3xl font-bold">
                                 Tiến trình điều trị
                             </h1>
-                            <Link
-                                className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
-                                href={route(
-                                    "tientrinhdieutri.create",
-                                    records["id"]
-                                )}
-                            >
-                                Thêm mới
-                            </Link>
+                            {records.TrangThai === "DangDieutri" ? (
+                                <Link
+                                    className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
+                                    href={route(
+                                        "tientrinhdieutri.create",
+                                        records["id"]
+                                    )}
+                                >
+                                    Thêm mới
+                                </Link>
+                            ) : null}
                         </div>
                         <Table
                             data={_get(props, "process", [])}

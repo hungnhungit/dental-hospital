@@ -44,8 +44,8 @@
             <td>{{ $item['BenhNhan'] }}</td>
         </tr>
         @endforeach
-
     </table>
+    <h4>Tông tiền: {{ $TongTien }} VND</h4>
 </body>
 
 </html>

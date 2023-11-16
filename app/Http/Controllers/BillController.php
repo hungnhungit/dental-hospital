@@ -19,7 +19,11 @@ class BillController extends Controller
 {
     public function index(Request $request): Response
     {
-        $bills = HoaDon::query()->with(['nhanVien', 'benhNhan'])->where('TenHoaDon', 'LIKE', '%' . request('q') . '%')->orderBy('TenHoaDon', $request['sortType'] ?? 'asc')->paginate(10);
+        $bills = HoaDon::query()->with(['nhanVien', 'benhNhan'])->when(request('start'), function ($q) {
+            $q->whereBetween('NgayLap', [request('start'), request('end')]);
+        })->where('XoaMem', 0)->where('TenHoaDon', 'LIKE', '%' . request('q') . '%')->when(request('f'), function ($q, $val) {
+            $q->where('TrangThai', $val);
+        })->orderBy('TenHoaDon', $request['sortType'] ?? 'asc')->paginate(10);
         return Inertia::render('Bill/List', [
             "bills" => collect($bills->items())->map(function ($item) {
                 return [
@@ -96,7 +100,9 @@ class BillController extends Controller
 
     public function destroy(int $id)
     {
-        HoaDon::destroy($id);
+        HoaDon::query()->findOrFail($id)->update([
+            'XoaMem' => 1
+        ]);
 
         return back();
     }
@@ -112,7 +118,11 @@ class BillController extends Controller
 
     public function pdfList()
     {
-        $bills = HoaDon::query()->with(['nhanVien', 'benhNhan'])->where('TenHoaDon', 'LIKE', '%' . request('q') . '%')->orderBy('TenHoaDon', $request['sortType'] ?? 'asc')->get();
+        $bills = HoaDon::query()->with(['nhanVien', 'benhNhan'])->when(request('start'), function ($q) {
+            $q->whereBetween('NgayLap', [request('start'), request('end')]);
+        })->where('XoaMem', 0)->where('TenHoaDon', 'LIKE', '%' . request('q') . '%')->when(request('f'), function ($q, $val) {
+            $q->where('TrangThai', $val);
+        })->orderBy('TenHoaDon', $request['sortType'] ?? 'asc')->get();
         $data = ["bills" => $bills->map(function ($item) {
             return [
                 "TenHoaDon" => $item['TenHoaDon'],
@@ -123,7 +133,9 @@ class BillController extends Controller
                 'GiamGia' => $item['GiamGia'],
                 'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y')
             ];
-        }),];
+        }), "TongTien" => number_format($bills->sum(function ($item) {
+            return $item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0)) / 100;
+        }))];
         $pdf = PDF::loadView('danhsachhoadon', $data);
         return $pdf->download('danhsachhoadon.pdf');
     }

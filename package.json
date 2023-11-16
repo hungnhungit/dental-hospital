@@ -26,6 +26,7 @@
         "date-fns": "^2.30.0",
         "query-string": "^8.1.0",
         "react-chartjs-2": "^5.2.0",
+        "react-datepicker": "^4.21.0",
         "react-hook-form": "^7.46.2",
         "react-icons": "^4.10.1",
         "react-quill": "^2.0.0",
