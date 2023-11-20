@@ -29,6 +29,15 @@ export default function InputControl(props) {
         error && "border-red-600",
         className,
     ]);
+
+    const handleOnChange = (e) => {
+        if (type === "number") {
+            field.onChange(String(e.target.value).replace(/\D/g, ""));
+        } else {
+            field.onChange(e.target.value);
+        }
+    };
+
     return (
         <div className="flex flex-col items-start">
             <InputLabel
@@ -39,10 +48,11 @@ export default function InputControl(props) {
             <input
                 {...field}
                 value={field.value || ""}
-                type={type}
+                type="text"
                 className={cls}
                 disabled={disabled}
                 maxLength={maxLength}
+                onChange={handleOnChange}
             />
             {error ? <InputError message={get(error, "message")} /> : null}
         </div>

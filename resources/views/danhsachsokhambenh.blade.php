@@ -37,6 +37,7 @@
             <td>{{ $item['HoVaTen'] }}</td>
             <td>{{ $item['BacSi'] }}</td>
             <td>{{ $item['ChanDoanBenh'] }}</td>
+            <td>{{ $item['TrangThai'] }}</td>
         </tr>
         @endforeach
     </table>

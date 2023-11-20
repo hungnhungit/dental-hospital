@@ -28,16 +28,6 @@ export default function NewBill(props) {
         name: "services", // unique name for your Field Array
     });
 
-    useEffect(() => {
-        const subscription = watch((value, { name, type }) => {
-            if (name === "GiamGia" && type === "change") {
-                setValue(name, String(value[name]).replace(/\D/g, ""));
-            }
-        });
-
-        return () => subscription.unsubscribe();
-    }, [watch]);
-
     const wServices = watch("services");
 
     const servicesKeyBy = useMemo(() => {
@@ -115,6 +105,7 @@ export default function NewBill(props) {
                         </div>
                         <InputControl
                             control={control}
+                            type="number"
                             name="GiamGia"
                             className="mt-1 block w-full"
                             label="Giảm giá"

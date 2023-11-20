@@ -21,7 +21,7 @@ class HealthRecordsController extends Controller
     {
         $healthRecords = SoKhamBenh::query()->join('benhnhan', 'sokhambenh.MaBenhNhan', '=', 'benhnhan.id')->with(['bacSi'])->whereHas('benhNhan', function (Builder $q) {
             $q->where('HoVaTen', 'LIKE', '%' . request('q') . '%');
-        })->orderBy('benhnhan.HoVaTen', request('sortType', 'asc'))->select(['HoVaTen', 'sokhambenh.Id as id', 'TrangThai', 'MaBacSi', 'ChanDoanBenh'])->paginate(10);
+        })->where('sokhambenh.XoaMem', 0)->orderBy('benhnhan.HoVaTen', request('sortType', 'asc'))->select(['HoVaTen', 'sokhambenh.Id as id', 'TrangThai', 'MaBacSi', 'ChanDoanBenh'])->paginate(10);
 
         return Inertia::render('HealthRecords/List', [
             "healthRecords" => collect($healthRecords->items())->map(function ($item) {
@@ -129,7 +129,9 @@ class HealthRecordsController extends Controller
 
     public function destroy(int $id)
     {
-        SoKhamBenh::destroy($id);
+        SoKhamBenh::query()->findOrFail($id)->update([
+            'XoaMem' => 1
+        ]);
 
         return back();
     }
@@ -143,7 +145,7 @@ class HealthRecordsController extends Controller
                 "BenhNhan" => $record['benhNhan']['HoVaTen'],
                 "BacSi" => $record['bacSi']['HoVaTen'],
                 "ChanDoanBenh" => $record['ChanDoanBenh'],
-                "TrangThai" => $record['TrangThai']
+                "TrangThai" => $record->getTextStatus()
             ],
             "process" => collect($process)->map(function ($item) {
                 return [
@@ -163,14 +165,14 @@ class HealthRecordsController extends Controller
     {
         $healthRecords = SoKhamBenh::query()->join('benhnhan', 'sokhambenh.MaBenhNhan', '=', 'benhnhan.id')->with(['bacSi'])->whereHas('benhNhan', function (Builder $q) {
             $q->where('HoVaTen', 'LIKE', '%' . request('q') . '%');
-        })->orderBy('benhnhan.HoVaTen', request('sortType', 'asc'))->select(['HoVaTen', 'sokhambenh.Id as id', 'TrangThai', 'MaBacSi', 'ChanDoanBenh'])->paginate(10);
+        })->where('XoaMem', 0)->orderBy('benhnhan.HoVaTen', request('sortType', 'asc'))->select(['HoVaTen', 'sokhambenh.Id as id', 'TrangThai', 'MaBacSi', 'ChanDoanBenh'])->paginate(10);
         $data = [
             "healthRecords" => $healthRecords->map(function ($item) {
                 return [
                     "HoVaTen" => $item['HoVaTen'],
                     "BacSi" => $item['bacSi']['HoVaTen'],
                     "ChanDoanBenh" => $item['ChanDoanBenh'],
-                    "TrangThai" => $item['TrangThai']
+                    "TrangThai" => $item->getTextStatus()
                 ];
             }),
         ];

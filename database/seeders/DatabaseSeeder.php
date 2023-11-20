@@ -63,6 +63,7 @@ class DatabaseSeeder extends Seeder
         DonViTinh::truncate();
         Ham::truncate();
         DB::table('phanquyenham')->truncate();
+        DB::table('chitiethoadon')->truncate();
         DB::statement("SET foreign_key_checks=1");
 
         ChucVu::create([

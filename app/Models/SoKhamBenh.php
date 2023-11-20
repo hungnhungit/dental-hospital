@@ -33,4 +33,15 @@ class SoKhamBenh extends Model
     {
         return $this->hasMany(TienTrinhDieuTri::class, 'MaSoKhamBenh');
     }
+
+    public function getTextStatus(): string
+    {
+        $STATUS_RECORD_MAP_TO_STATUS_TEXT = [
+            'ChoPheDuyet' => "Chờ phê duyệt",
+            'DangDieutri' => "Đang điều trị",
+            'Huy' => "Hủy bỏ",
+            'ThanhCong' => "Thành công",
+        ];
+        return $STATUS_RECORD_MAP_TO_STATUS_TEXT[$this['TrangThai']];
+    }
 }

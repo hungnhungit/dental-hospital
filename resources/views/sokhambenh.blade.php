@@ -36,6 +36,10 @@
         <span className="font-bold">Chuẩn đoán bệnh: </span>
         {{ $records['ChanDoanBenh'] }}
     </div>
+    <div>
+        <span className="font-bold">Trạng thái: </span>
+        {{ $records['TrangThai'] }}
+    </div>
 
     <h2>Tiến trình điểu trị</h2>
 

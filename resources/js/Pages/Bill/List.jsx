@@ -16,15 +16,14 @@ import { toast } from "react-toastify";
 import useCols from "./Cols";
 import "react-datepicker/dist/react-datepicker.css";
 import vi from "date-fns/locale/vi";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 
 registerLocale("vi", vi);
 
 export default function ListBill(props) {
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-
-    const { page, sortCols, sortType, f } = qs.parse(location.search);
+    const { page, sortCols, sortType, f, start, end } = qs.parse(
+        location.search
+    );
     const [sorting, setSorting] = useState([
         {
             id: sortCols,
@@ -32,6 +31,12 @@ export default function ListBill(props) {
         },
     ]);
     const [filter, setFilter] = useState(f);
+    const [startDate, setStartDate] = useState(
+        isNaN(Date.parse(start)) ? null : new Date(start)
+    );
+    const [endDate, setEndDate] = useState(
+        isNaN(Date.parse(end)) ? null : new Date(end)
+    );
     const [currentPage, setCurrentPage] = useState(Number(page || 1));
 
     const onChange = (dates) => {

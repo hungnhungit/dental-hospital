@@ -35,7 +35,7 @@ export default function ListHealthRecords(props) {
         },
         handlePrint: async (id) => {
             const res = await request.post(
-                route("danhsachsokhambenh.pdf", id),
+                route("sokhambenh.pdf", id),
                 {},
                 { responseType: "blob" }
             );
@@ -44,7 +44,7 @@ export default function ListHealthRecords(props) {
             });
             let link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
-            link.download = "danhsachsokhambenh.pdf";
+            link.download = "sokhambenh.pdf";
             link.click();
         },
         user: props.auth.user,

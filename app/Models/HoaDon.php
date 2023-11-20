@@ -33,4 +33,16 @@ class HoaDon extends Model
     {
         return $this->belongsToMany(DichVu::class, 'chitiethoadon', 'HoaDonId', 'DichVuId')->as("payload")->withPivot('SoLuong');
     }
+
+    public function getTextStatus(): string
+    {
+
+        $STATUS_MAP_TO_STATUS_TEXT = [
+            'ChuaThanhToan' => "Chờ thanh toán",
+            'DaThanhToan' => "Đã thanh toán",
+            'Huy' => "Hủy thanh toán",
+        ];
+
+        return $STATUS_MAP_TO_STATUS_TEXT[$this['TrangThai']];
+    }
 }

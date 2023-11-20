@@ -87,6 +87,7 @@ class BillController extends Controller
             "NguoiTao" => $bill['nhanVien']['HoVaTen'],
             "BenhNhan" => $bill['benhNhan']['HoVaTen'],
             "GiamGia" => $bill['GiamGia'],
+            'TrangThai' => $bill->getTextStatus(),
         ], 'services' =>   $bill['dichvu']->map(function ($service) {
             return [
                 'TenDichVu' => $service['TenDichVu'],
@@ -129,7 +130,7 @@ class BillController extends Controller
                 "TongSoTien" => number_format($item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0)) / 100),
                 "NguoiTao" => $item['nhanVien']['HoVaTen'],
                 "BenhNhan" => $item['benhNhan']['HoVaTen'],
-                'TrangThai' => $item['TrangThai'],
+                'TrangThai' => $item->getTextStatus(),
                 'GiamGia' => $item['GiamGia'],
                 'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y')
             ];

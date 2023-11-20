@@ -28,20 +28,22 @@
     <table>
         <tr>
             <th>TÊN HOÁ ĐƠN</th>
+            <th>BỆNH NHÂN</th>
             <th>TỔNG TIỀN</th>
             <th>GIẢM GIÁ</th>
             <th>NGÀY TẠO</th>
             <th>NGƯỜI TẠO</th>
-            <th>BỆNH NHÂN</th>
+            <th>TRẠNG THÁI</th>
         </tr>
         @foreach ($bills as $item)
         <tr>
             <td>{{ $item['TenHoaDon'] }}</td>
+            <td>{{ $item['BenhNhan'] }}</td>
             <td>{{ $item['TongSoTien'] }} VND</td>
             <td>{{ $item['GiamGia'] ?? 0 }}%</td>
             <td>{{ $item['NgayLap'] }}</td>
             <td>{{ $item['NguoiTao'] }}</td>
-            <td>{{ $item['BenhNhan'] }}</td>
+            <td>{{ $item['TrangThai'] }}</td>
         </tr>
         @endforeach
     </table>

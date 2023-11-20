@@ -27,6 +27,8 @@
     <p>Bệnh nhân: {{ $bill['BenhNhan'] }}</p>
     <p>Người tạo: {{ $bill['NguoiTao'] }}</p>
     <p>Tổng số tiền: {{ $bill['TongSoTien'] }} VND</p>
+    <p>Trạng thái: {{ $bill['TrangThai']  }}</p>
+
     <p>Giảm giá: {{ $bill['GiamGia'] ?? 0  }}%</p>
 
     <h2>Tiến trình điểu trị</h2>
