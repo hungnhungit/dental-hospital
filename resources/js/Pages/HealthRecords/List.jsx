@@ -63,7 +63,7 @@ export default function ListHealthRecords(props) {
         });
         let link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
-        link.download = "sokham.pdf";
+        link.download = "danhsachsokham.pdf";
         link.click();
     };
     return (

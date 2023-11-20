@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\BenhNhan;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -20,7 +21,7 @@ class PatientController extends Controller
                 return [
                     "id" => $item['Id'],
                     "HoVaTen" => $item['HoVaTen'],
-                    "dob" => $item['NgaySinh'],
+                    "dob" => Carbon::parse($item['NgaySinh'])->format('d/m/Y'),
                     "phone" => $item['DienThoai'],
                     "address" => $item['DiaChi'],
                     "cccd" => $item['CMND'],

@@ -165,7 +165,7 @@ class HealthRecordsController extends Controller
     {
         $healthRecords = SoKhamBenh::query()->join('benhnhan', 'sokhambenh.MaBenhNhan', '=', 'benhnhan.id')->with(['bacSi'])->whereHas('benhNhan', function (Builder $q) {
             $q->where('HoVaTen', 'LIKE', '%' . request('q') . '%');
-        })->where('XoaMem', 0)->orderBy('benhnhan.HoVaTen', request('sortType', 'asc'))->select(['HoVaTen', 'sokhambenh.Id as id', 'TrangThai', 'MaBacSi', 'ChanDoanBenh'])->paginate(10);
+        })->where('sokhambenh.XoaMem', 0)->orderBy('benhnhan.HoVaTen', request('sortType', 'asc'))->select(['HoVaTen', 'sokhambenh.Id as id', 'TrangThai', 'MaBacSi', 'ChanDoanBenh'])->paginate(10);
         $data = [
             "healthRecords" => $healthRecords->map(function ($item) {
                 return [

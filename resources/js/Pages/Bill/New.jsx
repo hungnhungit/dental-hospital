@@ -150,17 +150,13 @@ export default function NewBill(props) {
                                         )}
                                     </select>
                                 </div>
-                                <div className="flex flex-col items-start">
-                                    <InputLabel value="Số lượng" required />
-                                    <input
-                                        {...register(
-                                            `services.${index}.SoLuong`,
-                                            { required: true }
-                                        )}
-                                        type="number"
-                                        className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-                                    />
-                                </div>
+                                <InputControl
+                                    control={control}
+                                    type="number"
+                                    name={`services.${index}.SoLuong`}
+                                    className="mt-1 block w-full"
+                                    label="Số lượng"
+                                />
                                 <FaTrash
                                     className="cursor-pointer h-[20px] w-[20px] relative top-3"
                                     onClick={() => remove(index)}
