@@ -1,6 +1,8 @@
 import PageContainer from "@/Components/PageContainer";
+import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { formatNumber } from "@/Utils/helpers";
+import { request } from "@/Utils/request";
 import { Head } from "@inertiajs/react";
 import {
     Chart as ChartJS,
@@ -11,6 +13,8 @@ import {
     Tooltip,
     Legend,
 } from "chart.js";
+import { map } from "lodash";
+import { useMemo } from "react";
 import { Bar } from "react-chartjs-2";
 
 ChartJS.register(
@@ -22,7 +26,14 @@ ChartJS.register(
     Legend
 );
 
-export const options = {
+function randomBgColor() {
+    const x = Math.floor(Math.random() * 256);
+    const y = Math.floor(Math.random() * 256);
+    const z = Math.floor(Math.random() * 256);
+    return "rgb(" + x + "," + y + "," + z + ")";
+}
+
+export const options1 = {
     responsive: true,
     plugins: {
         legend: {
@@ -53,6 +64,19 @@ export const options = {
     },
 };
 
+export const options2 = {
+    responsive: true,
+    plugins: {
+        legend: {
+            position: "top",
+        },
+        title: {
+            display: true,
+            text: "Dịch vụ sử dụng",
+        },
+    },
+};
+
 const labels = Array(12)
     .fill("")
     .map((_, index) => {
@@ -60,8 +84,9 @@ const labels = Array(12)
     });
 
 export default function ListRevenue(props) {
-    const { months, today } = props;
-    const data = {
+    const { months, today, services, servicesLabel } = props;
+    console.log(servicesLabel);
+    const data1 = {
         labels,
         datasets: [
             {
@@ -77,6 +102,34 @@ export default function ListRevenue(props) {
         ],
     };
 
+    const data2 = useMemo(() => {
+        return {
+            labels,
+            datasets: map(servicesLabel, (item) => {
+                return {
+                    label: item.name,
+                    data: item.data,
+                    backgroundColor: randomBgColor(),
+                };
+            }),
+        };
+    }, [servicesLabel]);
+
+    const handlePrint = async (kind) => {
+        const res = await request.post(
+            route(`${kind}.pdf`),
+            {},
+            { responseType: "blob" }
+        );
+        let blob = new Blob([res], {
+            type: "application/pdf",
+        });
+        let link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "doanhthu.pdf";
+        link.click();
+    };
+
     return (
         <AuthenticatedLayout
             auth={props.auth}
@@ -86,6 +139,23 @@ export default function ListRevenue(props) {
                     <h2 className="font-semibold text-xl text-gray-800 leading-tight uppercase">
                         doanh thu
                     </h2>
+                    <div className="flex gap-5">
+                        <SecondaryButton
+                            onClick={() => handlePrint("doanhthutoday")}
+                        >
+                            In doanh thu ngày
+                        </SecondaryButton>
+                        <SecondaryButton
+                            onClick={() => handlePrint("doanhthumonth")}
+                        >
+                            In doanh thu tháng
+                        </SecondaryButton>
+                        <SecondaryButton
+                            onClick={() => handlePrint("doanhthuyear")}
+                        >
+                            In doanh thu năm
+                        </SecondaryButton>
+                    </div>
                 </div>
             }
         >
@@ -93,7 +163,9 @@ export default function ListRevenue(props) {
 
             <PageContainer>
                 <div className="flex flex-col gap-10">
-                    <Bar options={options} data={data} />
+                    <Bar options={options1} data={data1} />
+
+                    <Bar options={options2} data={data2} />
                 </div>
             </PageContainer>
         </AuthenticatedLayout>

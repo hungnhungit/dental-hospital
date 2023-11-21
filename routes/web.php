@@ -43,6 +43,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('luuanh', [UploadController::class, 'upload'])->name('upload.handle');
     Route::get('doanhthu', [RevenueController::class, 'index'])->name('doanhthu.index');
+    Route::post('doanhthu/today/pdf', [RevenueController::class, 'today'])->name('doanhthutoday.pdf');
+    Route::post('doanhthu/month/pdf', [RevenueController::class, 'month'])->name('doanhthumonth.pdf');
+    Route::post('doanhthu/year/pdf', [RevenueController::class, 'year'])->name('doanhthuyear.pdf');
     Route::resource('taikhoan', UsersController::class);
     Route::resource('tin-tuc', NewsController::class);
     Route::resource('loai-tin-tuc', KindNewController::class);

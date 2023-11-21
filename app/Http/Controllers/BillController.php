@@ -70,7 +70,7 @@ class BillController extends Controller
             'MaBenhNhan' => $request['MaBenhNhan'],
             'MaNhanVien' => $empl['Id'],
             'GiamGia' => $request['GiamGia'],
-            'NgayLap' => now()
+            'NgayLap' => now()->subMonth()
         ]);
         $hoadon->dichvu()->attach($request['services']);
 
