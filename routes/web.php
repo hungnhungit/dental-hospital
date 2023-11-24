@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::post('doanhthu/today/pdf', [RevenueController::class, 'today'])->name('doanhthutoday.pdf');
     Route::post('doanhthu/month/pdf', [RevenueController::class, 'month'])->name('doanhthumonth.pdf');
     Route::post('doanhthu/year/pdf', [RevenueController::class, 'year'])->name('doanhthuyear.pdf');
+    Route::post('doanhthu/doanhthukhoangngay/pdf', [RevenueController::class, 'rangeDate'])->name('doanhthukhoangngay.pdf');
     Route::resource('taikhoan', UsersController::class);
     Route::resource('tin-tuc', NewsController::class);
     Route::resource('loai-tin-tuc', KindNewController::class);
@@ -60,10 +61,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('thuoc', MedicineController::class);
     Route::post('api/vat-tu/pdf', [SuppliesController::class, 'pdfRemainingAmount'])->name('vat-tu.pdf');
     Route::resource('vat-tu', SuppliesController::class);
+    Route::post('vat-tu', [SuppliesController::class, 'import'])->name('vat-tu.import');
     Route::post('api/hoadon/pay', [BillController::class, 'pdfList'])->name('hoadon.pdfList');
     Route::post('api/hoadon/{id}/pdf', [BillController::class, 'pdf'])->name('hoadon.pdf');
     Route::post('hoadon/{id}/pay', [BillController::class, 'pay'])->name('hoadon.pay');
     Route::resource('hoadon', BillController::class);
+    Route::get('lichsukhambenh', [ProccessController::class, 'index'])->name('lichsukhambenh.index');
     Route::delete('tientrinhdieutri', [ProccessController::class, 'destroy']);
     Route::post('api/sokhambenh/pdf', [HealthRecordsController::class, 'pdfList'])->name('sokham.pdfList');
     Route::get('sokhambenh/{id}/tientrinhdieutri/create', [ProccessController::class, 'create'])->name('tientrinhdieutri.create');

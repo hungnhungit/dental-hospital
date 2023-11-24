@@ -28,13 +28,13 @@
 </head>
 
 <body>
-    <h2 class="text-center">Danh sách hoá đơn</h2>
-
+    <h2 class="text-center">Phòng khám nha khoa quốc tế DR DEE</h2>
+    <p class="text-center">Danh sách hóa đơn từ ngày {{ $start }} đến ngày {{ $end }}</p>
     <table>
         <tr>
             <th>TÊN HOÁ ĐƠN</th>
-            <th>BÁC SĨ</th>
             <th>BỆNH NHÂN</th>
+            <th>BÁC SĨ</th>
             <th>TỔNG TIỀN</th>
             <th>GIẢM GIÁ</th>
             <th>NGÀY TẠO</th>

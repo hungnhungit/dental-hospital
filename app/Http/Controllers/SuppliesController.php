@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\DonViTinh;
 use App\Models\LoaiVatTu;
+use App\Models\NhapXuatVatTu;
 use App\Models\VatTu;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -27,6 +29,12 @@ class SuppliesController extends Controller
                     "LoaiVatTu" => $item['loaiVatTu']['LoaiVatTu'],
                     "DonVi" => $item['donVi']['DonVi'],
                     "SoLuong" => $item['SoLuong'],
+                ];
+            }),
+            "supplieOptions" => VatTu::query()->get()->map(function ($item) {
+                return [
+                    "id" => $item['Id'],
+                    "name" => $item['TenVT'],
                 ];
             }),
             "totalPage" => $supplies->total(),
@@ -68,6 +76,11 @@ class SuppliesController extends Controller
                     "name" => $item['DonVi'],
                 ];
             }),
+            "history" => NhapXuatVatTu::query()->get()->map(function ($item) {
+                return array_merge($item->toArray(), [
+                    'NgayBienDong' => Carbon::parse($item['NgayBienDong'])->format('d/m/Y')
+                ]);
+            }),
             "supplie" => $record->toArray()
         ]);
     }
@@ -96,7 +109,7 @@ class SuppliesController extends Controller
 
     public function pdfRemainingAmount()
     {
-        $supplies = VatTu::with(['loaiVatTu', 'donVi'])->when(request('f'), function ($q, $val) {
+        $supplies = VatTu::with(['loaiVatTu', 'donVi', 'nhapxuat'])->when(request('f'), function ($q, $val) {
             $q->where('SoLuong', $val === 'het' ? '=' : '>', 0);
         })->get();
         $data = ["data" => collect($supplies)->map(function ($item) {
@@ -105,10 +118,31 @@ class SuppliesController extends Controller
                 "TenVT" => $item['TenVT'],
                 "LoaiVatTu" => $item['loaiVatTu']['LoaiVatTu'],
                 "DonVi" => $item['donVi']['DonVi'],
-                "SoLuong" => $item['SoLuong'],
+                "SoLuongNhap" => $item['nhapxuat']->sum->SoLuongNhap,
+                "SoLuongXuat" => $item['nhapxuat']->sum->SoLuongXuat,
+                "SoLuongHienTai" => $item['SoLuong'],
             ];
         })];
         $pdf = PDF::loadView('vattu', $data);
         return $pdf->download('vattu.pdf');
+    }
+
+    public function import()
+    {
+        $vt = VatTu::query()->findOrFail(request('MaVatTu'));
+
+
+        NhapXuatVatTu::query()->create([
+            'MaVatTu' => request('MaVatTu'),
+            'NgayBienDong' => request('NgayNhap'),
+            'SoLuongNhap' => request('SoLuong'),
+            'SoLuongHienTai' => $vt['SoLuong']
+        ]);
+
+        $vt->update([
+            'SoLuong' => $vt['SoLuong'] + request('SoLuong')
+        ]);
+
+        return back();
     }
 }

@@ -1,4 +1,5 @@
 import { createColumnHelper } from "@/Components/Table";
+import { formatNumber } from "@/Utils/helpers";
 import { useMemo } from "react";
 import { BsPencil, BsTrash } from "react-icons/bs";
 
@@ -10,6 +11,11 @@ const useCols = ({ handleDelete, handleEdit }) => {
             columnHelper.accessor("HoVaTen", {
                 header: "Họ và tên",
                 cell: (info) => info.getValue(),
+                enableSorting: true,
+            }),
+            columnHelper.accessor("TongTienChi", {
+                header: "Tổng tiền chi",
+                cell: (info) => formatNumber(info.getValue()),
                 enableSorting: true,
             }),
             columnHelper.accessor("dob", {

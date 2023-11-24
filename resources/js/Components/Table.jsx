@@ -27,7 +27,7 @@ const Table = ({ data, columns, sorting, setSorting }) => {
     });
 
     return (
-        <div className="relative overflow-x-auto min-h-[600px] mt-4">
+        <div className="relative overflow-x-auto min-h-[600px] w-[1500px] mt-4">
             <table className="w-full text-sm text-left text-gray-500">
                 <thead className="lg:text-base md:text-[10px] text-gray-700 uppercase bg-gray-50">
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -36,11 +36,11 @@ const Table = ({ data, columns, sorting, setSorting }) => {
                                 return (
                                     <th
                                         key={header.id}
-                                        className={
+                                        className={`${
                                             header.id === "actions"
                                                 ? "px-6 py-3 w-[150px]"
                                                 : "px-6 py-3"
-                                        }
+                                        } whitespace-nowrap`}
                                     >
                                         {header.isPlaceholder ? null : (
                                             <div

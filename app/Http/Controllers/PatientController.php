@@ -14,13 +14,14 @@ class PatientController extends Controller
 {
     public function index(Request $request): Response
     {
-        $patients = BenhNhan::query()->where('XoaMem', 0)->where('HoVaTen', 'LIKE', '%' . request('q') . '%')->orderBy('HoVaTen', $request['sortType'] ?? 'asc')->paginate(10);
+        $patients = BenhNhan::query()->where('XoaMem', 0)->where('HoVaTen', 'LIKE', '%' . request('q') . '%')->orderBy($request['sortCols'] ?? 'HoVaTen', $request['sortType'] ?? 'asc')->paginate(10);
 
         return Inertia::render('Patients/List', [
             "patients" => collect($patients->items())->map(function ($item) {
                 return [
                     "id" => $item['Id'],
                     "HoVaTen" => $item['HoVaTen'],
+                    "TongTienChi" => $item['TongTienChi'],
                     "dob" => Carbon::parse($item['NgaySinh'])->format('d/m/Y'),
                     "phone" => $item['DienThoai'],
                     "address" => $item['DiaChi'],

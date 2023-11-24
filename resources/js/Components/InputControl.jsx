@@ -31,15 +31,12 @@ export default function InputControl(props) {
     ]);
 
     const handleOnChange = (e) => {
-        console.log(type);
         if (type === "number") {
             field.onChange(String(e.target.value).replace(/\D/g, ""));
         } else {
             field.onChange(e.target.value);
         }
     };
-
-    const getType = {};
 
     return (
         <div className="flex flex-col items-start">

@@ -37,6 +37,9 @@ class BillController extends Controller
                     'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y')
                 ];
             }),
+            "TongTien" => HoaDon::query()->get()->sum(function ($item) {
+                return $item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0)) / 100;
+            }),
             "totalPage" => $bills->total(),
         ]);
     }
@@ -72,6 +75,7 @@ class BillController extends Controller
             'GiamGia' => $request['GiamGia'],
             'NgayLap' => now()
         ]);
+
         $hoadon->dichvu()->attach($request['services']);
 
 
@@ -110,8 +114,14 @@ class BillController extends Controller
 
     public function pay(int $id)
     {
-        HoaDon::query()->findOrFail($id)->update([
+        $hoadon = HoaDon::query()->findOrFail($id);
+        $benhnhan = BenhNhan::query()->findOrFail($hoadon['MaBenhNhan']);
+        $hoadon->update([
             'TrangThai' => 'DaThanhToan'
+        ]);
+
+        $benhnhan->update([
+            'TongTienChi' => $benhnhan['TongTienChi'] + $hoadon['TongSoTien']
         ]);
 
         return back();

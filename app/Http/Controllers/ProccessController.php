@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Thuoc;
 use App\Models\TienTrinhDieuTri;
 use App\Models\VatTu;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
@@ -14,6 +16,27 @@ use function PHPUnit\Framework\isNull;
 
 class ProccessController extends Controller
 {
+    public function index()
+    {
+        $proccess = TienTrinhDieuTri::query()->when(request('start'), function ($q) {
+            $q->whereBetween('NgayDieuTri', [request('start'), request('end')]);
+        })->orderBy('NgayDieuTri', 'desc')->with(['sokham' => function ($q) {
+            $q->with(['bacSi', 'benhNhan']);
+        }])->paginate(10);
+
+        return Inertia::render('Proccess/List', [
+            "proccess" => collect($proccess->items())->map(function ($item) {
+                return [
+                    "TenTienTrinh" => $item['TenTienTrinh'],
+                    "TenBacSi" => Arr::get($item, 'sokham.bacSi.HoVaTen', ''),
+                    "TenBenhNhan" => Arr::get($item, 'sokham.benhNhan.HoVaTen', ''),
+                    "ChiTietDieuTri" => $item['ChiTietDieuTri'],
+                    "NgayDieuTri" =>  Carbon::parse($item['NgayDieuTri'])->format('d/m/Y'),
+                ];
+            }),
+            "totalPage" => $proccess->total(),
+        ]);
+    }
     public function create(int $id)
     {
         return Inertia::render('Proccess/New', [

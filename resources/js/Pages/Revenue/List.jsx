@@ -14,8 +14,11 @@ import {
     Legend,
 } from "chart.js";
 import { map } from "lodash";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Bar } from "react-chartjs-2";
+import ReactDatePicker from "react-datepicker";
+import { toast } from "react-toastify";
+import { format } from "date-fns";
 
 ChartJS.register(
     CategoryScale,
@@ -84,8 +87,14 @@ const labels = Array(12)
     });
 
 export default function ListRevenue(props) {
-    const { months, today, services, servicesLabel } = props;
-    console.log(servicesLabel);
+    const { months, today, servicesLabel } = props;
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const onChange = (dates) => {
+        const [start, end] = dates;
+        setStartDate(start);
+        setEndDate(end);
+    };
     const data1 = {
         labels,
         datasets: [
@@ -130,6 +139,28 @@ export default function ListRevenue(props) {
         link.click();
     };
 
+    const handlePrintRangeDate = async () => {
+        if (!startDate && !endDate) {
+            toast.warn("Chưa chọn khoảng thời gian !");
+            return;
+        }
+        const res = await request.post(
+            route(`doanhthukhoangngay.pdf`),
+            {
+                start: format(startDate, "yyyy-MM-dd"),
+                end: format(endDate, "yyyy-MM-dd"),
+            },
+            { responseType: "blob" }
+        );
+        let blob = new Blob([res], {
+            type: "application/pdf",
+        });
+        let link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "doanhthukhoangngay.pdf";
+        link.click();
+    };
+
     return (
         <AuthenticatedLayout
             auth={props.auth}
@@ -140,6 +171,19 @@ export default function ListRevenue(props) {
                         doanh thu
                     </h2>
                     <div className="flex gap-5">
+                        <ReactDatePicker
+                            locale="vi"
+                            placeholderText="Ngày bắt đầu - Ngày kết thúc"
+                            selected={startDate}
+                            onChange={onChange}
+                            startDate={startDate}
+                            endDate={endDate}
+                            selectsRange
+                            className="w-[220px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block p-2.5"
+                        />
+                        <SecondaryButton onClick={() => handlePrintRangeDate()}>
+                            In doanh theo khoảng ngày
+                        </SecondaryButton>
                         <SecondaryButton
                             onClick={() => handlePrint("doanhthutoday")}
                         >

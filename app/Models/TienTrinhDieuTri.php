@@ -29,11 +29,6 @@ class TienTrinhDieuTri extends Model
         return $this->belongsTo(VatTu::class, 'MaVatTu', 'Id');
     }
 
-    public function hoadon(): HasOne
-    {
-        return $this->hasOne(HoaDon::class, 'MaTienTrinh', 'Id');
-    }
-
     public function sokham(): BelongsTo
     {
         return $this->belongsTo(SoKhamBenh::class, 'MaSoKhamBenh', 'Id');

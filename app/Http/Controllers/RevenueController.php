@@ -59,13 +59,14 @@ class RevenueController extends Controller
     {
         $bills = HoaDon::query()
             ->whereDate('NgayLap', Carbon::today())
-            ->with(['nhanVien', 'benhNhan'])
+            ->with(['nhanVien', 'benhNhan.sokham.bacSi', 'dichvu'])
             ->where('TrangThai', 'DaThanhToan')
             ->where('XoaMem', 0)
             ->get();
 
         $data = ["bills" => $bills->map(function ($item) {
             return [
+                "TenBacSi" => Arr::get($item, 'benhNhan.sokham.bacSi.HoVaTen', ''),
                 "TenHoaDon" => $item['TenHoaDon'],
                 "TongSoTien" => number_format($item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0)) / 100),
                 "NguoiTao" => $item['nhanVien']['HoVaTen'],
@@ -85,20 +86,28 @@ class RevenueController extends Controller
     {
         $bills = HoaDon::query()
             ->whereMonth('NgayLap', Carbon::now()->format('m'))
-            ->with(['nhanVien', 'benhNhan'])
+            ->with(['nhanVien', 'benhNhan.sokham.bacSi', 'dichvu'])
             ->where('TrangThai', 'DaThanhToan')
             ->where('XoaMem', 0)
             ->get();
 
         $data = ["bills" => $bills->map(function ($item) {
             return [
+                "TenBacSi" => Arr::get($item, 'benhNhan.sokham.bacSi.HoVaTen', ''),
                 "TenHoaDon" => $item['TenHoaDon'],
                 "TongSoTien" => number_format($item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0)) / 100),
                 "NguoiTao" => $item['nhanVien']['HoVaTen'],
                 "BenhNhan" => $item['benhNhan']['HoVaTen'],
                 'TrangThai' => $item->getTextStatus(),
                 'GiamGia' => $item['GiamGia'],
-                'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y')
+                'DichVu' => $item['GiamGia'],
+                'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y'),
+                "DichVu" => $item['dichvu']->map(function ($item) {
+                    return [
+                        'TenDichVu' => $item['TenDichVu'],
+                        'SoLuong' => $item['payload']['SoLuong']
+                    ];
+                })
             ];
         }), "TongTien" => number_format($bills->sum(function ($item) {
             return $item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0)) / 100;
@@ -111,25 +120,68 @@ class RevenueController extends Controller
     {
         $bills = HoaDon::query()
             ->whereYear('NgayLap', Carbon::now()->format('Y'))
-            ->with(['nhanVien', 'benhNhan'])
+            ->with(['nhanVien', 'benhNhan.sokham.bacSi', 'dichvu'])
             ->where('TrangThai', 'DaThanhToan')
             ->where('XoaMem', 0)
             ->get();
 
         $data = ["bills" => $bills->map(function ($item) {
             return [
+                "TenBacSi" => Arr::get($item, 'benhNhan.sokham.bacSi.HoVaTen', ''),
                 "TenHoaDon" => $item['TenHoaDon'],
                 "TongSoTien" => number_format($item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0)) / 100),
                 "NguoiTao" => $item['nhanVien']['HoVaTen'],
                 "BenhNhan" => $item['benhNhan']['HoVaTen'],
                 'TrangThai' => $item->getTextStatus(),
                 'GiamGia' => $item['GiamGia'],
-                'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y')
+                'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y'),
+                "DichVu" => $item['dichvu']->map(function ($item) {
+                    return [
+                        'TenDichVu' => $item['TenDichVu'],
+                        'SoLuong' => $item['payload']['SoLuong']
+                    ];
+                })
             ];
         }), "TongTien" => number_format($bills->sum(function ($item) {
             return $item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0)) / 100;
         }))];
         $pdf = PDF::loadView('danhsachhoadon', $data);
         return $pdf->download('danhsachhoadon.pdf');
+    }
+
+    public function rangeDate()
+    {
+        $bills = HoaDon::query()
+            ->whereYear('NgayLap', Carbon::now()->format('Y'))
+            ->with(['nhanVien', 'benhNhan.sokham.bacSi', 'dichvu'])
+            ->where('TrangThai', 'DaThanhToan')
+            ->where('XoaMem', 0)
+            ->when(request('start'), function ($q) {
+                $q->whereBetween('NgayLap', [request('start'), request('end')]);
+            })
+            ->get();
+
+        $data = ["start" => request('start'), "end" => request('end'), "bills" => $bills->map(function ($item) {
+            return [
+                "TenBacSi" => Arr::get($item, 'benhNhan.sokham.bacSi.HoVaTen', ''),
+                "TenHoaDon" => $item['TenHoaDon'],
+                "TongSoTien" => number_format($item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0)) / 100),
+                "NguoiTao" => $item['nhanVien']['HoVaTen'],
+                "BenhNhan" => $item['benhNhan']['HoVaTen'],
+                'TrangThai' => $item->getTextStatus(),
+                'GiamGia' => $item['GiamGia'],
+                'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y'),
+                "DichVu" => $item['dichvu']->map(function ($item) {
+                    return [
+                        'TenDichVu' => $item['TenDichVu'],
+                        'SoLuong' => $item['payload']['SoLuong']
+                    ];
+                })
+            ];
+        }), "TongTien" => number_format($bills->sum(function ($item) {
+            return $item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0)) / 100;
+        }))];
+        $pdf = PDF::loadView('danhsachhoadonkhoangngay', $data);
+        return $pdf->download('danhsachhoadonkhoangngay.pdf');
     }
 }

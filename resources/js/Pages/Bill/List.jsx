@@ -11,14 +11,10 @@ import { Head, Link, router } from "@inertiajs/react";
 import _get from "lodash/get";
 import qs from "query-string";
 import { useState } from "react";
-import ReactDatePicker, { registerLocale } from "react-datepicker";
+import ReactDatePicker from "react-datepicker";
 import { toast } from "react-toastify";
 import useCols from "./Cols";
-import "react-datepicker/dist/react-datepicker.css";
-import vi from "date-fns/locale/vi";
-import { format, isValid } from "date-fns";
-
-registerLocale("vi", vi);
+import { format } from "date-fns";
 
 export default function ListBill(props) {
     const { page, sortCols, sortType, f, start, end } = qs.parse(

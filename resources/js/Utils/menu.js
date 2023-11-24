@@ -7,6 +7,11 @@ const common = [
     },
     { name: "thuoc.index", label: "Thuốc", permission: "thuoc.index" },
     { name: "vat-tu.index", label: "Vật tư", permission: "vat-tu.index" },
+    {
+        name: "lichsukhambenh.index",
+        label: "Lịch sử khám bệnh",
+        permission: "access",
+    },
 ];
 
 const MENUS = {

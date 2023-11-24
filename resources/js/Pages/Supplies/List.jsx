@@ -12,6 +12,12 @@ import qs from "query-string";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import useCols from "./Cols";
+import PrimaryButton from "@/Components/PrimaryButton";
+import Dialog from "rc-dialog";
+import { useForm } from "react-hook-form";
+import InputLabel from "@/Components/InputLabel";
+import InputControl from "@/Components/InputControl";
+import { format } from "date-fns";
 
 export default function ListSupplies(props) {
     const { page, sortCols, sortType, f } = qs.parse(location.search);
@@ -22,7 +28,9 @@ export default function ListSupplies(props) {
         },
     ]);
     const [filter, setFilter] = useState(f);
+    const [openModal, setOpenModal] = useState(false);
     const [currentPage, setCurrentPage] = useState(Number(page || 1));
+    const { register, control, handleSubmit, reset, setValue } = useForm();
     const cols = useCols({
         handleDelete: (id) => {
             router.delete(route("vat-tu.destroy", id));
@@ -41,8 +49,16 @@ export default function ListSupplies(props) {
         });
         let link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
-        link.download = "vattu.pdf";
+        link.download = "thongkevattu.pdf";
         link.click();
+    };
+    const onSubmit = (data) => {
+        router.post(route("vat-tu.import"), data, {
+            onSuccess: () => {
+                setOpenModal(false);
+                toast.success("Nhập thêm thành công !");
+            },
+        });
     };
 
     return (
@@ -54,6 +70,7 @@ export default function ListSupplies(props) {
                     <h2 className="font-semibold text-xl text-gray-800 leading-tight uppercase">
                         vật tư
                     </h2>
+
                     <div className="flex gap-5">
                         <Link
                             className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
@@ -61,8 +78,18 @@ export default function ListSupplies(props) {
                         >
                             Thêm mới
                         </Link>
+                        <PrimaryButton
+                            onClick={() => {
+                                setOpenModal(true);
+                                reset({
+                                    NgayNhap: format(new Date(), "yyyy-MM-dd"),
+                                });
+                            }}
+                        >
+                            Nhập vật tư
+                        </PrimaryButton>
                         <SecondaryButton onClick={handlePrint}>
-                            In danh sách
+                            in báo cáo thống kê vật tư
                         </SecondaryButton>
                     </div>
                 </div>
@@ -91,10 +118,10 @@ export default function ListSupplies(props) {
                             Tất cả
                         </option>
                         <option key="con" value="con">
-                            Còn thuốc
+                            Còn vật tư
                         </option>
                         <option key="het" value="het">
-                            Hết thuốc
+                            Hết vật tư
                         </option>
                     </select>
                 </div>
@@ -125,6 +152,54 @@ export default function ListSupplies(props) {
                     }}
                 />
             </PageContainer>
+            <Dialog
+                title="Nhập thêm vật tư"
+                onClose={() => setOpenModal(false)}
+                visible={openModal}
+            >
+                <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="flex flex-col gap-5">
+                        <div>
+                            <InputLabel htmlFor="VatTuID" value="Vật tư" />
+                            <select
+                                {...register("MaVatTu")}
+                                id="MaVatTu"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            >
+                                {_get(props, "supplieOptions", []).map(
+                                    (s, index) => {
+                                        return (
+                                            <option key={index} value={s.id}>
+                                                {s.name}
+                                            </option>
+                                        );
+                                    }
+                                )}
+                            </select>
+                        </div>
+                        <InputControl
+                            control={control}
+                            name="SoLuong"
+                            className="mt-1 block w-full"
+                            label="Số lượng"
+                            type="number"
+                            maxLength={10}
+                            rules={{ required: "Số lượng không để trống" }}
+                        />
+                        <InputControl
+                            control={control}
+                            name="NgayNhap"
+                            className="mt-1 block w-full"
+                            label="Ngày nhập"
+                            type="date"
+                            rules={{ required: "Ngày nhậph không để trống" }}
+                        />
+                    </div>
+                    <div className="mt-5">
+                        <PrimaryButton>Lưu</PrimaryButton>
+                    </div>
+                </form>
+            </Dialog>
         </AuthenticatedLayout>
     );
 }

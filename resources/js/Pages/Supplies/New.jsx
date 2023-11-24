@@ -2,11 +2,13 @@ import InputControl from "@/Components/InputControl";
 import InputLabel from "@/Components/InputLabel";
 import PageContainer from "@/Components/PageContainer";
 import PrimaryButton from "@/Components/PrimaryButton";
+import Table from "@/Components/Table";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import _get from "lodash/get";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import useColsHistory from "./ColsHistory";
 
 export default function NewMedicine(props) {
     const { supplie } = props;
@@ -15,6 +17,7 @@ export default function NewMedicine(props) {
     const { register, handleSubmit, control } = useForm({
         defaultValues: isModeEdit ? supplie : {},
     });
+    const cols = useColsHistory();
 
     const onSubmit = (data) => {
         if (!isModeEdit) {
@@ -37,7 +40,7 @@ export default function NewMedicine(props) {
                     </h2>
                     <Link
                         className="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase"
-                        href={route("loai-dich-vu.index")}
+                        href={route("vat-tu.index")}
                     >
                         Danh sách vật tư
                     </Link>
@@ -85,6 +88,7 @@ export default function NewMedicine(props) {
                             label="Số lượng"
                             type="number"
                             maxLength={10}
+                            disabled={isModeEdit}
                             rules={{ required: "Số lượng không để trống" }}
                         />
                         <div>
@@ -107,6 +111,17 @@ export default function NewMedicine(props) {
                     <PrimaryButton type="submit" className="mt-4">
                         {isModeEdit ? "Sửa" : "Thêm mới"}
                     </PrimaryButton>
+                    {isModeEdit ? (
+                        <div className="mt-4">
+                            <h3 className="font-semibold text-lg">
+                                Lịch sử biến động
+                            </h3>
+                            <Table
+                                data={_get(props, "history", [])}
+                                columns={cols}
+                            />
+                        </div>
+                    ) : null}
                 </form>
             </PageContainer>
         </AuthenticatedLayout>
