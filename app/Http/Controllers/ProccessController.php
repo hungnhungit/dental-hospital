@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\NhapXuatThuoc;
+use App\Models\NhapXuatVatTu;
 use App\Models\Thuoc;
 use App\Models\TienTrinhDieuTri;
 use App\Models\VatTu;
@@ -95,6 +97,13 @@ class ProccessController extends Controller
             $thuoc->update([
                 'SoLuong' => $thuoc['SoLuong'] - $request['Sothuoc']
             ]);
+
+            NhapXuatThuoc::create([
+                'MaThuoc' => $request['MaThuoc'],
+                'NgayBienDong' => $request['NgayDieuTri'],
+                'SoLuongXuat' => $request['Sothuoc'],
+                'SoLuongHienTai' => $thuoc['SoLuong']
+            ]);
         }
 
         if (!is_null($request['MaVatTu'])) {
@@ -105,6 +114,13 @@ class ProccessController extends Controller
 
             $vattu->update([
                 'SoLuong' => $vattu['SoLuong'] - $request['SoVatTu']
+            ]);
+
+            NhapXuatVatTu::create([
+                'MaVatTu' => $request['MaVatTu'],
+                'NgayBienDong' => $request['NgayDieuTri'],
+                'SoLuongXuat' => $request['SoVatTu'],
+                'SoLuongHienTai' => $vattu['SoLuong']
             ]);
         }
 

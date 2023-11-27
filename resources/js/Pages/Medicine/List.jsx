@@ -12,6 +12,12 @@ import qs from "query-string";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import useCols from "./Cols";
+import PrimaryButton from "@/Components/PrimaryButton";
+import InputControl from "@/Components/InputControl";
+import InputLabel from "@/Components/InputLabel";
+import Dialog from "rc-dialog";
+import { useForm } from "react-hook-form";
+import { format } from "date-fns";
 
 export default function ListMedicine(props) {
     const { page, sortCols, sortType, f } = qs.parse(location.search);
@@ -22,7 +28,9 @@ export default function ListMedicine(props) {
         },
     ]);
     const [filter, setFilter] = useState(f);
+    const [openModal, setOpenModal] = useState(false);
     const [currentPage, setCurrentPage] = useState(Number(page || 1));
+    const { register, control, handleSubmit, reset } = useForm();
     const cols = useCols({
         handleDelete: (id) => {
             router.delete(route("thuoc.destroy", id));
@@ -45,6 +53,15 @@ export default function ListMedicine(props) {
         link.download = "thuoc.pdf";
         link.click();
     };
+    const onSubmit = (data) => {
+        router.post(route("thuoc.import"), data, {
+            onSuccess: () => {
+                setOpenModal(false);
+                toast.success("Nhập thêm thành công !");
+            },
+        });
+    };
+
     return (
         <AuthenticatedLayout
             auth={props.auth}
@@ -61,8 +78,18 @@ export default function ListMedicine(props) {
                         >
                             Thêm mới
                         </Link>
+                        <PrimaryButton
+                            onClick={() => {
+                                setOpenModal(true);
+                                reset({
+                                    NgayNhap: format(new Date(), "yyyy-MM-dd"),
+                                });
+                            }}
+                        >
+                            Nhập thuốc
+                        </PrimaryButton>
                         <SecondaryButton onClick={handlePrint}>
-                            In danh sách
+                            in báo cáo thống kê thuốc
                         </SecondaryButton>
                     </div>
                 </div>
@@ -124,6 +151,54 @@ export default function ListMedicine(props) {
                     }}
                 />
             </PageContainer>
+            <Dialog
+                title="Nhập thêm thuốc"
+                onClose={() => setOpenModal(false)}
+                visible={openModal}
+            >
+                <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="flex flex-col gap-5">
+                        <div>
+                            <InputLabel htmlFor="MaThuoc" value="Thuốc" />
+                            <select
+                                {...register("MaThuoc")}
+                                id="MaThuoc"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            >
+                                {_get(props, "medicineOptions", []).map(
+                                    (s, index) => {
+                                        return (
+                                            <option key={index} value={s.id}>
+                                                {s.name}
+                                            </option>
+                                        );
+                                    }
+                                )}
+                            </select>
+                        </div>
+                        <InputControl
+                            control={control}
+                            name="SoLuong"
+                            className="mt-1 block w-full"
+                            label="Số lượng"
+                            type="number"
+                            maxLength={10}
+                            rules={{ required: "Số lượng không để trống" }}
+                        />
+                        <InputControl
+                            control={control}
+                            name="NgayNhap"
+                            className="mt-1 block w-full"
+                            label="Ngày nhập"
+                            type="date"
+                            rules={{ required: "Ngày nhập không để trống" }}
+                        />
+                    </div>
+                    <div className="mt-5">
+                        <PrimaryButton>Lưu</PrimaryButton>
+                    </div>
+                </form>
+            </Dialog>
         </AuthenticatedLayout>
     );
 }

@@ -73,7 +73,13 @@ class RevenueController extends Controller
                 "BenhNhan" => $item['benhNhan']['HoVaTen'],
                 'TrangThai' => $item->getTextStatus(),
                 'GiamGia' => $item['GiamGia'],
-                'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y')
+                'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y'),
+                "DichVu" => $item['dichvu']->map(function ($item) {
+                    return [
+                        'TenDichVu' => $item['TenDichVu'],
+                        'SoLuong' => $item['payload']['SoLuong']
+                    ];
+                })
             ];
         }), "TongTien" => number_format($bills->sum(function ($item) {
             return $item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0)) / 100;
@@ -100,7 +106,6 @@ class RevenueController extends Controller
                 "BenhNhan" => $item['benhNhan']['HoVaTen'],
                 'TrangThai' => $item->getTextStatus(),
                 'GiamGia' => $item['GiamGia'],
-                'DichVu' => $item['GiamGia'],
                 'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y'),
                 "DichVu" => $item['dichvu']->map(function ($item) {
                     return [

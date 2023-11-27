@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Thuoc extends Model
 {
@@ -26,5 +27,9 @@ class Thuoc extends Model
     public function donVi(): BelongsTo
     {
         return $this->belongsTo(DonViTinh::class, 'MaDonVi', 'Id');
+    }
+    public function nhapxuat(): HasMany
+    {
+        return $this->hasMany(NhapXuatThuoc::class, 'MaThuoc', 'Id');
     }
 }

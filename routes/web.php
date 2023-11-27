@@ -61,13 +61,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('thuoc', MedicineController::class);
     Route::post('api/vat-tu/pdf', [SuppliesController::class, 'pdfRemainingAmount'])->name('vat-tu.pdf');
     Route::resource('vat-tu', SuppliesController::class);
-    Route::post('vat-tu', [SuppliesController::class, 'import'])->name('vat-tu.import');
-    Route::post('api/hoadon/pay', [BillController::class, 'pdfList'])->name('hoadon.pdfList');
+    Route::post('vat-tu/import', [SuppliesController::class, 'import'])->name('vat-tu.import');
+    Route::post('thuoc/import', [MedicineController::class, 'import'])->name('thuoc.import');
+    Route::post('api/hoadon/pdfList', [BillController::class, 'pdfList'])->name('hoadon.pdfList');
     Route::post('api/hoadon/{id}/pdf', [BillController::class, 'pdf'])->name('hoadon.pdf');
     Route::post('hoadon/{id}/pay', [BillController::class, 'pay'])->name('hoadon.pay');
     Route::resource('hoadon', BillController::class);
     Route::get('lichsukhambenh', [ProccessController::class, 'index'])->name('lichsukhambenh.index');
-    Route::delete('tientrinhdieutri', [ProccessController::class, 'destroy']);
+    Route::delete('tientrinhdieutri/{id}', [ProccessController::class, 'destroy'])->name('tientrinhdieutri.destroy');
     Route::post('api/sokhambenh/pdf', [HealthRecordsController::class, 'pdfList'])->name('sokham.pdfList');
     Route::get('sokhambenh/{id}/tientrinhdieutri/create', [ProccessController::class, 'create'])->name('tientrinhdieutri.create');
     Route::post('sokhambenh/{id}/tientrinhdieutri/store', [ProccessController::class, 'store'])->name('tientrinhdieutri.store');

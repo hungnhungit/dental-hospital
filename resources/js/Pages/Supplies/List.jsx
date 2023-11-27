@@ -30,7 +30,7 @@ export default function ListSupplies(props) {
     const [filter, setFilter] = useState(f);
     const [openModal, setOpenModal] = useState(false);
     const [currentPage, setCurrentPage] = useState(Number(page || 1));
-    const { register, control, handleSubmit, reset, setValue } = useForm();
+    const { register, control, handleSubmit, reset } = useForm();
     const cols = useCols({
         handleDelete: (id) => {
             router.delete(route("vat-tu.destroy", id));
@@ -192,7 +192,7 @@ export default function ListSupplies(props) {
                             className="mt-1 block w-full"
                             label="Ngày nhập"
                             type="date"
-                            rules={{ required: "Ngày nhậph không để trống" }}
+                            rules={{ required: "Ngày nhập không để trống" }}
                         />
                     </div>
                     <div className="mt-5">

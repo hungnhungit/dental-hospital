@@ -21,7 +21,6 @@ export default function DetailHealthRecords(props) {
     };
     const cols = useColsProcess({
         handleDelete: (id) => {
-            console.log(id);
             router.delete(route("tientrinhdieutri.destroy", id));
             toast.success("Xoá tiến trình điểu trị thành công !");
         },

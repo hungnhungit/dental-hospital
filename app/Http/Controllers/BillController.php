@@ -10,6 +10,7 @@ use App\Models\NhanVien;
 use App\Models\TienTrinhDieuTri;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -129,7 +130,7 @@ class BillController extends Controller
 
     public function pdfList()
     {
-        $bills = HoaDon::query()->with(['nhanVien', 'benhNhan'])->when(request('start'), function ($q) {
+        $bills = HoaDon::query()->with(['nhanVien', 'benhNhan.sokham.bacSi', 'dichvu'])->when(request('start'), function ($q) {
             $q->whereBetween('NgayLap', [request('start'), request('end')]);
         })->where('XoaMem', 0)->where('TenHoaDon', 'LIKE', '%' . request('q') . '%')->when(request('f'), function ($q, $val) {
             $q->where('TrangThai', $val);
@@ -137,12 +138,19 @@ class BillController extends Controller
         $data = ["bills" => $bills->map(function ($item) {
             return [
                 "TenHoaDon" => $item['TenHoaDon'],
+                "TenBacSi" => Arr::get($item, 'benhNhan.sokham.bacSi.HoVaTen', ''),
                 "TongSoTien" => number_format($item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0)) / 100),
                 "NguoiTao" => $item['nhanVien']['HoVaTen'],
                 "BenhNhan" => $item['benhNhan']['HoVaTen'],
                 'TrangThai' => $item->getTextStatus(),
                 'GiamGia' => $item['GiamGia'],
-                'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y')
+                'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y'),
+                "DichVu" => $item['dichvu']->map(function ($item) {
+                    return [
+                        'TenDichVu' => $item['TenDichVu'],
+                        'SoLuong' => $item['payload']['SoLuong']
+                    ];
+                })
             ];
         }), "TongTien" => number_format($bills->sum(function ($item) {
             return $item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0)) / 100;

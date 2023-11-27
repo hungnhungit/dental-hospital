@@ -58,7 +58,7 @@ export default function NewProccess(props) {
         setValue,
         clearErrors,
         control,
-        formState: { errors },
+        reset,
     } = useForm({
         resolver: yupResolver(schema),
         criteriaMode: "all",
@@ -69,8 +69,8 @@ export default function NewProccess(props) {
                   TenTienTrinh: "TTDT-" + Math.floor(Math.random() * 100000),
               },
     });
-    const hasMedicine = !isEmpty(watch("MaThuoc"));
-    const hasSupplier = !isEmpty(watch("MaVatTu"));
+    const hasMedicine = !isEmpty(String(watch("MaThuoc")));
+    const hasSupplier = !isEmpty(String(watch("MaVatTu")));
     useEffect(() => {
         const subscription = watch((value, { name, type }) => {
             if (name === "MaThuoc" && type === "change") {

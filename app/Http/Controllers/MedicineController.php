@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\DonViTinh;
 use App\Models\LoaiThuoc;
+use App\Models\NhapXuatThuoc;
 use App\Models\Thuoc;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -33,6 +34,12 @@ class MedicineController extends Controller
                 ];
             }),
             "totalPage" => $medicines->total(),
+            "medicineOptions" => Thuoc::all()->map(function ($item) {
+                return [
+                    'id' => $item['Id'],
+                    'name' => $item['TenThuoc'],
+                ];
+            })
         ]);
     }
 
@@ -70,7 +77,12 @@ class MedicineController extends Controller
                     "name" => $item['LoaiThuoc'],
                 ];
             }),
-            "medicine" => $record->toArray()
+            "medicine" => $record->toArray(),
+            "history" => NhapXuatThuoc::query()->get()->map(function ($item) {
+                return array_merge($item->toArray(), [
+                    'NgayBienDong' => Carbon::parse($item['NgayBienDong'])->format('d/m/Y')
+                ]);
+            }),
         ]);
     }
 
@@ -98,7 +110,7 @@ class MedicineController extends Controller
 
     public function pdfRemainingAmount()
     {
-        $medicines =  Thuoc::with(['loaiThuoc', 'donVi'])->when(request('f'), function ($q, $val) {
+        $medicines =  Thuoc::with(['loaiThuoc', 'donVi', 'nhapxuat'])->when(request('f'), function ($q, $val) {
             $q->where('SoLuong', $val === 'het' ? '=' : '>', 0);
         })->get();
         $data = ["data" => collect($medicines)->map(function ($item) {
@@ -107,10 +119,31 @@ class MedicineController extends Controller
                 "Ten" => $item['TenThuoc'],
                 "LoaiThuoc" => $item['loaiThuoc']['LoaiThuoc'],
                 "DonVi" => $item['donVi']['DonVi'],
-                "SoLuong" => $item['SoLuong'],
+                "SoLuongNhap" => $item['nhapxuat']->sum->SoLuongNhap,
+                "SoLuongXuat" => $item['nhapxuat']->sum->SoLuongXuat,
+                "SoLuongHienTai" => $item['SoLuong'],
             ];
         })];
         $pdf = PDF::loadView('thuoc', $data);
         return $pdf->download('thuoc.pdf');
+    }
+
+    public function import()
+    {
+        $thuoc = Thuoc::query()->findOrFail(request('MaThuoc'));
+
+
+        NhapXuatThuoc::query()->create([
+            'MaThuoc' => request('MaThuoc'),
+            'NgayBienDong' => request('NgayNhap'),
+            'SoLuongNhap' => request('SoLuong'),
+            'SoLuongHienTai' => $thuoc['SoLuong']
+        ]);
+
+        $thuoc->update([
+            'SoLuong' => $thuoc['SoLuong'] + request('SoLuong')
+        ]);
+
+        return back();
     }
 }
