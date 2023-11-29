@@ -7,6 +7,14 @@ const columnHelper = createColumnHelper();
 const useColsHistory = () => {
     const cols = useMemo(() => {
         return [
+            columnHelper.accessor("TenVT", {
+                header: "Tên vật tư",
+                cell: (info) => info.getValue(),
+            }),
+            columnHelper.accessor("DonVi", {
+                header: "Đơn vị tính",
+                cell: (info) => info.getValue(),
+            }),
             columnHelper.accessor("NgayBienDong", {
                 header: "Ngày biến động",
                 cell: (info) => info.getValue(),

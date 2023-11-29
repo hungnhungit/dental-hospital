@@ -41,11 +41,13 @@ class MedicineController extends Controller
                     'name' => $item['TenThuoc'],
                 ];
             }),
-            "history" => NhapXuatThuoc::query()->with(['thuoc'])->get()->map(function ($item) {
+            "history" => NhapXuatThuoc::query()->with(['thuoc.donVi'])->get()->map(function ($item) {
                 return array_merge($item->toArray(), [
                     'NgayBienDong' => Carbon::parse($item['NgayBienDong'])->format('d/m/Y'),
                     'ChiPhiNhap' => $item['SoLuongNhap'] * $item['thuoc']['DonGia'],
-                    'ChiPhiXuat' => $item['SoLuongXuat'] * $item['thuoc']['DonGia']
+                    'ChiPhiXuat' => $item['SoLuongXuat'] * $item['thuoc']['DonGia'],
+                    'TenThuoc' => $item['thuoc']['TenThuoc'],
+                    'DonVi' => $item['thuoc']['donVi']['DonVi']
                 ]);
             }),
         ]);

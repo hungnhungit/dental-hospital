@@ -39,11 +39,13 @@ class SuppliesController extends Controller
                 ];
             }),
             "totalPage" => $supplies->total(),
-            "history" => NhapXuatVatTu::query()->get()->map(function ($item) {
+            "history" => NhapXuatVatTu::query()->with(['vattu.donVi'])->get()->map(function ($item) {
                 return array_merge($item->toArray(), [
                     'NgayBienDong' => Carbon::parse($item['NgayBienDong'])->format('d/m/Y'),
                     'ChiPhiNhap' => $item['SoLuongNhap'] * $item['vattu']['DonGia'],
-                    'ChiPhiXuat' => $item['SoLuongXuat'] * $item['vattu']['DonGia']
+                    'ChiPhiXuat' => $item['SoLuongXuat'] * $item['vattu']['DonGia'],
+                    'TenVT' => $item['vattu']['TenVT'],
+                    'DonVi' => $item['vattu']['donVi']['DonVi']
                 ]);
             }),
         ]);
