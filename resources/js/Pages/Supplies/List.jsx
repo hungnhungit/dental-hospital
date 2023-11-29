@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import InputLabel from "@/Components/InputLabel";
 import InputControl from "@/Components/InputControl";
 import { format } from "date-fns";
+import useColsHistory from "./ColsHistory";
 
 export default function ListSupplies(props) {
     const { page, sortCols, sortType, f } = qs.parse(location.search);
@@ -31,6 +32,7 @@ export default function ListSupplies(props) {
     const [openModal, setOpenModal] = useState(false);
     const [currentPage, setCurrentPage] = useState(Number(page || 1));
     const { register, control, handleSubmit, reset } = useForm();
+    const colsHistory = useColsHistory();
     const cols = useCols({
         handleDelete: (id) => {
             router.delete(route("vat-tu.destroy", id));
@@ -151,6 +153,13 @@ export default function ListSupplies(props) {
                         setCurrentPage(page);
                     }}
                 />
+                <div className="mt-4">
+                    <h3 className="font-semibold text-lg">Lịch sử biến động</h3>
+                    <Table
+                        data={_get(props, "history", [])}
+                        columns={colsHistory}
+                    />
+                </div>
             </PageContainer>
             <Dialog
                 title="Nhập thêm vật tư"

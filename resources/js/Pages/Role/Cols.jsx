@@ -16,7 +16,9 @@ const useCols = () => {
                 header: "Thao tác",
                 cell: (info) => (
                     <>
-                        {info.row.original["Quyen"] !== "admin" ? (
+                        {!["admin", "supperadmin"].includes(
+                            info.row.original["Quyen"]
+                        ) ? (
                             <AiOutlineSetting
                                 className="cursor-pointer"
                                 onClick={() =>

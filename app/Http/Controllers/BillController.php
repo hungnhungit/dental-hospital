@@ -20,11 +20,23 @@ class BillController extends Controller
 {
     public function index(Request $request): Response
     {
-        $bills = HoaDon::query()->with(['nhanVien', 'benhNhan'])->when(request('start'), function ($q) {
-            $q->whereBetween('NgayLap', [request('start'), request('end')]);
-        })->where('XoaMem', 0)->where('TenHoaDon', 'LIKE', '%' . request('q') . '%')->when(request('f'), function ($q, $val) {
-            $q->where('TrangThai', $val);
-        })->orderBy('TenHoaDon', $request['sortType'] ?? 'asc')->paginate(10);
+        $bills = HoaDon::query()
+            ->with(['nhanVien', 'benhNhan'])
+            ->whereHas('benhNhan', function ($q) {
+                $q->where('CMND', 'LIKE', '%' . request('q') . '%');
+            })
+            ->when(request('start'), function ($q) {
+                $q->whereBetween('NgayLap', [request('start'), request('end')]);
+            })
+            ->when(request('q'), function ($q, $val) {
+                $q->orWhere('TenHoaDon', 'LIKE', '%' . $val . '%');
+            })
+            ->when(request('f'), function ($q, $val) {
+                $q->where('TrangThai', $val);
+            })
+            ->where('XoaMem', 0)
+            ->orderBy('TenHoaDon', $request['sortType'] ?? 'asc')->paginate(10);
+
         return Inertia::render('Bill/List', [
             "bills" => collect($bills->items())->map(function ($item) {
                 return [
@@ -33,6 +45,7 @@ class BillController extends Controller
                     "TongSoTien" => $item['TongSoTien'],
                     "NguoiTao" => $item['nhanVien']['HoVaTen'],
                     "BenhNhan" => $item['benhNhan']['HoVaTen'],
+                    "CMND" => $item['benhNhan']['CMND'],
                     'TrangThai' => $item['TrangThai'],
                     'GiamGia' => $item['GiamGia'],
                     'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y')
@@ -142,6 +155,7 @@ class BillController extends Controller
                 "TongSoTien" => number_format($item['TongSoTien'] - ($item['TongSoTien'] * ($item['GiamGia'] ?? 0)) / 100),
                 "NguoiTao" => $item['nhanVien']['HoVaTen'],
                 "BenhNhan" => $item['benhNhan']['HoVaTen'],
+                "CMND" => $item['benhNhan']['CMND'],
                 'TrangThai' => $item->getTextStatus(),
                 'GiamGia' => $item['GiamGia'],
                 'NgayLap' => Carbon::parse($item['NgayLap'])->format('d/m/Y'),

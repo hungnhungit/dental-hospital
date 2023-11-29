@@ -1,6 +1,6 @@
 import { createColumnHelper } from "@/Components/Table";
+import { formatNumber } from "@/Utils/helpers";
 import { useMemo } from "react";
-import { BsPencil, BsTrash } from "react-icons/bs";
 
 const columnHelper = createColumnHelper();
 
@@ -22,6 +22,14 @@ const useColsHistory = () => {
             columnHelper.accessor("SoLuongHienTai", {
                 header: "Số lượng hiện tại",
                 cell: (info) => info.getValue(),
+            }),
+            columnHelper.accessor("ChiPhiNhap", {
+                header: "Chi phí nhập",
+                cell: (info) => formatNumber(info.getValue()),
+            }),
+            columnHelper.accessor("ChiPhiXuat", {
+                header: "Chi phí xuất",
+                cell: (info) => formatNumber(info.getValue()),
             }),
         ];
     }, []);

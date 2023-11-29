@@ -60,6 +60,10 @@ const useCols = ({ handlePrint, handleDelete, handlePay }) => {
                 header: "bệnh nhân",
                 cell: (info) => info.getValue(),
             }),
+            columnHelper.accessor("CMND", {
+                header: "CCCD",
+                cell: (info) => info.getValue(),
+            }),
             columnHelper.accessor("actions", {
                 header: "Thao tác",
                 cell: (info) => (

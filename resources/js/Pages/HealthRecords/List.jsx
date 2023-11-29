@@ -93,7 +93,7 @@ export default function ListHealthRecords(props) {
 
             <PageContainer>
                 <InputSearch
-                    placeholder="tên"
+                    placeholder="tên, cccd"
                     onSearch={(query) => {
                         getRouter({ q: query, page: 1 });
                         setCurrentPage(1);

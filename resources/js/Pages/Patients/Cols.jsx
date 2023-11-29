@@ -13,6 +13,10 @@ const useCols = ({ handleDelete, handleEdit }) => {
                 cell: (info) => info.getValue(),
                 enableSorting: true,
             }),
+            columnHelper.accessor("Ma", {
+                header: "Mã bệnh nhân",
+                cell: (info) => info.getValue(),
+            }),
             columnHelper.accessor("TongTienChi", {
                 header: "Tổng tiền chi",
                 cell: (info) => formatNumber(info.getValue()),

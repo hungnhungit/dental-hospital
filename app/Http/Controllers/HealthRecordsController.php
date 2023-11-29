@@ -20,13 +20,14 @@ class HealthRecordsController extends Controller
     public function index(): Response
     {
         $healthRecords = SoKhamBenh::query()->join('benhnhan', 'sokhambenh.MaBenhNhan', '=', 'benhnhan.id')->with(['bacSi'])->whereHas('benhNhan', function (Builder $q) {
-            $q->where('HoVaTen', 'LIKE', '%' . request('q') . '%');
-        })->where('sokhambenh.XoaMem', 0)->orderBy('benhnhan.HoVaTen', request('sortType', 'asc'))->select(['HoVaTen', 'sokhambenh.Id as id', 'TrangThai', 'MaBacSi', 'ChanDoanBenh'])->paginate(10);
+            $q->where('HoVaTen', 'LIKE', '%' . request('q') . '%')->orWhere('CMND', 'LIKE', '%' . request('q') . '%');
+        })->where('sokhambenh.XoaMem', 0)->orderBy('benhnhan.HoVaTen', request('sortType', 'asc'))->select(['HoVaTen', 'sokhambenh.Id as id', 'TrangThai', 'MaBacSi', 'ChanDoanBenh', 'CMND'])->paginate(10);
 
         return Inertia::render('HealthRecords/List', [
             "healthRecords" => collect($healthRecords->items())->map(function ($item) {
                 return [
                     "id" => $item['id'],
+                    "CMND" => $item['CMND'],
                     "HoVaTen" => $item['HoVaTen'],
                     "BacSi" => $item['bacSi']['HoVaTen'],
                     "ChanDoanBenh" => $item['ChanDoanBenh'],
@@ -164,12 +165,13 @@ class HealthRecordsController extends Controller
     public function pdfList()
     {
         $healthRecords = SoKhamBenh::query()->join('benhnhan', 'sokhambenh.MaBenhNhan', '=', 'benhnhan.id')->with(['bacSi'])->whereHas('benhNhan', function (Builder $q) {
-            $q->where('HoVaTen', 'LIKE', '%' . request('q') . '%');
-        })->where('sokhambenh.XoaMem', 0)->orderBy('benhnhan.HoVaTen', request('sortType', 'asc'))->select(['HoVaTen', 'sokhambenh.Id as id', 'TrangThai', 'MaBacSi', 'ChanDoanBenh'])->paginate(10);
+            $q->where('HoVaTen', 'LIKE', '%' . request('q') . '%')->orWhere('CMND', 'LIKE', '%' . request('q') . '%');
+        })->where('sokhambenh.XoaMem', 0)->orderBy('benhnhan.HoVaTen', request('sortType', 'asc'))->select(['HoVaTen', 'sokhambenh.Id as id', 'TrangThai', 'MaBacSi', 'ChanDoanBenh', 'CMND'])->paginate(10);
         $data = [
             "healthRecords" => $healthRecords->map(function ($item) {
                 return [
                     "HoVaTen" => $item['HoVaTen'],
+                    "CMND" => $item['CMND'],
                     "BacSi" => $item['bacSi']['HoVaTen'],
                     "ChanDoanBenh" => $item['ChanDoanBenh'],
                     "TrangThai" => $item->getTextStatus()

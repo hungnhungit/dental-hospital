@@ -78,6 +78,33 @@ const MENUS = {
         { name: "doanhthu.index", label: "Doanh thu", permission: "access" },
         { name: "profile.edit", label: "Cài đặt", permission: "access" },
     ],
+    supperadmin: [
+        ...common,
+        { name: "hoadon.index", label: "Hoá đơn" },
+        { name: "dichvu.index", label: "Dịch vụ" },
+        {
+            name: "donvitinh.index",
+            label: "Đơn vị tính",
+        },
+        {
+            name: "loai-dich-vu.index",
+            label: "Loại dịch vụ",
+        },
+        {
+            name: "loai-vat-tu.index",
+            label: "Loại vật tư",
+        },
+        {
+            name: "loai-thuoc.index",
+            label: "Loại thuốc",
+        },
+        {
+            name: "sokhambenh.index",
+            label: "Sổ khám bệnh",
+        },
+        { name: "doanhthu.index", label: "Doanh thu" },
+        { name: "profile.edit", label: "Cài đặt" },
+    ],
 };
 
 export { MENUS };

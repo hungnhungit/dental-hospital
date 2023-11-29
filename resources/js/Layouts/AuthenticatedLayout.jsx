@@ -29,7 +29,8 @@ export default function Authenticated({ auth, header, children }) {
                         if (
                             permssionsMap.includes(menu.permission) ||
                             menu.permission === "access" ||
-                            role === "admin"
+                            role === "admin" ||
+                            role === "supperadmin"
                         ) {
                             return (
                                 <li

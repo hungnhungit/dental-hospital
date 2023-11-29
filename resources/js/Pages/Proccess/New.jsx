@@ -8,12 +8,12 @@ import _get from "lodash/get";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import SecondaryButton from "@/Components/SecondaryButton";
 import { request } from "@/Utils/request";
-import { isEmpty, omit } from "lodash";
+import { isEmpty, isNumber, omit } from "lodash";
 
 const schema = yup
     .object({
@@ -51,26 +51,32 @@ export default function NewProccess(props) {
     const isModeEdit = process ? true : false;
     const fileRef = useRef(null);
     const [img, setImg] = useState(process?.LinkHinhAnh || null);
-    const {
-        register,
-        handleSubmit,
-        watch,
-        setValue,
-        clearErrors,
-        control,
-        reset,
-    } = useForm({
-        resolver: yupResolver(schema),
-        criteriaMode: "all",
-        defaultValues: isModeEdit
-            ? process
-            : {
-                  NgayDieuTri: format(new Date(), "yyyy-MM-dd"),
-                  TenTienTrinh: "TTDT-" + Math.floor(Math.random() * 100000),
-              },
-    });
-    const hasMedicine = !isEmpty(String(watch("MaThuoc")));
-    const hasSupplier = !isEmpty(String(watch("MaVatTu")));
+    const { register, handleSubmit, watch, setValue, clearErrors, control } =
+        useForm({
+            resolver: yupResolver(schema),
+            criteriaMode: "all",
+            defaultValues: isModeEdit
+                ? process
+                : {
+                      NgayDieuTri: format(new Date(), "yyyy-MM-dd"),
+                      TenTienTrinh:
+                          "TTDT-" + Math.floor(Math.random() * 100000),
+                  },
+        });
+    const MaThuoc = watch("MaThuoc");
+    const MaVatTu = watch("MaVatTu");
+    const hasMedicine = useMemo(() => {
+        if (MaThuoc === undefined || MaThuoc === "" || MaThuoc === null) {
+            return false;
+        }
+        return true;
+    }, [MaThuoc]);
+    const hasSupplier = useMemo(() => {
+        if (MaVatTu === undefined || MaVatTu === "" || MaVatTu === null) {
+            return false;
+        }
+        return true;
+    }, [MaVatTu]);
     useEffect(() => {
         const subscription = watch((value, { name, type }) => {
             if (name === "MaThuoc" && type === "change") {

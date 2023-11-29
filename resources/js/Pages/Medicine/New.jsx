@@ -2,18 +2,15 @@ import InputControl from "@/Components/InputControl";
 import InputLabel from "@/Components/InputLabel";
 import PageContainer from "@/Components/PageContainer";
 import PrimaryButton from "@/Components/PrimaryButton";
-import Table from "@/Components/Table";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import _get from "lodash/get";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import useCols from "./ColsHistory";
 
 export default function NewMedicine(props) {
     const { medicine } = props;
     const isModeEdit = medicine ? true : false;
-    const cols = useCols();
 
     const { register, handleSubmit, control } = useForm({
         defaultValues: isModeEdit ? medicine : {},
@@ -136,21 +133,19 @@ export default function NewMedicine(props) {
                             maxLength={10}
                             rules={{ required: "HSD không để trống" }}
                         />
+                        <InputControl
+                            type="number"
+                            control={control}
+                            name="DonGia"
+                            className="mt-1 block w-full"
+                            label="Đơn giá"
+                            maxLength={10}
+                            rules={{ required: "Đơn giá không để trống" }}
+                        />
                     </div>
                     <PrimaryButton type="submit" className="mt-4">
                         {isModeEdit ? "Sửa" : "Thêm mới"}
                     </PrimaryButton>
-                    {isModeEdit ? (
-                        <div className="mt-4">
-                            <h3 className="font-semibold text-lg">
-                                Lịch sử biến động
-                            </h3>
-                            <Table
-                                data={_get(props, "history", [])}
-                                columns={cols}
-                            />
-                        </div>
-                    ) : null}
                 </form>
             </PageContainer>
         </AuthenticatedLayout>

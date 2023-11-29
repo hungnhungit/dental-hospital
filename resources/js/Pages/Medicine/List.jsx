@@ -18,8 +18,10 @@ import InputLabel from "@/Components/InputLabel";
 import Dialog from "rc-dialog";
 import { useForm } from "react-hook-form";
 import { format } from "date-fns";
+import useColsHistory from "./ColsHistory";
 
 export default function ListMedicine(props) {
+    console.log(props);
     const { page, sortCols, sortType, f } = qs.parse(location.search);
     const [sorting, setSorting] = useState([
         {
@@ -31,6 +33,7 @@ export default function ListMedicine(props) {
     const [openModal, setOpenModal] = useState(false);
     const [currentPage, setCurrentPage] = useState(Number(page || 1));
     const { register, control, handleSubmit, reset } = useForm();
+    const colsHistory = useColsHistory();
     const cols = useCols({
         handleDelete: (id) => {
             router.delete(route("thuoc.destroy", id));
@@ -150,6 +153,13 @@ export default function ListMedicine(props) {
                         setCurrentPage(page);
                     }}
                 />
+                <div className="mt-4">
+                    <h3 className="font-semibold text-lg">Lịch sử biến động</h3>
+                    <Table
+                        data={_get(props, "history", [])}
+                        columns={colsHistory}
+                    />
+                </div>
             </PageContainer>
             <Dialog
                 title="Nhập thêm thuốc"

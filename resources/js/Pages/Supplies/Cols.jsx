@@ -1,4 +1,5 @@
 import { createColumnHelper } from "@/Components/Table";
+import { formatNumber } from "@/Utils/helpers";
 import { useMemo } from "react";
 import { BsPencil, BsTrash } from "react-icons/bs";
 
@@ -19,6 +20,10 @@ const useCols = ({ handleDelete, handleEdit }) => {
             columnHelper.accessor("DonVi", {
                 header: "Đơn vị tính",
                 cell: (info) => info.getValue(),
+            }),
+            columnHelper.accessor("DonGia", {
+                header: "Đơn giá",
+                cell: (info) => formatNumber(info.getValue()),
             }),
             columnHelper.accessor("SoLuong", {
                 header: "Số lượng",

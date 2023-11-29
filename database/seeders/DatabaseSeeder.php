@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Helpers\Helper;
 use App\Models\Admin;
 use App\Models\BenhNhan;
 use App\Models\ChucVu;
@@ -64,6 +65,8 @@ class DatabaseSeeder extends Seeder
         Ham::truncate();
         DB::table('phanquyenham')->truncate();
         DB::table('chitiethoadon')->truncate();
+        DB::table('nhapxuatthuoc')->truncate();
+        DB::table('nhapxuatvattu')->truncate();
         DB::statement("SET foreign_key_checks=1");
 
         ChucVu::create([
@@ -76,6 +79,10 @@ class DatabaseSeeder extends Seeder
 
         ChucVu::create([
             'ChucVu' => 'Lễ tân',
+        ]);
+
+        ChucVu::create([
+            'ChucVu' => 'Lãnh đạo',
         ]);
 
         PhanQuyen::create([
@@ -92,6 +99,10 @@ class DatabaseSeeder extends Seeder
 
         PhanQuyen::create([
             'Quyen' => 'receptionist',
+        ]);
+
+        PhanQuyen::create([
+            'Quyen' => 'supperadmin',
         ]);
 
         //users
@@ -111,6 +122,12 @@ class DatabaseSeeder extends Seeder
             'TenDangNhap' => 'nurse',
             'MatKhau' => Hash::make('nurse'),
             'QuyenId' => 3,
+        ]);
+
+        User::create([
+            'TenDangNhap' => 'supperadmin',
+            'MatKhau' => Hash::make('supperadmin'),
+            'QuyenId' => 5,
         ]);
 
         $receptionist = User::create([
@@ -146,6 +163,15 @@ class DatabaseSeeder extends Seeder
             "DienThoai" => $faker->phoneNumber()
         ]);
 
+        NhanVien::create([
+            'HoVaTen' => 'Duy Hưng',
+            "NgaySinh" => $faker->dateTime(),
+            "DiaChi" => "Hải Phòng",
+            "MaChucVu" => 4,
+            "MaTaiKhoan" => 4,
+            "DienThoai" => $faker->phoneNumber()
+        ]);
+
         BenhNhan::create([
             'HoVaTen' => 'Nguyên Văn A',
             'DiaChi' => $faker->address(),
@@ -153,7 +179,8 @@ class DatabaseSeeder extends Seeder
             'CMND' => $faker->ean8(),
             'CanNang' => 80,
             'ChieuCao' => 150,
-            'NhomMau' => 'B'
+            'NhomMau' => 'B',
+            'Ma' => Helper::genCode(),
         ]);
         BenhNhan::create([
             'HoVaTen' => 'Nguyên Văn B',
@@ -162,7 +189,8 @@ class DatabaseSeeder extends Seeder
             'CMND' => $faker->ean8(),
             'CanNang' => 80,
             'ChieuCao' => 150,
-            'NhomMau' => 'B'
+            'NhomMau' => 'B',
+            'Ma' => Helper::genCode(),
         ]);
         BenhNhan::create([
             'HoVaTen' => 'Nguyên Văn C',
@@ -171,7 +199,8 @@ class DatabaseSeeder extends Seeder
             'CMND' => $faker->ean8(),
             'CanNang' => 80,
             'ChieuCao' => 150,
-            'NhomMau' => 'O'
+            'NhomMau' => 'O',
+            'Ma' => Helper::genCode(),
         ]);
 
         $kindService1 = LoaiDichVu::create([
@@ -272,7 +301,8 @@ class DatabaseSeeder extends Seeder
             'CongDung' => 'Chữa bệnh',
             'CachDung' => 'Uống',
             'SoLuong' => 10,
-            'HSD' => $faker->dateTime()
+            'HSD' => $faker->dateTime(),
+            'DonGia' => 10000
         ]);
 
         Thuoc::create([
@@ -282,7 +312,8 @@ class DatabaseSeeder extends Seeder
             'CongDung' => 'Chữa bệnh',
             'CachDung' => 'Uống',
             'SoLuong' => 0,
-            'HSD' => $faker->dateTime()
+            'HSD' => $faker->dateTime(),
+            'DonGia' => 100000
         ]);
 
         Thuoc::create([
@@ -292,7 +323,8 @@ class DatabaseSeeder extends Seeder
             'CongDung' => 'Chữa bệnh',
             'CachDung' => 'Uống',
             'SoLuong' => 10,
-            'HSD' => $faker->dateTime()
+            'HSD' => $faker->dateTime(),
+            'DonGia' => 10000
         ]);
 
         Thuoc::create([
@@ -302,28 +334,32 @@ class DatabaseSeeder extends Seeder
             'CongDung' => 'Chữa bệnh',
             'CachDung' => 'Uống',
             'SoLuong' => 100,
-            'HSD' => $faker->dateTime()
+            'HSD' => $faker->dateTime(),
+            'DonGia' => 10000
         ]);
 
         VatTu::create([
             'TenVT' => 'Máy soi',
             'LoaiVatTuID' => 1,
             'MaDonVi' => 1,
-            'SoLuong' => 1
+            'SoLuong' => 1,
+            'DonGia' => 100000
         ]);
 
         VatTu::create([
             'TenVT' => 'Máy chiếu',
             'LoaiVatTuID' => 1,
             'MaDonVi' => 1,
-            'SoLuong' => 20
+            'SoLuong' => 20,
+            'DonGia' => 10000000
         ]);
 
         VatTu::create([
             'TenVT' => 'X-Quang',
             'LoaiVatTuID' => 1,
             'MaDonVi' => 1,
-            'SoLuong' => 0
+            'SoLuong' => 0,
+            'DonGia' => 1000000
         ]);
 
         SoKhamBenh::create([
@@ -369,7 +405,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        $roles = PhanQuyen::query()->where('Quyen', '!=', 'admin')->get();
+        $roles = PhanQuyen::query()->whereNotIn('Quyen', ['admin', 'supperadmin'])->get();
         $hams = Ham::query()->get();
 
         foreach ($roles as $role) {

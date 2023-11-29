@@ -17,7 +17,7 @@ class MedicineController extends Controller
 {
     public function index(Request $request)
     {
-        $medicines = Thuoc::query()->with(['loaiThuoc', 'donVi'])->when(request('f'), function ($q, $val) {
+        $medicines = Thuoc::query()->where('XoaMem', 0)->with(['loaiThuoc', 'donVi'])->when(request('f'), function ($q, $val) {
             $q->where('SoLuong', $val === 'het' ? '=' : '>', 0);
         })->where('TenThuoc', 'LIKE', '%' . request('q') . '%')->orderBy('TenThuoc', $request['sortType'] ?? 'asc')->paginate(10);
         return Inertia::render('Medicine/List', [
@@ -30,6 +30,7 @@ class MedicineController extends Controller
                     "CongDung" => $item['CongDung'],
                     "CachDung" => $item['CachDung'],
                     "SoLuong" => $item['SoLuong'],
+                    "DonGia" => $item['DonGia'],
                     "HSD" => Carbon::parse($item['HSD'])->format('d/m/Y'),
                 ];
             }),
@@ -39,7 +40,14 @@ class MedicineController extends Controller
                     'id' => $item['Id'],
                     'name' => $item['TenThuoc'],
                 ];
-            })
+            }),
+            "history" => NhapXuatThuoc::query()->with(['thuoc'])->get()->map(function ($item) {
+                return array_merge($item->toArray(), [
+                    'NgayBienDong' => Carbon::parse($item['NgayBienDong'])->format('d/m/Y'),
+                    'ChiPhiNhap' => $item['SoLuongNhap'] * $item['thuoc']['DonGia'],
+                    'ChiPhiXuat' => $item['SoLuongXuat'] * $item['thuoc']['DonGia']
+                ]);
+            }),
         ]);
     }
 
@@ -78,11 +86,7 @@ class MedicineController extends Controller
                 ];
             }),
             "medicine" => $record->toArray(),
-            "history" => NhapXuatThuoc::query()->get()->map(function ($item) {
-                return array_merge($item->toArray(), [
-                    'NgayBienDong' => Carbon::parse($item['NgayBienDong'])->format('d/m/Y')
-                ]);
-            }),
+
         ]);
     }
 
@@ -103,14 +107,16 @@ class MedicineController extends Controller
 
     public function destroy(int $id)
     {
-        Thuoc::destroy($id);
+        Thuoc::query()->findOrFail($id)->update([
+            'XoaMem' => '1'
+        ]);
 
         return back();
     }
 
     public function pdfRemainingAmount()
     {
-        $medicines =  Thuoc::with(['loaiThuoc', 'donVi', 'nhapxuat'])->when(request('f'), function ($q, $val) {
+        $medicines =  Thuoc::with(['loaiThuoc', 'donVi', 'nhapxuat'])->where('XoaMem', 0)->when(request('f'), function ($q, $val) {
             $q->where('SoLuong', $val === 'het' ? '=' : '>', 0);
         })->get();
         $data = ["data" => collect($medicines)->map(function ($item) {
@@ -119,8 +125,11 @@ class MedicineController extends Controller
                 "Ten" => $item['TenThuoc'],
                 "LoaiThuoc" => $item['loaiThuoc']['LoaiThuoc'],
                 "DonVi" => $item['donVi']['DonVi'],
+                "DonGia" => number_format($item['DonGia']),
                 "SoLuongNhap" => $item['nhapxuat']->sum->SoLuongNhap,
                 "SoLuongXuat" => $item['nhapxuat']->sum->SoLuongXuat,
+                'ChiPhiNhap' => number_format($item['nhapxuat']->sum->SoLuongNhap * $item['DonGia']),
+                'ChiPhiXuat' => number_format($item['nhapxuat']->sum->SoLuongXuat * $item['DonGia']),
                 "SoLuongHienTai" => $item['SoLuong'],
             ];
         })];

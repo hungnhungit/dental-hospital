@@ -5,6 +5,7 @@ const ROLE_MAP_TO_POSTION = {
     doctor: "Bác sĩ",
     nurse: "Y tá",
     receptionist: "Lễ tân",
+    supperadmin: "Lãnh đạo",
 };
 
 const STATUS_MAP_TO_STATUS_TEXT = {

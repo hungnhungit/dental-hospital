@@ -19,6 +19,10 @@ const useCols = ({
                 cell: (info) => info.getValue(),
                 enableSorting: true,
             }),
+            columnHelper.accessor("CMND", {
+                header: "CCCD",
+                cell: (info) => info.getValue(),
+            }),
             columnHelper.accessor("BacSi", {
                 header: "Bác sĩ",
                 cell: (info) => info.getValue(),

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\BenhNhan;
 use Carbon\Carbon;
@@ -14,7 +15,9 @@ class PatientController extends Controller
 {
     public function index(Request $request): Response
     {
-        $patients = BenhNhan::query()->where('XoaMem', 0)->where('HoVaTen', 'LIKE', '%' . request('q') . '%')->orderBy($request['sortCols'] ?? 'HoVaTen', $request['sortType'] ?? 'asc')->paginate(10);
+        $patients = BenhNhan::query()->where('XoaMem', 0)->when(request('q'), function ($q) {
+            $q->where('HoVaTen', 'LIKE', '%' . request('q') . '%')->orWhere('CMND', 'LIKE', '%' . request('q') . '%');
+        })->orderBy($request['sortCols'] ?? 'HoVaTen', $request['sortType'] ?? 'asc')->paginate(10);
 
         return Inertia::render('Patients/List', [
             "patients" => collect($patients->items())->map(function ($item) {
@@ -26,6 +29,7 @@ class PatientController extends Controller
                     "phone" => $item['DienThoai'],
                     "address" => $item['DiaChi'],
                     "cccd" => $item['CMND'],
+                    "Ma" => $item['Ma'],
                     "h" => $item['ChieuCao'],
                     "w" => $item['CanNang'],
                     "blood" => $item['NhomMau'],
@@ -59,7 +63,9 @@ class PatientController extends Controller
 
     public function store(Request $request)
     {
-        BenhNhan::create($request->all());
+        BenhNhan::create(array_merge($request->all(), [
+            'Ma' => Helper::genCode()
+        ]));
         return redirect('/benhnhan');
     }
 
@@ -74,7 +80,9 @@ class PatientController extends Controller
 
     public function pdf()
     {
-        $patients = BenhNhan::query()->where('XoaMem', 0)->where('HoVaTen', 'LIKE', '%' . request('q') . '%')->orderBy('HoVaTen', $request['sortType'] ?? 'asc')->get();
+        $patients = BenhNhan::query()->where('XoaMem', 0)->when(request('q'), function ($q) {
+            $q->where('HoVaTen', 'LIKE', '%' . request('q') . '%')->orWhere('CMND', 'LIKE', '%' . request('q') . '%');
+        })->orderBy('HoVaTen', $request['sortType'] ?? 'asc')->get();
         $data = ["patients" => $patients->map(function ($item) {
             return [
                 "HoVaTen" => $item['HoVaTen'],
@@ -85,6 +93,7 @@ class PatientController extends Controller
                 "ChieuCao" => $item['ChieuCao'],
                 "CanNang" => $item['CanNang'],
                 "NhomMau" => $item['NhomMau'],
+                "Ma" => $item['Ma'],
             ];
         })];
         $pdf = PDF::loadView('benhnhan', $data);

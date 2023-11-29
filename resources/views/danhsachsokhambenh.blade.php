@@ -17,6 +17,7 @@
         th {
             border: 1px solid;
             text-align: center;
+            font-size: 10px;
         }
     </style>
     <title>Bill</title>
@@ -28,6 +29,7 @@
     <table>
         <tr>
             <th>BỆNH NHÂN</th>
+            <th>CCCD</th>
             <th>BÁC SĨ</th>
             <th>CHUẨN ĐOÁN BỆNH</th>
             <th>TRẠNG THÁI</th>
@@ -35,6 +37,7 @@
         @foreach ($healthRecords as $item)
         <tr>
             <td>{{ $item['HoVaTen'] }}</td>
+            <td>{{ $item['CMND'] }}</td>
             <td>{{ $item['BacSi'] }}</td>
             <td>{{ $item['ChanDoanBenh'] }}</td>
             <td>{{ $item['TrangThai'] }}</td>

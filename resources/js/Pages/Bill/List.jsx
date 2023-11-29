@@ -120,7 +120,7 @@ export default function ListBill(props) {
             <PageContainer>
                 <div className="flex gap-5">
                     <InputSearch
-                        placeholder="tên"
+                        placeholder="tên, cccd"
                         onSearch={(query) => {
                             getRouter({ q: query, page: 1 });
                             setCurrentPage(1);

@@ -17,4 +17,9 @@ class NhapXuatThuoc extends Model
     protected $primaryKey = 'Id';
 
     protected $guarded = [];
+
+    public function thuoc(): BelongsTo
+    {
+        return $this->belongsTo(Thuoc::class, 'MaThuoc', 'Id');
+    }
 }

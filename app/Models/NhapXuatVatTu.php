@@ -17,4 +17,9 @@ class NhapXuatVatTu extends Model
     protected $primaryKey = 'Id';
 
     protected $guarded = [];
+
+    public function vattu(): BelongsTo
+    {
+        return $this->belongsTo(VatTu::class, 'MaVatTu', 'Id');
+    }
 }

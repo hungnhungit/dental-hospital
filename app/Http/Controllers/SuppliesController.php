@@ -17,7 +17,7 @@ class SuppliesController extends Controller
 {
     public function index(Request $request): Response
     {
-        $supplies = VatTu::query()->with(['loaiVatTu', 'donVi'])->when(request('f'), function ($q, $val) {
+        $supplies = VatTu::query()->where('XoaMem', 0)->with(['loaiVatTu', 'donVi'])->when(request('f'), function ($q, $val) {
             $q->where('SoLuong', $val === 'het' ? '=' : '>', 0);
         })->where('TenVT', 'LIKE', '%' . request('q') . '%')->orderBy('TenVT', $request['sortType'] ?? 'asc')->paginate(10);
 
@@ -28,6 +28,7 @@ class SuppliesController extends Controller
                     "TenVT" => $item['TenVT'],
                     "LoaiVatTu" => $item['loaiVatTu']['LoaiVatTu'],
                     "DonVi" => $item['donVi']['DonVi'],
+                    "DonGia" => $item['DonGia'],
                     "SoLuong" => $item['SoLuong'],
                 ];
             }),
@@ -38,6 +39,13 @@ class SuppliesController extends Controller
                 ];
             }),
             "totalPage" => $supplies->total(),
+            "history" => NhapXuatVatTu::query()->get()->map(function ($item) {
+                return array_merge($item->toArray(), [
+                    'NgayBienDong' => Carbon::parse($item['NgayBienDong'])->format('d/m/Y'),
+                    'ChiPhiNhap' => $item['SoLuongNhap'] * $item['vattu']['DonGia'],
+                    'ChiPhiXuat' => $item['SoLuongXuat'] * $item['vattu']['DonGia']
+                ]);
+            }),
         ]);
     }
 
@@ -76,11 +84,6 @@ class SuppliesController extends Controller
                     "name" => $item['DonVi'],
                 ];
             }),
-            "history" => NhapXuatVatTu::query()->get()->map(function ($item) {
-                return array_merge($item->toArray(), [
-                    'NgayBienDong' => Carbon::parse($item['NgayBienDong'])->format('d/m/Y')
-                ]);
-            }),
             "supplie" => $record->toArray()
         ]);
     }
@@ -102,14 +105,16 @@ class SuppliesController extends Controller
 
     public function destroy(int $id)
     {
-        VatTu::destroy($id);
+        VatTu::query()->findOrFail($id)->update([
+            'XoaMem' => '1'
+        ]);
 
         return back();
     }
 
     public function pdfRemainingAmount()
     {
-        $supplies = VatTu::with(['loaiVatTu', 'donVi', 'nhapxuat'])->when(request('f'), function ($q, $val) {
+        $supplies = VatTu::with(['loaiVatTu', 'donVi', 'nhapxuat'])->where('XoaMem', 0)->when(request('f'), function ($q, $val) {
             $q->where('SoLuong', $val === 'het' ? '=' : '>', 0);
         })->get();
         $data = ["data" => collect($supplies)->map(function ($item) {
@@ -118,8 +123,11 @@ class SuppliesController extends Controller
                 "TenVT" => $item['TenVT'],
                 "LoaiVatTu" => $item['loaiVatTu']['LoaiVatTu'],
                 "DonVi" => $item['donVi']['DonVi'],
+                "DonGia" => number_format($item['DonGia']),
                 "SoLuongNhap" => $item['nhapxuat']->sum->SoLuongNhap,
                 "SoLuongXuat" => $item['nhapxuat']->sum->SoLuongXuat,
+                'ChiPhiNhap' => number_format($item['nhapxuat']->sum->SoLuongNhap * $item['DonGia']),
+                'ChiPhiXuat' => number_format($item['nhapxuat']->sum->SoLuongXuat * $item['DonGia']),
                 "SoLuongHienTai" => $item['SoLuong'],
             ];
         })];
